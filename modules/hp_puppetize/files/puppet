@@ -1,0 +1,14 @@
+#
+# /etc/default/puppet
+#
+##############################################################
+# Do not edit. Managed by Puppet. Changes will be wiped out. #
+##############################################################
+
+# Defaults for puppet - sourced by /etc/init.d/puppet
+
+# Start puppet on boot?
+START=yes
+
+# Startup options
+DAEMON_OPTS="--certname node-hphome --server hphome.hphome.tld"
