@@ -11,8 +11,8 @@ modulepath=$confdir/modules
 
 ssldir=/etc/puppet/ssl
 
-server = hphome.home.tld
+server = <%= puppetsrvfqdn %>
 
 [agent]
-certname = node-hphome.home.tld
+certname = node-<%= puppetsrvfqdn %>
 

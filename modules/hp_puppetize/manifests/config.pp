@@ -14,22 +14,25 @@ class hp_puppetize::config {
        require => Class['hp_puppetize::install'],
     }
 
-    # sets e.g. if agent runs as daemon or not
-
+    # used template variables
+    $puppetsrvfqdn = $::fqdn
+    $myhostname = $::hostname
+    
+    # sets e.g. if agent runs as daemon or not (default)
     file { '/etc/default/puppet' :
         ensure => present,
-        source => 'puppet:///modules/hp_puppetize/puppet',
+       content =>  template( 'hp_puppetize/puppet.erb' ),         
          owner => 'root',
          group => 'root',
        require => Class['hp_puppetize::install'],
         notify => Class['hp_puppetize::service'],
     }
-
-    if $::fqdn == $::hp_puppetize::params::mypuppetserver_fqdn {
+  
+    if $puppetsrvfqdn in $::hp_puppetize::params::list_puppetservers_fqdn {
 
         file { '/etc/puppet/puppet.conf' :
             ensure => present,
-            source => 'puppet:///modules/hp_puppetize/puppet.conf',
+           content =>  template( 'hp_puppetize/puppet.conf.erb' ),    
              owner => 'root',
              group => 'root',
            require => Class['hp_puppetize::install'],
@@ -54,7 +57,7 @@ class hp_puppetize::config {
             notify => Class['hp_puppetize::service'],
         }
 
-        # sets e.g. if puppet master runs as daemon or not
+        # sets e.g. if puppet master runs as daemon (default) or not
         file { '/etc/default/puppetmaster' :
             ensure => present,
             source => 'puppet:///modules/hp_puppetize/puppetmaster',

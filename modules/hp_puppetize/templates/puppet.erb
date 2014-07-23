@@ -11,4 +11,4 @@
 START=yes
 
 # Startup options
-DAEMON_OPTS="--certname node-hphome --server hphome.hphome.tld"
+DAEMON_OPTS="--certname node-<%= myhostname %> --server <%= puppetsrvfqdn %>"
