@@ -3,8 +3,8 @@
 #########################################
 node basenode {
 
-	# puppet helper routines
-	include puppet_utils
+    # puppet helper routines
+    include puppet_utils
 
     # Set up root's home directories and bash customization
     include hp_root_home
