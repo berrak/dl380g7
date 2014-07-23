@@ -2,8 +2,9 @@
 ## (BASENODE) Included in every node
 #########################################
 node basenode {
-		
-	include hp_puppet_utils
+	
+	# puppet helper routines	
+	include puppet_utils
 	
 }
 ###############################
