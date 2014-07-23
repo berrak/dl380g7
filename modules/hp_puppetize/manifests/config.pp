@@ -17,6 +17,7 @@ class hp_puppetize::config {
     # used template variables
     $puppetsrvfqdn = $::fqdn
     $myhostname = $::hostname
+    $mydomain = $::domain
     
     # sets e.g. if agent runs as daemon or not (default)
     file { '/etc/default/puppet' :

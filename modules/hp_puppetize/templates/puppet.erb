@@ -11,4 +11,4 @@
 START=yes
 
 # Startup options
-DAEMON_OPTS="--certname node-<%= myhostname %> --server <%= puppetsrvfqdn %>"
+DAEMON_OPTS="--certname node-<%= myhostname %>.<%= mydomain %> --server <%= puppetsrvfqdn %>"
