@@ -1,6 +1,6 @@
-#########################################
-## (BASENODE) Included in every node
-#########################################
+#
+## (BASENODE) Inherited in every node
+#
 node basenode {
 
     # puppet helper routines
@@ -11,6 +11,6 @@ node basenode {
     include hp_root_bashrc
 
 }
-###############################
+#
 ## eof
-###############################
+#

@@ -1,11 +1,12 @@
 #
-# site.pp
+## site.pp
 #
+node 'node-hphome.home.tld' inherits basenode {
 
-import 'base.pp'
-
-node 'node-hphome.home.tld' {
-
+	# manage puppet
     include hp_puppetize
 
 }
+#
+## eof
+#
