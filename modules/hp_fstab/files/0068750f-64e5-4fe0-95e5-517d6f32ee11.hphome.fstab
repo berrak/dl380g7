@@ -1,0 +1,33 @@
+# /etc/fstab: static file system information.
+#
+# Use 'blkid' to print the universally unique identifier for a
+# device; this may be used with UUID= as a more robust way to name devices
+# that works even if disks are added and removed. See fstab(5).
+#
+# <file system> <mount point>   <type>  <options>       <dump>  <pass>
+# / was on /dev/sda6 during installation
+UUID=51dc734a-036e-48e9-8385-0ca2324a319c /               ext4    errors=remount-ro 0       1
+
+# /boot was on /dev/sda1 during installation
+UUID=0068750f-64e5-4fe0-95e5-517d6f32ee11 /boot           ext4    defaults        0       2
+
+# /home was on /dev/sdb1 during installation
+UUID=62894dfe-ebc5-4fbb-93ac-27b01e4117f0 /home           ext4    defaults        0       2
+
+# /srv was on /dev/sdb7 during installation
+UUID=b90800f0-fa32-44fa-82cb-59575d15db98 /srv            ext4    defaults        0       2
+
+# /tmp was on /dev/sdb6 during installation
+UUID=cc104ad4-be96-4a99-b118-e21d2dcda0e6 /tmp            ext4    defaults        0       2
+
+# /var was on /dev/sda7 during installation
+UUID=d43a6828-ab62-4049-a09a-3df8348a41f2 /var            ext4    defaults        0       2
+
+# /var/log was on /dev/sdb5 during installation
+UUID=8d2308a6-619a-424a-b43d-b11da65cbfbc /var/log        ext4    defaults        0       2
+
+# /var/www was on /dev/sdb8 during installation
+UUID=a0597dcf-e9d9-417f-87df-3078734efc18 /var/www        ext4    defaults        0       2
+
+/dev/mapper/sda5_crypt none            swap    sw              0       0
+/dev/sr0        /media/cdrom0   udf,iso9660 user,noauto     0       0
