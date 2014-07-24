@@ -1,6 +1,8 @@
 #
 ## site.pp
 #
+include 'base.pp'
+
 node 'node-hphome.home.tld' inherits basenode {
 
 	# manage puppet
