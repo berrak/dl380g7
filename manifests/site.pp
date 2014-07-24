@@ -1,12 +1,16 @@
 #
 ## site.pp
 #
-include 'base.pp'
+node 'node-hphome.home.tld' {
 
-node 'node-hphome.home.tld' inherits basenode {
-
+    # puppet helper routines
+    include puppet_utils
 	# manage puppet
     include hp_puppetize
+
+    # Set up root's home directories and bash customization
+    include hp_root_home
+    include hp_root_bashrc
 
 }
 #
