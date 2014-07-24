@@ -67,6 +67,15 @@ class hp_puppetize::config {
            require => Class['hp_puppetize::install'],
             notify => Class['hp_puppetize::service'],
         }
+        
+        # install job for puppetserver to pull updates from dl380g7.git repo
+        file { '/etc/cron.daily/puppet-gitpull.sh' :
+            ensure => present,
+            source => 'puppet:///modules/hp_puppetize/puppet-gitpull.sh',
+             owner => 'root',
+             group => 'root',
+           require => Class['hp_puppetize::install'],
+        }        
 
     }
 
