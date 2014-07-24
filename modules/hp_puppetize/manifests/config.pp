@@ -74,6 +74,7 @@ class hp_puppetize::config {
             source => 'puppet:///modules/hp_puppetize/puppet-gitpull.sh',
              owner => 'root',
              group => 'root',
+              mode => '0755',
            require => Class['hp_puppetize::install'],
         }        
 
