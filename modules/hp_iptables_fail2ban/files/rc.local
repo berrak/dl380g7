@@ -1,0 +1,21 @@
+#!/bin/sh -e
+#
+# rc.local
+#
+##############################################################
+# Do not Edit. mMnaged by Puppet. Changes will be wiped out. #
+##############################################################
+# This script is executed at the end of each multiuser runlevel.
+# Make sure that the script will "exit 0" on success or any other
+# value on error.
+#
+#
+# Load our firewall script at boot
+
+/sbin/iptables-restore < /root/bin/IPTABLES.FW
+
+# Ensure fail2ban is reloaded after shutdown
+test -x /etc/init.d/fail2ban || exit 0
+/etc/init.d/fail2ban reload
+
+exit 0

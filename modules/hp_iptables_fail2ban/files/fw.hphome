@@ -1,0 +1,155 @@
+#!/bin/sh
+# /root/bin/fw.hphome
+##############################################################
+# Do not Edit. Managed by Puppet. Changes will be wiped out. #
+##############################################################
+#
+# Rules for internal HP acceptance-test server.
+#
+# Copyright (C) (2012-14) K-B.Kronlund <bkronmailbox-copyright@yahoo.se>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+## Basic data
+
+IPTABLES=/sbin/iptables
+MODPROBE=/sbin/modprobe
+
+IPTSAVE=/sbin/iptables-save
+IPTSAVEFILE=/root/bin/IPTABLES.FW
+
+# localhost
+HOSTADDR="192.168.0.12"
+
+# Remote access on port: 22, 80, 8080, 5432 (postgreSQL), 9418 (Git)
+BKTRUSTEDNET="192.168.0.0/24"
+
+# Trust google.com
+GOOGLENET="66.249.67.0/24"
+
+# Multicast mDNS packets
+MDNSMULTICASTADDR="224.0.0.251"
+
+## Log options - i.e. log to file var/log/debug
+LOGOPT="LOG --log-level 7 --log-ip-options --log-tcp-options"
+
+## Prevent excessive logging
+RLIMIT="-m limit --limit 3/s --limit-burst 8"
+
+## Load modules
+$MODPROBE ip_conntrack
+$MODPROBE ip_conntrack_ftp
+
+## Flush old rules, old custom rules
+$IPTABLES -F
+$IPTABLES -X
+
+#---------------------------------------------------------------------
+# Default policies
+#---------------------------------------------------------------------
+$IPTABLES -P INPUT DROP
+$IPTABLES -P OUTPUT ACCEPT
+$IPTABLES -P FORWARD DROP
+
+## Free reign to loopback interfaces
+$IPTABLES -I INPUT 1 -i lo -j ACCEPT
+$IPTABLES -I OUTPUT 1 -o lo -j ACCEPT
+
+## ======================
+## ALLOW INBOUND TRAFFIC
+## ======================
+
+# allow all established and related in
+$IPTABLES -A INPUT -p all -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+# allow Google access
+$IPTABLES -A INPUT -p tcp -s $GOOGLENET -m tcp -m state --state NEW -j ACCEPT
+
+# ssh client access for management
+$IPTABLES -A INPUT -p tcp -s $BKTRUSTEDNET -m tcp --dport 22 -m state --state NEW -j ACCEPT
+
+# allow DHCP requests
+$IPTABLES -A INPUT -p udp -m udp --dport 67:68 --sport 67:68 -m state --state NEW -j ACCEPT
+
+# allow dns (udp/tcp) queries to our host
+$IPTABLES -A INPUT -p tcp -m tcp --sport 53 -m state --state NEW -j ACCEPT
+$IPTABLES -A INPUT -p udp -m udp --sport 53 -m state --state NEW -j ACCEPT
+
+# allow trusted user access web server
+$IPTABLES -A INPUT -p tcp -s $BKTRUSTEDNET -m tcp --dport 80 -m state --state NEW -j ACCEPT
+
+# allow same trusted users access developers web server on port 8080
+$IPTABLES -A INPUT -p tcp -s $BKTRUSTEDNET -m tcp --dport 8080 -m state --state NEW -j ACCEPT
+
+# allow NTP to communicate with external time servers
+$IPTABLES -A OUTPUT -p udp -m udp --dport 123 -m state --state NEW -j ACCEPT
+
+# allow postgresql to accept local input
+$IPTABLES -A INPUT -p tcp -s 0/0 --sport 1024:65535 -d $HOSTADDR --dport 5432 -m state --state NEW,ESTABLISHED -j ACCEPT
+
+# allow postgresql to accept some remote pgadmin connections
+$IPTABLES -A INPUT -p tcp -s $BKTRUSTEDNET --dport 5432 -m state --state NEW,ESTABLISHED -j ACCEPT
+
+# Puppet client: allow puppet server input to this puppet client
+$IPTABLES -A INPUT -p tcp -m tcp --dport 8139 -m state --state NEW -j ACCEPT
+
+# Puppet server: allow puppet client requests to this puppet server
+$IPTABLES -A INPUT -p tcp -m tcp --dport 8140 -m state --state NEW -j ACCEPT
+
+# allow possible multicast mDNS packets
+$IPTABLES -A INPUT -p udp -m udp --dport 5353 -j ACCEPT
+
+# allow Git (port 9418) access for trusted users
+$IPTABLES -A INPUT -p tcp -s $BKTRUSTEDNET -m tcp --dport 9418 -m state --state NEW -j ACCEPT
+
+## ==========================
+## DROP OTHER INBOUND TRAFFIC
+## ==========================
+
+#---------------------------------------------------------------------------
+# CATCH ALL INPUT LOG-and-DROP RULES (you may be suprised what ends up here)
+#---------------------------------------------------------------------------
+
+## Prevent invalid input packages
+$IPTABLES -A INPUT -m state --state INVALID -j $LOGOPT $RLIMIT --log-prefix "DROP INPUT INVALID "
+$IPTABLES -A INPUT -m state --state INVALID -j DROP
+
+$IPTABLES -A INPUT ! -i lo -j $LOGOPT $RLIMIT --log-prefix "DROP INPUT DEFAULT "
+$IPTABLES -A INPUT ! -i lo -j DROP
+
+## ======================
+## ALLOW OUTBOUND TRAFFIC
+## ======================
+
+# Allow mail out from host
+$IPTABLES -A OUTPUT -p tcp -m tcp --dport 25 -m state --state NEW -j ACCEPT
+$IPTABLES -A OUTPUT -p tcp -m tcp --dport 465 -m state --state NEW -j ACCEPT
+$IPTABLES -A OUTPUT -p tcp -m tcp --dport 587 -m state --state NEW -j ACCEPT
+
+
+#############################
+## SAVE THE FILE
+#############################
+
+$IPTSAVE > $IPTSAVEFILE
+chmod 700 $IPTSAVEFILE
+
+#############################
+## LIST LOADED IPTABLES RULES
+#############################
+
+$IPTABLES -L -v --line-numbers
+
+exit 0
+
