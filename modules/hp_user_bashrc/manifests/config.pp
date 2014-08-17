@@ -49,7 +49,7 @@ define hp_user_bashrc::config {
 		
 		# Now append one line to original .bashrc to source user customizations.
 		
-		hp_puppet_utils::append_if_no_such_line { "enable_${name}_customization" :
+		puppet_utils::append_if_no_such_line { "enable_${name}_customization" :
 				
 		    file => "/home/${name}/.bashrc",
 		    line => "[ -f ~/bashrc.d/${name} ] && source ~/bashrc.d/${name}" 
