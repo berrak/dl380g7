@@ -1,0 +1,38 @@
+##############################################################
+# MANAGED BY PUPPET. DO NOT EDIT. CHANGES WILL BE WIPED OUT. #
+##############################################################
+#
+# ~/bashrc.d/perl.rc
+#
+# Sourced by user bash resource file
+#
+
+# Print out perls library path
+alias perl.inc='perl -e "print join(\"\n\", @INC);"'
+
+# Find  Perl module and version (from Stackoverflow)
+alias cpan.module="perl -e\"eval qq{use \\\$ARGV[0];\\\\\\\$v=\\\\\\\$\\\${ARGV[0]}::VERSION;};\ print\\\$@?qq{No module found\\n}:\\\$v?qq{Version \\\$v\\n}:qq{Found.\\n};\"\$1"
+
+# useage: cpan.module XML::Simple
+# Example --> No module found
+
+# useage: cpan.module DBI
+# Example --> Version 1.607
+
+
+# For test
+alias prove-all='prove --lib $PWD/t/*.t $PWD/t/*/*.t $PWD/xt/*t $PWD/xt/*/*.t'
+alias prove-t='prove --lib $PWD/t/*.t $PWD/t/*/*.t'
+alias prove-xt='prove --lib $PWD/xt/*.t $PWD/xt/*/*.t'
+
+#export PERL5LIB=/home/bekr/perlwork/<project>lib
+
+# (option use taint check)
+#export PERL5OPT=-T
+
+
+
+
+
+
+

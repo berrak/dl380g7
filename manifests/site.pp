@@ -54,6 +54,10 @@ node 'node-hphome.home.tld' {
 		  no_lan_outbound_mail => 'false',
 	}
 	
+	# user profiles
+    hp_user_bashrc::config { 'bekr' : }
+#	le_sudo::config { 'bekr': }
+	
 	hp_mutt::install { 'bekr': mailserver_hostname => 'hphome' }
 
 }
