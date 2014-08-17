@@ -13,6 +13,9 @@ node 'node-hphome.home.tld' {
 	
 	include hp_screen
 	
+	# configure APT
+    include hp_aptconf
+	
 	# Disable ipv6 in kernel/grub and use the more text lines in console mode	
     class { hp_grub::install : defaultline => 'vga=791', appendline => 'true', ipv6 => 'false' }
 	
