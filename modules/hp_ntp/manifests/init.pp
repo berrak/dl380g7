@@ -21,7 +21,7 @@ class hp_ntp(
                     
             file { "ntp.conf.lanclient":
                 path => "/etc/ntp.conf",
-                source => "hp:///modules/hp_ntp/ntp.conf.lanclient",
+                source => "puppet:///modules/hp_ntp/ntp.conf.lanclient",
                 owner => "root",
                 group => "root",
                 require => Package["ntp"],
@@ -43,7 +43,7 @@ class hp_ntp(
         
             file { "ntp.conf.lanserver":
                 path => "/etc/ntp.conf",
-                source => "hp:///modules/hp_ntp/ntp.conf.lanserver",
+                source => "puppet:///modules/hp_ntp/ntp.conf.lanserver",
                 owner => "root",
                 group => "root",
                 require => Package["ntp"],
