@@ -58,7 +58,8 @@ node 'node-hphome.home.tld' {
 	## APPLICATIONS ##
 	
 	# Packages without any special configurations
-    class { hp_install_debs : debs => [ "tree", "sipcalc" ] }
+    class { hp_install_debs : debs => [ "tree", "sipcalc", "gddrescue", "lshw",
+	                                "dnsutils" , "ethtool", "parted", "lsof" ] }
 	
 	# MAIL server, relay external mails via google
 		hp_postfix::install { 'mta' :
