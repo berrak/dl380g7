@@ -48,6 +48,8 @@ node 'node-hphome.home.tld' {
 		   smtp_relayhost_fqdn => 'smtp.gmail.com',
 		  no_lan_outbound_mail => 'false',
 	}
+	
+	hp_mutt::install { 'bekr': mailserver_hostname => 'hphome' }
 
 }
 #

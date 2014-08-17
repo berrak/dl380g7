@@ -1,0 +1,95 @@
+#
+# ~/.muttrc
+#
+#############################################################
+# MANAGE BY PUPPET. DO NOT EDIT. CHANGES WILL BE WIPED OUT. #
+#############################################################
+
+
+## First the local folder type and other important stuff
+set mbox_type=Maildir
+
+set mask="!^\\.[^.]"
+set mbox="~/Maildir"
+
+# Use fixed paths (otherwise mutt can not find/create eg .Sent)
+set record="~/Maildir/.Sent"
+set postponed="~/Maildir/.Drafts"
+
+
+## Sending Mail (SMTP)
+## (works uncommented in the initial plain tests. Needs authentication!)
+
+#set smtp_url="smtp://bekr@rohan.home.tld:25
+#set smtp_pass=""
+#set from="your_username@home.tld"
+#set realname="Your Real_name"
+
+#set copy=yes 
+
+## Retrieving Mail (IMAP)
+
+<%= imap_user %>
+<%= imap_passwd %>
+
+set spoolfile=<%= mailspool %>
+set folder=<%= mailfolder %>
+
+## (alt a) use mutt org solution for mailboxes
+
+mailboxes ! + `for file in ~/Maildir/.*; do box=$(basename "$file"); if [ ! "$box" = '.' -a ! "$box" = '..' -a ! "$box" = '.customflags' -a ! "$box" = '.subscriptions' ]; then echo -n "\"+$box\" "; fi; done`
+
+## (alt b) Set mailboxes by scanning for subfolders (does it work?)
+## mailboxes `echo -n "+ "; find ~/Maildir -maxdepth 1 -type d -name ".*" -printf "+'%f' "`
+
+## Reading Mail
+
+set timeout=10  
+set mail_check=5
+set sort=threads
+set sort_aux=reverse-date
+set move=no     
+set mark_old=no
+ignore * # ignore all headers except for ...
+unignore Date: From: To: CC: Bcc: Subject:
+hdr_order Subject: Date: From: To: CC: Bcc:
+set index_format="%{%b %d %H:%M}  %-20.20L %s"
+
+## Macros
+
+macro index c "<change-folder>?<toggle-mailboxes>" "open a different folder"
+macro pager c "<change-folder>?<toggle-mailboxes>" "open a different folder"
+
+macro index C "<copy-message>?<toggle-mailboxes>" "copy a message to a mailbox"
+macro index M "<save-message>?<toggle-mailboxes>" "move a message to a mailbox"
+
+macro compose A "<attach-message>?<toggle-mailboxes>" "attach message(s) to this message"
+
+
+## Composing Mail
+
+set editor="nano"     
+set markers=no     
+#set signature=~/.sig  
+set include=yes
+
+# what is this?
+# set forward_format="Fwd: %s"                
+
+## Pretty Colors
+color status white blue
+color index green  default ~N  # new
+color index red default ~D  # deleted
+color index brightmagenta default ~T  # tagged
+color index brightyellow default ~F  # flagged
+color header green default "^Subject:"
+color header yellow default "^Date:"
+color header yellow default "^To:"
+color header yellow default "^Cc:"
+color header yellow default "^Bcc:"
+color header yellow default "^From:"
+color header red default "^X-.*:"
+
+## View Special Formats
+# set mailcap_path=~/.mailcap
+#auto_view text/html # auto-render html inline mutt
