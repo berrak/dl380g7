@@ -11,6 +11,8 @@ node 'node-hphome.home.tld' {
 	# manage puppet itself
     include hp_puppetize
 	
+	include hp_screen
+	
 	# Disable ipv6 in kernel/grub and use the more text lines in console mode	
     class { hp_grub::install : defaultline => 'vga=791', appendline => 'true', ipv6 => 'false' }
 	

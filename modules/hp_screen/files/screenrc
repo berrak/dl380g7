@@ -1,0 +1,85 @@
+#############################################################
+# Manage by puppet. Do not edit. Changes will be wiped out. #
+#############################################################
+#
+# Screen resource file (ref: https://bbs.archlinux.org/viewtopic.php?id=55618&p=3)
+#
+startup_message off
+setenv LC_CTYPE en_US.UTF-8
+defutf8 on
+hardcopy_append on
+crlf off
+multiuser off
+#deflogin on
+bufferfile $HOME/.screen_buffer
+pow_detach_msg "Screen session of \$LOGNAME \$:cr:\$:nl:ended."  # Emulate a logout msg
+msgwait 2         # 1 second messages
+#silencewait 5
+sorendition =s Gk
+
+vbell off
+vbell_msg " *beep* "
+#activity "%c activity -> %n%f %t"
+#bell "%c bell -> %n%f %t^G"
+
+nethack on     # print wackier status messages
+nonblock on    # If a window goes unresponsive, don't block the whole session waiting for it.
+defnonblock 5  # flaky/slow ssh lines
+altscreen on   # restore window contents after using (e.g.) nano
+defmonitor on  # turn monitoring on
+shell -$SHELL  # use the default shell
+defbce on      # erase background with current bg color
+defflow off    # disable Ctrl-S/Ctrl-Q "flow control"
+#logfile ~/screen_%y-%m-%d_%0c
+
+
+# terminfo and termcap for nice 256 color terminal
+termcapinfo xterm*|rxvt-* 'Co#256:AB=\E[48;5;%dm:AF=\E[38;5;%dm'
+termcapinfo xterm*|rxvt-* 'hs:ts=\E]0;:fs=\007:ds=\E]0;\007'
+termcapinfo xterm*|rxvt-* ti@:te=\E[3J
+termcapinfo xterm*|rxvt-* hs@:cs=\E[%i%d;%dr:im=\E[4h:ei=\E[4l
+termcapinfo xterm*|rxvt-* hs@:cs=\E[%i%p1%d;%p2%dr:im=\E[4h:ei=\E[4l
+attrcolor b ".I"        # allow bold colors - necessary for some reason
+term 'xterm-256color'   # 256 terminal for xterm
+#term screen-256color   #By default, screen uses an 8-color terminal emulator. Use the following line to enable more colors, more-capable terminal emulator:
+
+
+
+#
+# hardstatus
+#
+hardstatus on
+hardstatus alwayslastline
+defhstatus "%{= 9}%-w%{= 9}%50>%n* %{= 9}%t%{= 9}%+w%< %=  %{= R} %{= 9}%c:%s"  # nice and simple
+#hardstatus alwayslastline "%{=b}%{G} Screen(s): %{b}%w %=%{kG}%C%A  %D, %M/%d/%Y "
+#hardstatus string '%{= kG}[ %{G}%H %{g}][%= %{= kw}%?%-Lw%?%{r}(%{W}%n*%f%t%?(%u)%?%{r})%{w}%?%+Lw%?%?%= %{g}][%{B} %d/%m %{W}%c %{g}]'
+#hardstatus alwayslastline "%{yk}( %{Y}%H %{y})%= %{wk}%?%-Lw%?%{R}(%{W}%n*%f %t%?(%u)%?%{R})%{w}%?%+Lw%?%?%= %{y}( %{Y}load: %l %{y})"
+##hardstatus alwayslastline "%{=b kW}[ %{= Y}$USER @ %H %{b W}][%= %{= kw}%?%-Lw%?%{r}(%{W}%n*%f%t%?(%u)%?%{r})%{w}%?%+Lw%?%?%= %{b W}][%{= Y} %l %{b W}][%{= Y} %d/%m %{Y}%c %{b W}]"
+##hardstatus alwayslastline "%{=b kW}[ %{= Y}$USER @ %H %{b W}][%= %{= kw}%?%-Lw%?%{r}(%{W}%n*%f%t%?(%u)%?%{r})%{w}%?%+Lw%?%?%= %{b W}][%{= Y} %m/%d/%y %{Y}%C %{b W}]"
+##hardstatus string '%{= kG}[ %{G}%H %{g}][%= %{=kw}%?%-Lw%?%{r}(%{W}%n*%f%t%?(%u)%?%{r})%{w}%?%+Lw%?%?%= %{g}][%{B}%Y-%m-%d %{W}%c %{g}]'
+##hardstatus alwayslastline "%{= kG}[ $USER@%{G}%H %{g}][%= %{= kw}%?%-Lw%?%{r}(%{W}%n*%f%t%?(%u)%?%{r})%{w}%?%+Lw%?%?%= %{g}][%{B} %d.%m.%Y %{W}%c:%s %{g}]"
+hardstatus string "%{.wB}%-w%{.bW}%n %t%{-}%+w %=%{..Lw} %H %{..b} %m/%d %C%a "
+
+
+screen -t bash 0
+screen -t bash 1
+select 0
+
+
+#bind T screen -t 'pstree' 2 sudo watch -n 2 -t pstree -p -u -c -l -a -A|sed -e 's/\\040//g'
+#bind L screen -t 'log' 3 sudo tail -s3 -n 10 -f /var/log/everything.log
+#caption always "%{yK} $LOGNAME@%H | %l | %C %A - %M-%d-%Y | %-Lw%50>%{Ky}%n%f* %t%{-}%+Lw%<%{- Wk}%{yK} | "
+#caption always "%{= wk} %?%-Lw%?%{= kd} %n*%f %t %{= wk}%?%+Lw%? %{= wk}%=%{= Wk} %C%a %m-%d-%Y %{= wk} "
+#caption always "%{=b kW}[%= %{= K}F8=List F9=new F10=title F11=prev F12=next %{=b kW}%=]"  #stolen and changed from cornfelt
+#caption always " %m%d %c |  %w"
+#caption always "%?%{ Wk}%-Lw%?%{Rk}%n*%f %t%?(%u)%?%?%{Wk}%+Lw%? %{Rk}%=%c %{rk}%d/%M/%Y"
+#caption always "%{=b dw}:%{-b dw}:%{=b dk}[ %{-b dw}%{-b dg}$USER%{-b dw}@%{-b dg}%H %{=b dk}] [ %= %?%{-b dg}%-Lw%?%{+b dk}(%{+b dw}%n:%t%{+b dk})%?(%u)%?%{-b dw}%?%{-b dg}%+Lw%? %{=b dk}]%{-b dw}:%{+b dw}:"
+#caption always "%{+b kG} %=%{-s} %{.K}%-w%{.B}%n %{.G}%t%{.K}%+w%{.G} %{+s} %="
+
+
+
+# Finally! Shift-pg up or down to view scrollback buffer
+#
+bindkey "^[[5;2~" eval "copy" "stuff ^u"
+bindkey -m "^[[5;2~" stuff ^u
+bindkey -m "^[[6;2~" stuff ^d
