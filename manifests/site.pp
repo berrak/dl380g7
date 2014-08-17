@@ -78,6 +78,8 @@ node 'node-hphome.home.tld' {
 	# SSH server - Todo: change conf from pwd to RSA only
 	include hp_ssh_server
 	
+	include hp_logwatch
+	
 	include hp_screen
 	
 
