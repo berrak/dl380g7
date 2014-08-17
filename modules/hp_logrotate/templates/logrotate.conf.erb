@@ -1,0 +1,41 @@
+##############################################################
+# MANAGED BY PUPPET. DO NOT EDIT. CHANGES WILL BE WIPED OUT. #
+##############################################################
+# see "man logrotate" for details
+#
+# rotate log files monthly
+monthly
+
+# keep 12 months worth of backlogs
+rotate 12
+
+# create new (empty) log files after rotating old ones
+create
+
+# uncomment this if you want your log files compressed
+#compress
+
+# packages drop log rotation information into this directory
+include /etc/logrotate.d
+
+# no packages own wtmp, or btmp -- we'll rotate them here
+# 'wtmp' acts as a historical event log for the system, system boot time,
+# recording user logins at which terminals, logouts, system events etc.
+/var/log/wtmp {
+    missingok
+    monthly
+    create 0660 root utmp
+    rotate 12
+    mail root@<%= mydomain %>
+}
+
+# 'btmp' records failed login attempts
+/var/log/btmp {
+    missingok
+    monthly
+    create 0660 root utmp
+    rotate 12
+    mail root@<%= mydomain %>
+}
+
+# system-specific logs may be configured here

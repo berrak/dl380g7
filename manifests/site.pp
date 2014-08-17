@@ -81,7 +81,7 @@ node 'node-hphome.home.tld' {
 	include hp_logwatch
 	
 	include hp_rsyslog
-#	include hp_logrotate
+	include hp_logrotate
 	
 	include hp_screen
 	
