@@ -1,0 +1,83 @@
+#############################################################
+# MANAGED BY PUPPET. DO NOT EDIT. CHANGES WILL BE WIPED OUT #
+#############################################################
+
+alias_database = hash:/etc/aliases
+alias_maps = hash:/etc/aliases
+
+
+append_dot_mydomain = no
+biff = no
+
+home_mailbox = Maildir/
+
+inet_interfaces = all
+inet_protocols = ipv4
+
+mailbox_size_limit = 0
+<%= mail_box_command %>
+
+myhostname = <%= myfqdn %>
+mydestination = <%= mydomain %>, <%= myfqdn %>, localhost.<%= mydomain %>, localhost
+myorigin = <%= mydomain %>
+mynetworks = 127.0.0.0/8 <%= mynetwork_eth0 %>/24
+
+readme_directory = no
+recipient_delimiter = +
+relay_domains = $mydestination
+relayhost = [<%= smtp_relayhost_fqdn %>]:587
+
+virtual_alias_maps = hash:/etc/postfix/virtual
+
+# SASL/TSL configuration
+#-----------------------
+# Outgoing
+#----------
+# -- enable sasl
+smtp_sasl_auth_enable = yes
+# -- disallow
+smtp_sasl_security_options = noanonymous
+# -- where to find password
+smtp_sasl_password_maps = hash:/etc/postfix/sasl/sasl_passwd
+# -- unset for Google
+smtp_sasl_security_options =
+
+# -- enable STARTTLS encryption
+smtp_use_tls = yes
+# -- set TLS policy
+smtp_tls_policy_maps = hash:/etc/postfix/tls_policy
+# -- CA certs
+smtp_tls_CAfile = /etc/ssl/certs/ca-certificates.crt
+
+# -- other settings
+broken_sasl_auth_clients = yes
+smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
+
+# --------
+# Receive
+#---------
+smtpd_banner = $myhostname ESMTP $mail_name (Debian/GNU)
+smtpd_use_tls = yes
+smtpd_tls_cert_file=/etc/ssl/certs/ssl-cert-snakeoil.pem
+smtpd_tls_key_file=/etc/ssl/private/ssl-cert-snakeoil.key
+smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
+smtpd_sasl_local_domain = $myhostname
+
+# albeit commented out, postfix defaults still apply
+# sender restriction
+#-------------------
+#smtpd_sender_restrictions =
+#            permit_sasl_authenticated,
+#            permit_mynetworks,
+
+# recipient restrictions
+#-----------------------
+#smtpd_reccipient_restrictions =
+#            permit_mynetworks,
+#            permit_sasl_authenticated,
+#            reject_unauth_destinations, 
+#            reject_unknown_sender_domain,
+
+# manage mails transport for internal domain vs. ext domains
+<%= transport_maps %>
+

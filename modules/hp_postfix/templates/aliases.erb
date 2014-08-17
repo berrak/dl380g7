@@ -1,0 +1,17 @@
+#
+# /etc/aliases
+#
+##############################################################
+# MANAGED BY PUPPET. DO NOT EDIT. CHANGES WILL BE WIPED OUT. # 
+##############################################################
+#
+# Any entries which is created with 'crontab -e -u root' requires
+# this if 'local' (transport) root mails are intended to be sent
+# to the lan mail server. Note: after any changes, run
+# 'newaliases' and 'postfix reload' commands.
+# This is taken care of by puppet when the P't agent is run.
+# NOTE: this should be the domain for the mail server domain.
+#
+# See man 5 aliases for format
+root:          root@<%= mymailserverdomain %>
+postmaster:    root@<%= mymailserverdomain %>

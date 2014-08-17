@@ -1,0 +1,16 @@
+##
+## /etc/postfix/transport
+##
+## When this file is in use mails will bounce back to sender
+## and being removed from the mail queue. Note to reach back
+## to sender, a working DNS (e.g. bind9) must be on the LAN.
+##
+#############################################################
+# MANAGED BY PUPPET. DO NOT EDIT. CHANGES WILL BE WIPED OUT #
+#############################################################
+<%= mydomain %>        :
+.<%= mydomain %>       :
+<%= mysubdomain1 %>    :
+.<%= mysubdomain1 %>   : 
+*                  smtp:bounce
+

@@ -37,6 +37,17 @@ node 'node-hphome.home.tld' {
 	}
     # automatic security upgrades with cron script
 	include hp_auto_upgrade
+	
+	# Mail server, relay external mails via google
+		hp_postfix::install { 'mta' :
+			            ensure => 'installed',
+			install_cyrus_sasl => 'true',
+			          mta_type => 'server',
+		 server_root_mail_user => 'bekr',
+	external_root_gmail_cc => 'bertil.kronlund',
+		   smtp_relayhost_fqdn => 'smtp.gmail.com',
+		  no_lan_outbound_mail => 'false',
+	}
 
 }
 #
