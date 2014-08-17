@@ -10,6 +10,9 @@ node 'node-hphome.home.tld' {
     include puppet_utils
 	# manage puppet itself
     include hp_puppetize
+	
+	# Disable ipv6 in kernel/grub and use the more text lines in console mode	
+    class { hp_grub::install : defaultline => 'vga=791', appendline => 'true', ipv6 => 'false' }
 
     # Set up root's home directories and bash customization
     include hp_root_home
