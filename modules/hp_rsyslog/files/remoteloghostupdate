@@ -1,0 +1,15 @@
+#
+# /etc/cron.d/remoteloghostupdate
+#
+# Creates new log directories and entries for logcheck when 
+# new hosts is added to the network for the central loghost.
+#
+##############################################################
+# MANAGED BY PUPPET. DO NOT EDIT. CHANGES WILL BE WIPED OUT. #
+##############################################################
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+MAILTO=root
+30 18 * * *  root  test -x /root/jobs/cron.update_remote_log_directories && /bin/bash /root/jobs/cron.update_remote_log_directories
+
+# EOF
+

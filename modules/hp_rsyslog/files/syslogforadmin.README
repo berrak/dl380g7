@@ -1,0 +1,29 @@
+#
+# /var/log/syslogforadmin.README
+#
+###############################################################
+# MANAGED BY PUPPET. DO NOT EDIT. CHANGES WILL BE WIPED OUT.  #
+###############################################################
+#
+# Mmory notes to the local system admin for log host.
+#
+# When rsyslog is installed on a remote host. All security logs are
+# sent and written to sub directory '/var/log/REMOTELOGS/<host name>/'
+#
+# A script (cron.update_remote_log_directories) will automatically
+# update logcheck (if installed) to scan the directories and list
+# all remote logfiles in '/etc/logcheck/logcheck.logfiles'.
+#
+# The script will also save additional list of files in the same
+# logcheck directory as 'logcheck.logfiles.<logfile>' (which groups
+# all host with one kind of files in a list) or the file list
+# 'logcheck.logfiles.<remotehost>.<logfile>' which detail out it 
+# individually. All of these can be used on in 'cron.d' with logcheck
+# option -L (i.e. read alternative list file than logcheck.logfiles) 
+#
+# This script will also ensure log rotation of all remote log files
+# below /var/log/REMOTELOGS/<host name>/*.log
+#
+# Log rotation instructions is saved in /etc/logrotate.d/remotersyslog.
+#
+## EOF

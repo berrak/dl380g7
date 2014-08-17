@@ -1,0 +1,122 @@
+##############################################################
+# MANAGED BY PUPPET. DO NOT EDIT. CHANGES WILL BE WIPED OUT. #
+##############################################################
+#
+#  /etc/rsyslog.conf  Configuration file for rsyslog (loghost).
+#
+#			For more information see
+#			/usr/share/doc/rsyslog-doc/html/rsyslog_conf.html
+#
+
+#################
+#### MODULES ####
+#################
+
+$ModLoad imuxsock # provides support for local system logging
+$ModLoad imklog   # provides kernel logging support
+
+# central loghost enable TCP rsyslog reception port 1958
+$ModLoad imtcp
+$InputTCPServerRun 514
+
+###########################
+#### GLOBAL DIRECTIVES ####
+###########################
+
+#
+# Use traditional timestamp format.
+# To enable high precision timestamps, comment out the following line.
+#
+$ActionFileDefaultTemplate RSYSLOG_TraditionalFileFormat
+
+#
+# Set the default permissions for all log files.
+#
+$FileOwner root
+$FileGroup adm
+$FileCreateMode 0640
+$DirCreateMode 0755
+$Umask 0022
+
+#
+# Where to place spool and state files
+#
+$WorkDirectory /var/spool/rsyslog
+
+#
+# Include all config files in /etc/rsyslog.d/
+#
+$IncludeConfig /etc/rsyslog.d/*.conf
+
+###############
+#### Templates
+###############
+$template PerHostSyslog,"<%= logcheckfilepath %>/%HOSTNAME%/syslog.log"
+$template PerHostAuth,"<%= logcheckfilepath %>/%HOSTNAME%/auth.log"
+$template PerHostIptables,"<%= logcheckfilepath %>/%HOSTNAME%/iptables.log"
+
+###############
+#### RULES ####
+###############
+
+#
+# remote rsyslog (logcheck scan for security)
+######################################
+if $fromhost-ip != '127.0.0.1' and \
+( $syslogfacility-text == 'kern' and $syslogseverity-text == 'emerg' ) \
+then -?PerHostIptables
+& ~
+
+if $fromhost-ip != '127.0.0.1' and \
+( $syslogfacility-text == 'auth' or $syslogfacility-text == 'authpriv' ) \
+then -?PerHostAuth
+& ~
+
+if $fromhost-ip != '127.0.0.1' then -?PerHostSyslog
+& ~
+
+# Local hosts rsyslogs
+######################################
+*.*;auth,authpriv.none;kern.!emerg      -/var/log/syslog
+
+auth,authpriv.*		                    /var/log/auth.log
+
+# we set iptables to log to priority 'emerg'
+kern.emerg                              /var/log/iptables.log
+
+# Other local standard facilities
+######################################
+daemon.*			                    -/var/log/daemon.log
+kern.!=emerg		                    -/var/log/kern.log
+cron.*				                    -/var/log/cron.log
+user.*				                    -/var/log/user.log
+mail.*				                    -/var/log/mail.log
+
+
+#
+# Logging for the mail system.
+######################################
+mail.info			                    -/var/log/mail.info
+mail.warn       	                    -/var/log/mail.warn
+mail.err			                    /var/log/mail.err
+
+#
+# Sort out debug and the three lower priorities (i.e. info,notice,warning)
+######################################
+*.=debug;auth,authpriv,mail.none	                             -/var/log/debug
+*.=info;*.=notice;*.=warn;auth,authpriv,cron,mail,daemon.none	 -/var/log/messages
+
+#
+# Console messages (all three lowest priorities above debug)
+######################################
+*.=info;*.=notice;*.=warn;auth,authpriv,cron,mail.none	|/dev/xconsole
+
+# Local admin script logs
+local0.debug                             /var/log/local0admdbg.log
+
+
+#
+# All unused facilities to one log file.
+######################################
+lpr,news,uucp,local0.!debug,local1,local2,local3,local4,local5,local6,local7.*  -/var/log/unused.log
+

@@ -1,0 +1,237 @@
+#!/bin/bash
+#
+# /root/bin/cron.update_remote_log_directories
+#
+# Purpose: executed from cron to update any automatically 
+# added folders (remote hosts) at the log host. This adds:
+# 1. log rotate entry in /etc/logrotate.d
+# 2. added log files names to scan for logcheck, if installed
+#
+# Console usage: # cron.update_remote_log_directories
+#
+# Assumes that script only is executed on the log host
+#
+# Todo: automatically also update cron.d entries
+#
+##############################################################
+# MANAGED BY PUPPET. DO NOT EDIT. CHANGES WILL BE WIPED OUT. #
+##############################################################
+#
+# Copyright (C) (2012) K-B.Kronlund <bkronmailbox-copyright@yahoo.se>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+WHICH=/usr/bin/which
+TOUCH=/usr/bin/touch
+RM=/bin/rm
+CAT=/bin/cat
+ECHO=/bin/echo
+LOGGER=/usr/bin/logger
+GREP=/bin/grep
+HOSTNAME=/bin/hostname
+SED=/bin/sed
+CHOWN=/bin/chown
+CHMOD=/bin/chmod
+BASENAME=/usr/bin/basename
+PROG=`$BASENAME "$0"`
+
+##############################################################
+## Functions
+##############################################################
+function debug_echo()
+{
+    # Display message if $DEBUG >= 1
+    if [ "$DEBUG" -ge 1 ]; then
+	    $ECHO "$1" 1>&2
+    fi
+}
+
+##############################################################
+## Variables 
+##############################################################
+# enable debug statements (debug_echo)
+DEBUG=0
+
+# file name of syslog file to be rotated (special)
+SYSLOGFN="syslog.log"
+
+# name of logfiles (to build logcheck file list based on facility)
+LOGFILELIST='syslog iptables auth'
+
+# local logs to include for logcheck to scan (i.e. in /var/log)
+INCLLOCALLOGLIST='syslog auth.log iptables.log'
+
+# name of the sub directory for remote logs
+RLOGS="REMOTELOGS"
+
+# paths
+REMOTEDIRECTORIESPATH="/var/log/$RLOGS"
+FILENAMELIST="/etc/logcheck/logcheck.logfiles"
+FILENAMEROTATION="/etc/logrotate.d/remotersyslog"
+
+##############################################################
+## Program starts here
+##############################################################
+
+if [[ $EUID -ne 0 ]] ;then
+    echo "$PROG: This script must be run as root. Aborting." 
+    exit 0
+fi
+
+cd $REMOTEDIRECTORIESPATH
+if [ $? -ne 0 ] ; then
+    echo "Could not change to directory ($REMOTEDIRECTORIESPATH). Aborting!" | $LOGGER -p local0.debug -t $PROG
+    exit 1
+fi
+
+# assumption only executed on the log host
+if [ ! -f $FILENAMEROTATION ]; then
+    $TOUCH $FILENAMEROTATION
+fi
+
+# start to remove the logcheck original list file
+if [ -f $FILENAMELIST ]; then
+    $RM $FILENAMELIST
+    
+    # add local logs for log host to scan with logcheck (if default logcheck.logfiles is used)
+    for logfn in $INCLLOCALLOGLIST
+    do
+        $TOUCH $FILENAMELIST
+        $ECHO "/var/log/$logfn" >> $FILENAMELIST
+        
+        # also add log the host with one log file per 'list'
+        $TOUCH /etc/logcheck/logcheck.logfiles.warp.$logfn        
+        $ECHO "/var/log/$logfn" > /etc/logcheck/logcheck.logfiles.warp.$logfn
+        $CHOWN root:logcheck /etc/logcheck/logcheck.logfiles.warp.$logfn
+        $CHMOD 0640 /etc/logcheck/logcheck.logfiles.warp.$logfn
+        
+    done 
+fi
+
+
+for mydir in *
+do
+    # this is the remote directories (named after each remote host name)
+    debug_echo "In directory: $mydir"
+    
+    # for each log file in that directory (host)
+    cd $mydir
+    if [ $? -ne 0 ] ; then
+        echo "Could not change to directory ($mydir). Aborting!" | $LOGGER -p local0.debug -t $PROG
+        exit 1
+    fi
+    
+    for logfile in *
+    do
+    
+        # only accept files ending with '.log'
+        logcheckfn=`$ECHO $logfile | $SED -n '/\.log$/p'`
+        
+        ####################################################
+        ## test if logcheck is installed on this host and  #
+        ## if so update the list for which files to scan.  #
+        ####################################################
+        
+        $WHICH logcheck > /dev/null
+        if [ $? -eq 0 ] ; then
+            
+            # for each log file path, add to logcheck files (if not already there)
+            # use only log file names that is not rotated or compressed
+            # i.e. a file name which does ends with only '.log'
+            
+            if [ ! -z $logcheckfn ] ; then
+                debug_echo "PROCESS THIS FILE FOR LOGCHECK: ($mydir) $logcheckfn"
+                
+                # write out one 'list file' with just one logfile item
+                $ECHO $REMOTEDIRECTORIESPATH/$mydir/$logcheckfn > /etc/logcheck/logcheck.logfiles.${mydir}.${logcheckfn}
+                $CHOWN root:logcheck /etc/logcheck/logcheck.logfiles.${mydir}.${logcheckfn}
+                $CHMOD 0640 /etc/logcheck/logcheck.logfiles.${mydir}.${logcheckfn}              
+                
+                # if this log file is not already there, append it to the logcheck 'all files' list
+                
+                filepresent=`$GREP -Fx $REMOTEDIRECTORIESPATH/$mydir/$logcheckfn $FILENAMELIST`
+                if [ -z $filepresent ] ; then
+                    $ECHO $REMOTEDIRECTORIESPATH/$mydir/$logcheckfn >> $FILENAMELIST 
+                fi
+                
+            fi
+            
+        else
+            debug_echo "Logcheck package is not installed on ($HOSTNAME --fqdn). Skipping"
+            echo "Log check package is not installed ($HOSTNAME -fqdn). Skipping" | $LOGGER -p local0.debug -t $PROG
+        fi
+        
+        # Done set proper ownership and permissions
+        
+        if [ -f $FILENAMELIST ]; then
+            $CHOWN root:logcheck $FILENAMELIST
+            $CHMOD 0640 $FILENAMELIST
+            
+            # Create an alternative logfiles list based on type of log file
+            # combined for each host, then optionally refer this list from cron.d
+            
+            for facility in $LOGFILELIST
+            do
+                $CAT $FILENAMELIST | $GREP $facility > /etc/logcheck/logcheck.logfiles.${facility}.log
+                $CHOWN root:logcheck /etc/logcheck/logcheck.logfiles.${facility}.log
+                $CHMOD 0640 /etc/logcheck/logcheck.logfiles.${facility}.log
+            done
+            
+        fi
+        
+        
+        ###############################################################
+        ## For each file log file we need to log rotate these.        #
+        ## The sylog file itself requires diffrent rotate instruction #
+        ## by default. Add logrotate instruction in /etc/logrotate.d  # 
+        ###############################################################
+        
+        if [ ! -z $logcheckfn ] ; then
+        
+            filerotate=`$GREP -Fx $REMOTEDIRECTORIESPATH/$mydir/$logcheckfn $FILENAMEROTATION`
+        
+            # if file is not already there, append rotate instructions for that log file
+            if [ -z $filerotate ] ; then
+            
+                # write the opening rotate line (i.e. the log file name)
+                $ECHO "$REMOTEDIRECTORIESPATH/$mydir/$logcheckfn" >> $FILENAMEROTATION
+            
+                syslogfn=`$ECHO $logcheckfn | $SED -n '/syslog\.log$/p'`
+                (
+$CAT <<-EOF
+{
+  rotate 10
+  size 50M
+  compress
+  missingok
+  notifempty
+}
+EOF
+                ) >> $FILENAMEROTATION 
+                
+            
+            fi
+        
+        fi
+        
+    done
+    
+    # Done with all files in this directory.
+    # Now up one directory and continue with next.
+    
+    cd ..
+    
+done
+
+# eof

@@ -1,0 +1,106 @@
+#!/bin/bash
+#
+# /root/bin/rsyslog.test
+#
+# This script simply iterates through all rsyslog facilities and
+# priorities sending a test message to each combination.
+#
+# Console usage: # rsyslog.test
+#
+# Limitations: This script is based the logger command which is
+# not able to send messages to kern (this is a user process).
+# Thus skipping facility 'kern' in script. Neither is facility
+# authpriv available via logger. See man logger(1).
+#
+##############################################################
+# MANAGED BY PUPPET. DO NOT EDIT. CHANGES WILL BE WIPED OUT. #
+##############################################################
+#
+# Copyright (C) (2012) K-B.Kronlund <bkronmailbox-copyright@yahoo.se>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+BASENAME=/usr/bin/basename
+LOGGER=/usr/bin/logger
+DATE=/bin/date
+ECHO=/bin/echo
+PROG=`$BASENAME "$0"`
+LOGDATE=`date +%Y-%m-%d-%H:%M`
+PID=$$
+
+# see rsyslog.conf(5), logger(1) and syslog(3) documentation
+PRIORITIES='emerg alert crit err warning notice info debug'
+FACILITIES='auth cron daemon ftp local0 local1 local2 local3 local4 local5 local6 local7 lpr mail news syslog user uucp'
+
+# Set VERBOSE mode - set to 0 to be quiet and 1 to be verbose
+VERBOSE=1
+
+##############################################################
+## Functions
+##############################################################
+
+function debug_echo()
+{
+    # Display message if $VERBOSE >= 1
+    if [ "$VERBOSE" -ge 1 ]; then
+	    $ECHO "$1" 1>&2
+    fi
+}
+
+##############################################################
+## Main code starts here
+##############################################################
+
+if [[ $EUID -ne 0 ]] ;then
+   echo "$PROG: This script must be run as root. Aborting." 
+   exit 0
+fi
+
+# start with some information
+echo "$PROG: This script simply iterates through all rsyslog facilities (except kern"
+echo "and authpriv) and priorities sending a test message to each combination. Examine"
+echo "files with e.g. cat <log file> | grep PID to see which message ended up where."
+echo -n "$PROG: Continue? [y/n] "
+read answer
+
+case "$answer" in
+        [Yy])
+            echo "$PROG: Writing test messages to rsyslog..."
+            for f in $FACILITIES
+            do
+                for p in $PRIORITIES
+                do
+                    debug_echo "Sending rsyslog: $PROG[$PID] $LOGDATE Testing rsyslog facility ($f) and priority($p)."
+                    $LOGGER -p $f.$p "$PROG[$PID] $LOGDATE Testing rsyslog facility ($f) and priority($p)."
+                done
+            done
+            
+            echo
+            echo "$PROG: All done, please examine the log files with: cat <log file> | grep $PID."
+            echo "$PROG: Note $PROG (logger) does not support authpriv and kern messages is not user process."
+            echo         
+            
+            ;;
+
+        [Nn])
+            echo "$PROG: OK, will not continue now."
+            exit 0
+            ;;
+          *)
+            echo "$PROG: Did not get any answer - aborting."
+            exit 0
+            ;;
+esac
+
+# eof
