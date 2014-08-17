@@ -13,6 +13,9 @@ node 'node-hphome.home.tld' {
 	
 	# Disable ipv6 in kernel/grub and use the more text lines in console mode	
     class { hp_grub::install : defaultline => 'vga=791', appendline => 'true', ipv6 => 'false' }
+	
+	# lan ntp server provids time services to all lan clients
+    class { 'hp_ntp' : role => 'lanserver', peerntpip => '192.168.0.1' }
 
     # Set up root's home directories and bash customization
     include hp_root_home

@@ -1,0 +1,18 @@
+#!/bin/sh
+##############################################################
+# MANAGED BY PUPPET. DO NOT EDIT. CHANGES WILL BE WIPED OUT. #
+##############################################################
+#
+# Some useful time data in one command
+# Update to pull ip address from class parameter
+#
+if [ -x /usr/bin/ntpq ] ; then
+    /usr/bin/ntpq -p <%= local_ntpserver %>
+    echo
+    /usr/sbin/ntptime
+    echo
+else
+    echo "NTP daemon is not installed. Can't query time servers."
+fi
+date
+
