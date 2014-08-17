@@ -29,7 +29,8 @@ node 'node-hphome.home.tld' {
 		       fail2ban_modsec => 'false',
 			  fail2ban_postfix => 'false',
 	}
-    
+    # automatic security upgrades with cron script
+	include hp_auto_upgrade
 
 }
 #

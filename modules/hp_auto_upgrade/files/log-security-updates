@@ -1,0 +1,12 @@
+##############################################################
+# MANAGED BY PUPPET. DO NOT EDIT. CHANGES WILL BE WIPED OUT. #
+##############################################################
+/var/log/apt-security-updates
+{
+	rotate 2
+	weekly
+    size 250k
+	missingok
+	notifempty
+	compress
+}
