@@ -1,5 +1,7 @@
 #!/bin/sh
-
+##############################################################
+# MANAGED BY PUPPET. DO NOT EDIT. CHANGES WILL BE WIPED OUT. #
+##############################################################
 FQDN=`hostname -f`
 DEBRELEASE=`lsb_release -cs`
 
