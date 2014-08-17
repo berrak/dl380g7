@@ -56,8 +56,7 @@ node 'node-hphome.home.tld' {
 	
 	# user profiles
     hp_user_bashrc::config { 'bekr' : }
-#	le_sudo::config { 'bekr': }
-	
+	hp_sudo::config { 'bekr': }
 	hp_mutt::install { 'bekr': mailserver_hostname => 'hphome' }
 
 }
