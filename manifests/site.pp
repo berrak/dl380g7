@@ -62,7 +62,7 @@ node 'node-hphome.home.tld' {
 	                                "dnsutils" , "ethtool", "parted", "lsof" ] }
 	
 	# MAIL server, relay external mails via google
-		hp_postfix::install { 'mta' :
+	hp_postfix::install { 'mta' :
 			            ensure => 'installed',
 			install_cyrus_sasl => 'true',
 			          mta_type => 'server',
@@ -71,6 +71,20 @@ node 'node-hphome.home.tld' {
 		   smtp_relayhost_fqdn => 'smtp.gmail.com',
 		  no_lan_outbound_mail => 'false',
 	}
+	
+    # use apache2 prefork
+    include hp_apache2 
+    	
+	## Define a new Apache2 virtual host (docroot directory writable by group 'root')
+    # vb_apache2::vhost { 'hphome.home.tld' :
+            priority => '001',
+          devgroupid => 'root',
+          execscript => 'none',
+    }
+	
+	## Add mod-security for Apache (+ module headers)
+	# vb_apache2::module { 'mod-security' : }
+	# vb_apache2::module { 'headers' : }		
 	
 	
 	## MAINTENANCE

@@ -1,0 +1,47 @@
+##############################################################
+# Managed by Puppet. Do not edit. Changes will be wiped out. #
+##############################################################
+
+# Localhost
+
+<VirtualHost *:80>
+	
+	ServerAdmin root@localhost
+	DocumentRoot /var/www/default/public
+	
+	ServerName localhost
+	
+	# Always block file system access in /var/www/default and higher
+	
+	<Directory /var/www/default>
+		AllowOverride None
+		Options None
+		Order Deny,allow
+		Deny from all
+	</Directory>
+	
+	# Sets access, only in /var/www/default/public
+	
+	<Directory /var/www/default/public>
+		AllowOverride None
+		Options None
+		Allow from all
+		Order Allow,deny
+
+	</Directory>
+
+	ErrorLog ${APACHE_LOG_DIR}/error.log
+
+	LogLevel warn
+
+	CustomLog ${APACHE_LOG_DIR}/access.log combined
+	
+</VirtualHost>
+
+
+
+
+
+
+
+
