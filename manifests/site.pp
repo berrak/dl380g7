@@ -22,26 +22,7 @@ node 'node-hphome.home.tld' {
 	# hosts and fstab files
 	class { hp_hosts::config : puppetserver_hostname => 'hphome' }
 	class { hp_fstab::config : fstabhost => 'hphome' }
-	
-	
-	## SECURITY
-	
-	# Security (iptables + fail2ban)
-	# fail2ban ssh is enabled. disabled apache, modsec, postfix actions
-	# latter parameters needs both apache and mod-security installed
-    class { hp_iptables_fail2ban::config :
-		 puppetserver_hostname => 'hphome',
-		   fail2ban_trusted_ip => '192.168.0.0/24',
-		       fail2ban_apache => 'false',
-		       fail2ban_modsec => 'false',
-			  fail2ban_postfix => 'false',
-	}
-    # Automatic security upgrades with cron script
-	include hp_auto_upgrade
-	
-	# Disable ipv6 in kernel/grub and use the more text lines in console mode	
-    class { hp_grub::install : defaultline => 'vga=791', appendline => 'true', ipv6 => 'false' }
-	
+		
 	
 	## USER PROFILES ##
 	
@@ -57,11 +38,11 @@ node 'node-hphome.home.tld' {
 	
 	## APPLICATIONS ##
 	
-	# Packages without any special configurations
+	# DEBIAN packages without any special configurations
     class { hp_install_debs : debs => [ "tree", "sipcalc", "gddrescue", "lshw",
 	                                "dnsutils" , "ethtool", "parted", "lsof" ] }
 	
-	# MAIL server, relay external mails via google
+	# MAIL server (relay external mails via google smtp)
 	hp_postfix::install { 'mta' :
 			            ensure => 'installed',
 			install_cyrus_sasl => 'true',
@@ -72,22 +53,40 @@ node 'node-hphome.home.tld' {
 		  no_lan_outbound_mail => 'false',
 	}
 	
-    # use apache2 prefork
+    # APACHE2 prefork
     include hp_apache2 
-    	
 		
 	## Define a new Apache2 virtual host (docroot directory writable by group 'root')
-    # vb_apache2::vhost { 'hphome.home.tld' :
+    hp_apache2::vhost { 'hphome.home.tld' :
             priority => '001',
           devgroupid => 'root',
           execscript => 'none',
     }
 	
+
+	## SECURITY
+
 	## Add mod-security for Apache (+ module headers)
-	# vb_apache2::module { 'mod-security' : }
-	# vb_apache2::module { 'headers' : }		
+	hp_apache2::module { 'mod-security' : }
+	hp_apache2::module { 'headers' : }		
 	
+	# Security (iptables + fail2ban)
+	# fail2ban ssh is enabled. disabled apache, modsec, postfix actions
+	# latter parameters needs both apache and mod-security installed
+    class { hp_iptables_fail2ban::config :
+		 puppetserver_hostname => 'hphome',
+		   fail2ban_trusted_ip => '192.168.0.0/24',
+		       fail2ban_apache => 'true',
+		       fail2ban_modsec => 'true',
+			  fail2ban_postfix => 'true',
+	}
+    # Automatic security upgrades with cron script
+	include hp_auto_upgrade
 	
+	# Disable ipv6 in kernel/grub and use the more text lines in console mode	
+    class { hp_grub::install : defaultline => 'vga=791', appendline => 'true', ipv6 => 'false' }
+	
+
 	## MAINTENANCE
 	
 	# SSH server - Todo: change conf from pwd to RSA only
