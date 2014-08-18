@@ -75,6 +75,7 @@ node 'node-hphome.home.tld' {
     # use apache2 prefork
     include hp_apache2 
     	
+		
 	## Define a new Apache2 virtual host (docroot directory writable by group 'root')
     # vb_apache2::vhost { 'hphome.home.tld' :
             priority => '001',
