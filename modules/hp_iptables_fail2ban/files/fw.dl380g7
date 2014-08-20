@@ -1,10 +1,10 @@
 #!/bin/sh
-# /root/bin/fw.hphome
+# /root/bin/fw.dl380g7
 ##############################################################
 # DO NOT EDIT. MANAGES BY PUPPET. CHANGES WILL BE WIPED OUT. #
 ##############################################################
 #
-# Rules for HP DL380G7 server (internal host).
+# Rules for HP DL380G7 server (external host).
 #
 # Copyright (C) (2012-14) K-B.Kronlund <bkronmailbox-copyright@yahoo.se>
 #
