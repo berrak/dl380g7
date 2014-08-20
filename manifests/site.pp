@@ -40,7 +40,7 @@ node 'node-hphome.home.tld' {
 	
 	# DEBIAN packages without any special configurations
     class { hp_install_debs : debs => [ "tree", "sipcalc", "gddrescue", "lshw",
-	                                "dnsutils" , "ethtool", "parted", "lsof" ] }
+	                        "pydf" , "dnsutils" , "ethtool", "parted", "lsof" ] }
 	
 	# MAIL server (relay external mails via google smtp)
 	hp_postfix::install { 'mta' :
