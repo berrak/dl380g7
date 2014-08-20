@@ -4,7 +4,7 @@
 # Do not Edit. Managed by Puppet. Changes will be wiped out. #
 ##############################################################
 #
-# Rules for internal HP acceptance-test server.
+# Rules for internal HP DL380G7 server.
 #
 # Copyright (C) (2012-14) K-B.Kronlund <bkronmailbox-copyright@yahoo.se>
 #
@@ -29,11 +29,9 @@ MODPROBE=/sbin/modprobe
 IPTSAVE=/sbin/iptables-save
 IPTSAVEFILE=/root/bin/IPTABLES.FW
 
-# localhost
-HOSTADDR="192.168.0.12"
-
-# Remote access on port: 22, 80, 8080, 5432 (postgreSQL), 9418 (Git)
+# Remote access
 BKTRUSTEDNET="192.168.0.0/24"
+BKTRUSTEDADDR="81.237.245.35"
 
 # Trust google.com
 GOOGLENET="66.249.67.0/24"
@@ -59,8 +57,20 @@ $IPTABLES -X
 # Default policies
 #---------------------------------------------------------------------
 $IPTABLES -P INPUT DROP
-$IPTABLES -P OUTPUT ACCEPT
+$IPTABLES -P OUTPUT DROP
 $IPTABLES -P FORWARD DROP
+
+#--------------------------------------------------------------------------------------
+## Drop broadcast-packages (only log for initial test -- comment out not to fill logs)
+$IPTABLES -N broadcast-drop
+# $IPTABLES -A broadcast-drop -m pkttype --pkt-type broadcast -j $LOGOPT $RLIMIT --log-prefix "BROADCAST DROP "
+$IPTABLES -A broadcast-drop -m pkttype --pkt-type broadcast -j DROP
+$IPTABLES -A broadcast-drop -j RETURN
+#--------------------------------------------------------------------------------------
+
+## ======================
+## LOOPBACK TRAFFIC
+## ======================
 
 ## Free reign to loopback interfaces
 $IPTABLES -I INPUT 1 -i lo -j ACCEPT
@@ -78,6 +88,7 @@ $IPTABLES -A INPUT -p tcp -s $GOOGLENET -m tcp -m state --state NEW -j ACCEPT
 
 # ssh client access for management
 $IPTABLES -A INPUT -p tcp -s $BKTRUSTEDNET -m tcp --dport 22 -m state --state NEW -j ACCEPT
+$IPTABLES -A INPUT -p tcp -s $BKTRUSTEDADDR -m tcp --dport 22 -m state --state NEW -j ACCEPT
 
 # allow DHCP requests
 $IPTABLES -A INPUT -p udp -m udp --dport 67:68 --sport 67:68 -m state --state NEW -j ACCEPT
@@ -88,9 +99,11 @@ $IPTABLES -A INPUT -p udp -m udp --dport 53 -m state --state NEW -j ACCEPT
 
 # allow trusted user access web server
 $IPTABLES -A INPUT -p tcp -s $BKTRUSTEDNET -m tcp --dport 80 -m state --state NEW -j ACCEPT
+$IPTABLES -A INPUT -p tcp -s $BKTRUSTEDADDR -m tcp --dport 80 -m state --state NEW -j ACCEPT
 
 # allow same trusted users access developers web server on port 8080
 $IPTABLES -A INPUT -p tcp -s $BKTRUSTEDNET -m tcp --dport 8080 -m state --state NEW -j ACCEPT
+$IPTABLES -A INPUT -p tcp -s $BKTRUSTEDADDR -m tcp --dport 8080 -m state --state NEW -j ACCEPT
 
 # allow NTP to communicate with external time servers
 $IPTABLES -A INPUT -p udp -m udp --dport 123 -m state --state NEW -j ACCEPT
@@ -106,6 +119,10 @@ $IPTABLES -A INPUT -p udp -m udp --dport 5353 -j ACCEPT
 
 # allow Git (port 9418) access for trusted users
 $IPTABLES -A INPUT -p tcp -s $BKTRUSTEDNET -m tcp --dport 9418 -m state --state NEW -j ACCEPT
+$IPTABLES -A INPUT -p tcp -s $BKTRUSTEDADDR -m tcp --dport 9418 -m state --state NEW -j ACCEPT
+
+# accept inbound ping requests to this server
+$IPTABLES -A INPUT -p icmp --icmp-type echo-request -m state --state NEW -j ACCEPT
 
 ## ==========================
 ## DROP OTHER INBOUND TRAFFIC
@@ -126,13 +143,53 @@ $IPTABLES -A INPUT ! -i lo -j DROP
 ## ALLOW OUTBOUND TRAFFIC
 ## ======================
 
-## NOT REALLY REQUIRED SINCE OUTPUT POLICY ACCEPT
+# allow established and related traffic out
+$IPTABLES -A OUTPUT -p all -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+# allow ssh pass out
+$IPTABLES -A OUTPUT -p tcp -m tcp --dport 22 -m state --state NEW -j ACCEPT
+
+# allow whois
+$IPTABLES -A OUTPUT -p tcp -m tcp --dport 43 -m state --state NEW -j ACCEPT
+
+# allow DNS queries
+$IPTABLES -A OUTPUT -p tcp -m tcp --dport 53 -m state --state NEW -j ACCEPT
+$IPTABLES -A OUTPUT -p udp -m udp --dport 53 -m state --state NEW -j ACCEPT
 
 # Allow mail out from host
 $IPTABLES -A OUTPUT -p tcp -m tcp --dport 25 -m state --state NEW -j ACCEPT
 $IPTABLES -A OUTPUT -p tcp -m tcp --dport 465 -m state --state NEW -j ACCEPT
 $IPTABLES -A OUTPUT -p tcp -m tcp --dport 587 -m state --state NEW -j ACCEPT
 
+# allow web traffic out
+$IPTABLES -A OUTPUT -p tcp -m tcp --dport 80 -m state --state NEW -j ACCEPT
+
+# allow https out
+$IPTABLES -A OUTPUT -p tcp -m tcp --dport 443 -m state --state NEW -j ACCEPT
+
+# allow this NTP server communicate with other external time servers (broadcast)
+$IPTABLES -A OUTPUT -p udp -m udp --dport 123 -m state --state NEW -j ACCEPT
+
+# allow an outbound ping request from this host
+$IPTABLES -A OUTPUT -p icmp --icmp-type echo-request -m state --state NEW -j ACCEPT
+
+## ===========================
+## DROP OTHER OUTBOUND TRAFFIC
+## ===========================
+
+# deny any broadcasts from host to external
+$IPTABLES -t filter -A OUTPUT -j broadcast-drop
+
+#-----------------------------------------------------------
+# CATCH ALL LOG RULES (you may be suprise what ends up here)
+#-----------------------------------------------------------
+
+## Prevent invalid output packages
+$IPTABLES -A OUTPUT -m state --state INVALID -j $LOGOPT $RLIMIT --log-prefix "DROP OUTPUT INVALID "
+$IPTABLES -A OUTPUT -m state --state INVALID -j DROP
+
+$IPTABLES -A OUTPUT ! -o lo -j $LOGOPT $RLIMIT --log-prefix "DROP OUTPUT DEFAULT "
+$IPTABLES -A OUTPUT ! -o lo -j DROP
 
 #############################
 ## SAVE THE FILE
