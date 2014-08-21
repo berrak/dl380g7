@@ -5,7 +5,12 @@
 Explanation: Wheezy
 Package: *
 Pin: release a=stable
-Pin-Priority: 999
+Pin-Priority: 990
+
+Explanation: Lynis vulnerability scanner
+Package: lynis
+Pin: release a=testing
+Pin-Priority: 995
 
 Explanation: Jessie
 Package: *
