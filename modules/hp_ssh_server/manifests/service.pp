@@ -10,7 +10,6 @@ class hp_ssh_server::service {
 		hasrestart => true,
 			enable => true,
 		   require => Package["openssh-server"],
-
 	}
 	
 }
