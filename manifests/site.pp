@@ -15,6 +15,9 @@ node 'node-hphome.home.tld' {
 	
 	# Configure APT
     include hp_aptconf
+	
+	# Add 'testing for very few exceptional cases
+	hp_add_aptrelease::config{ 'testing' : }
 		
 	# Lan ntp server provids time services to all lan clients
     class { 'hp_ntp' : role => 'lanserver', peerntpip => '192.168.0.12' }
