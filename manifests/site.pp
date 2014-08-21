@@ -86,6 +86,8 @@ node 'node-hphome.home.tld' {
 	# Disable ipv6 in kernel/grub and use the more text lines in console mode	
     class { hp_grub::install : defaultline => 'vga=791', appendline => 'true', ipv6 => 'false' }
 	
+	include hp_chkrootkit
+	
 
 	## MAINTENANCE
 	

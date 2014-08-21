@@ -1,0 +1,14 @@
+#
+# /etc/cron.d/chkrootkit: crontab entries for the chkrootkit package
+#
+# Local Admin Note: this replace the maintainers usage in
+# 'cron.daily' for better control and reliability.
+#
+##############################################################
+# MANAGED BY PUPPET. DO NOT EDIT. CHANGES WILL BE WIPED OUT. #
+##############################################################
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+MAILTO=root
+30 18 * * *  root  test -x /root/jobs/cron.runchkrootkit && /bin/bash /root/jobs/cron.runchkrootkit
+
+# EOF
