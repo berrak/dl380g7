@@ -87,6 +87,7 @@ node 'node-hphome.home.tld' {
     class { hp_grub::install : defaultline => 'vga=791', appendline => 'true', ipv6 => 'false' }
 	
 	include hp_chkrootkit
+	include hp_hardening
 	
 
 	## MAINTENANCE
