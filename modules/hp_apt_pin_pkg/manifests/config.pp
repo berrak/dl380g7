@@ -45,13 +45,5 @@ define hp_apt_pin_pkg::config ( $pin_priority = '', $release = '' ) {
 		  mode => '0644',
 	   require => File["/etc/apt/sources.list.d/$name.list"],
 	}
-
-    # Update APT cache, but only when preferences file changes
-
-	exec { "/usr/bin/aptitude update" :
-		subscribe   => File["/etc/apt/preferences.d/$name.pref"],
-		refreshonly => true
-	}	
-	
 	
 }
