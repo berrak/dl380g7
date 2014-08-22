@@ -23,12 +23,6 @@ define hp_apt_pin_pkg::config ( $pin_priority = '', $release = '' ) {
 		fail("FAIL: Target release is missing!")
 	}	
 
-	# Check that release sources list file exist
-	
-	if ! defined(File["/etc/apt/sources.list.d/$release.list"]) {
-		fail("FAIL: The requested debian release $release have not been added to sources.list.d!")
-	 }
-	
     # Set preference priority
 	
 	file { "/etc/apt/preferences.d/$name.pref":
@@ -36,7 +30,7 @@ define hp_apt_pin_pkg::config ( $pin_priority = '', $release = '' ) {
 		 owner => "root",
 		 group => "root",
 		  mode => '0644',
-	   require => File["/etc/apt/sources.list.d/$name.list"],
+	   require => File["/etc/apt/sources.list.d/$release.list"],
 	}
 	
 }
