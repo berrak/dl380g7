@@ -25,18 +25,11 @@ class hp_apt_config::config {
     # Set preference release to stable (always)
 	
 	file { "/etc/apt/preferences":
-		source => "puppet:///modules/hp_apt_add_release/preferences",
+		source => "puppet:///modules/hp_apt_config/preferences",
 		 owner => "root",
 		 group => "root",
 		  mode => '0644',
 		  require => File['/etc/apt/sources.list'],
 	}
-	
-    # Update APT cache, but only when preferences file changes
-
-	exec { "/usr/bin/aptitude update" :
-		subscribe   => File["/etc/apt/preferences"],
-		refreshonly => true
-	}	
 	
 }
