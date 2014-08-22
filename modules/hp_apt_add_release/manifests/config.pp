@@ -10,7 +10,7 @@
 define hp_apt_add_release::config ( $pin_priority = '') {
 
 
-    if $name != in [ 'testing' ] {
+    if $name != 'testing'  {
 		fail("FAIL: $name is not supported as an additional release to add to stable!")
 	}
 
