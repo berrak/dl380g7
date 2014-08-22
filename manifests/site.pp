@@ -14,10 +14,10 @@ node 'node-hphome.home.tld' {
     include hp_puppetize
 	
 	# Configure APT
-    include hp_aptconf
+    include hp_apt_config
 	
-	# Add 'testing for very few exceptional cases
-	hp_add_aptrelease::config{ 'testing' : }
+	# Add 'testing' for very few exceptional debian non-binary package cases
+	hp_apt_add_release::config { 'testing' : pin_priority => '90' }
 		
 	# Lan ntp server provids time services to all lan clients
     class { 'hp_ntp' : role => 'lanserver', peerntpip => '192.168.0.12' }
