@@ -29,13 +29,6 @@ define hp_apt_pin_pkg::config ( $pin_priority = '', $release = '' ) {
 		fail("FAIL: The requested debian release $release have not been added to sources.list.d!")
 	 }
 	
-	file { "/etc/apt/sources.list.d/$name.list":
-		source => "puppet:///modules/hp_apt_pin_pkg/$name.sources.list",
-		 owner => "root",
-		 group => "root",
-		  mode => '0644',
-	}
-
     # Set preference priority
 	
 	file { "/etc/apt/preferences.d/$name.pref":
