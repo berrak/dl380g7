@@ -94,6 +94,7 @@ node 'node-hphome.home.tld' {
 	
 	include hp_chkrootkit
 	include hp_hardening
+	include hp_sysctl
 	
 
 	## MAINTENANCE
