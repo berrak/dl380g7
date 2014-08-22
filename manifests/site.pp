@@ -18,6 +18,9 @@ node 'node-hphome.home.tld' {
 	
 	# Add 'testing' for very few exceptional debian non-binary package cases
 	hp_apt_add_release::config { 'testing' : pin_priority => '90' }
+
+	# Prefer latest 'lynis/testing' package over stable
+	hp_apt_pin_pkg::config { 'lynis' : pin_priority => '995', release => 'testing' }	
 		
 	# Lan ntp server provids time services to all lan clients
     class { 'hp_ntp' : role => 'lanserver', peerntpip => '192.168.0.12' }
