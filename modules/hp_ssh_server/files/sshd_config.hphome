@@ -30,7 +30,7 @@ LogLevel VERBOSE
 LoginGraceTime 120
 PermitRootLogin yes
 StrictModes yes
-AllowUsers root@carbon.home.tld
+AllowUsers root
 
 RSAAuthentication yes
 PubkeyAuthentication yes
