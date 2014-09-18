@@ -46,7 +46,7 @@ node 'node-hphome.home.tld' {
 	
 	# DEBIAN packages without any special configurations
     class { hp_install_debs : debs => [ "tree", "sipcalc", "gddrescue", "lshw",
-	               "lynis", "pydf" , "dnsutils" , "ethtool", "parted", "lsof" ] }
+	       "bind9-host", "lynis", "pydf" , "dnsutils" , "ethtool", "parted", "lsof" ] }
 	
 	# MAIL server (relay external mails via google smtp)
 	hp_postfix::install { 'mta' :
@@ -153,7 +153,7 @@ node 'node-dl380g7.debinix.org' {
 	
 	# DEBIAN packages without any special configurations
     class { hp_install_debs : debs => [ "tree", "sipcalc", "gddrescue", "lshw",
-	            "lynis", "pydf" , "dnsutils" , "ethtool", "parted", "lsof" ] }
+	    "bind9-host", "lynis", "pydf" , "dnsutils" , "ethtool", "parted", "lsof" ] }
 	
 	# MAIL server (relay external mails via google smtp)
 ###	hp_postfix::install { 'mta' :
