@@ -168,21 +168,21 @@ node 'node-dl380g7.home.tld' {
 ###	}
 	
     # APACHE2 prefork
-###   include hp_apache2 
+    include hp_apache2 
 		
 	## Define a new Apache2 virtual host (docroot directory writable by group 'root')
-###    hp_apache2::vhost { 'hphome.home.tld' :
-#            priority => '001',
-#          devgroupid => 'root',
-#          execscript => 'none',
-###    }
+    hp_apache2::vhost { 'dl380g7.home.tld' :
+            priority => '001',
+          devgroupid => 'root',
+          execscript => 'none',
+    }
 	
 
 	## SECURITY
 
 	## Add mod-security for Apache (+ module headers)
-###	hp_apache2::module { 'mod-security' : }
-###	hp_apache2::module { 'headers' : }		
+	hp_apache2::module { 'mod-security' : }
+	hp_apache2::module { 'headers' : }		
 	
 	# Security (iptables + fail2ban)
 	# fail2ban ssh is enabled. disabled apache, modsec, postfix actions
