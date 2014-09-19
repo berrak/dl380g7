@@ -21,7 +21,16 @@ class hp_apache2::config {
         notify => Service["apache2"],
     }
     
-    ## Configure the default vhost (catch all for an unmatched site)
+	## Disable apache Debian maintainer default site'
+	
+    file { '/etc/apache2/sites-enabled/000-default':
+        ensure => false,
+        target => '/etc/apache2/sites-available/default',
+       require => Class["hp_apache2::install"],
+	    notify => Service["apache2"],
+    }	
+	
+    ## Configure the new default vhost (catch all for an unmatched site)
     
 	$default_fqdn = $::fqdn
 	$site_domain = $::domain
