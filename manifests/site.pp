@@ -187,13 +187,13 @@ node 'node-dl380g7.home.tld' {
 	# Security (iptables + fail2ban)
 	# fail2ban ssh is enabled. disabled apache, modsec, postfix actions
 	# latter parameters needs both apache and mod-security installed
-###    class { hp_iptables_fail2ban::config :
-#		 puppetserver_hostname => 'hphome',
-#		   fail2ban_trusted_ip => '192.168.0.0/24',
-#		       fail2ban_apache => 'true',
-#		       fail2ban_modsec => 'true',
-#			  fail2ban_postfix => 'true',
-###	}
+    class { hp_iptables_fail2ban::config :
+		 puppetserver_hostname => 'dl380g7',
+		   fail2ban_trusted_ip => '192.168.0.0/24',
+		       fail2ban_apache => 'true',
+		       fail2ban_modsec => 'true',
+			  fail2ban_postfix => 'false',
+	}
     # Automatic security upgrades with cron script
 	include hp_auto_upgrade
 	
