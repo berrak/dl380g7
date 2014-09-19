@@ -33,6 +33,9 @@ IPTSAVEFILE=/root/bin/IPTABLES.FW
 BKTRUSTEDNET="192.168.0.0/24"
 BKTRUSTEDADDR="81.237.245.35"
 
+# Ensure access to ssh incase Telia change ip (within a resonable range)
+BKTRUSTEDRANGE="81.237.0.0/16"
+
 # Trust google.com
 GOOGLENET="66.249.67.0/24"
 
@@ -89,6 +92,7 @@ $IPTABLES -A INPUT -p tcp -s $GOOGLENET -m tcp -m state --state NEW -j ACCEPT
 # ssh client access for management
 $IPTABLES -A INPUT -p tcp -s $BKTRUSTEDNET -m tcp --dport 22 -m state --state NEW -j ACCEPT
 $IPTABLES -A INPUT -p tcp -s $BKTRUSTEDADDR -m tcp --dport 22 -m state --state NEW -j ACCEPT
+$IPTABLES -A INPUT -p tcp -s $BKTRUSTEDRANGE -m tcp --dport 22 -m state --state NEW -j ACCEPT
 
 # allow DHCP requests
 $IPTABLES -A INPUT -p udp -m udp --dport 67:68 --sport 67:68 -m state --state NEW -j ACCEPT
