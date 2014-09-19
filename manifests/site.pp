@@ -99,11 +99,12 @@ node 'node-hphome.home.tld' {
 
 	## MAINTENANCE
 	
-	# SSH server - Todo: change conf from pwd to RSA only
+	# SSH server
 	include hp_ssh_server
 	
 	include hp_logwatch
 	
+    # Remote log disabled in config
 	include hp_rsyslog
 	include hp_logrotate
 	
@@ -111,7 +112,7 @@ node 'node-hphome.home.tld' {
 	
 }
 
-node 'node-dl380g7.debinix.org' {
+node 'node-dl380g7.home.tld' {
 
 	## BASIC
 	
@@ -206,15 +207,15 @@ node 'node-dl380g7.debinix.org' {
 
 	## MAINTENANCE
 	
-	# SSH server - Todo: change conf from pwd to RSA only
 	include hp_ssh_server
 	
 ###	include hp_logwatch
+
+    # Remote log disabled in config
+    include hp_rsyslog
+    include hp_logrotate
 	
-###	include hp_rsyslog
-###	include hp_logrotate
-	
-###	include hp_screen
+    include hp_screen
 
 }
 #
