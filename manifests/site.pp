@@ -111,7 +111,7 @@ node 'node-hphome.home.tld' {
 	include hp_screen
 	
 }
-
+########################################################################
 node 'node-dl380g7.home.tld' {
 
 	## BASIC
@@ -131,7 +131,7 @@ node 'node-dl380g7.home.tld' {
 	hp_apt_pin_pkg::config { 'lynis' : pin_priority => '995', release => 'testing' }	
 		
 	# Lan ntp server provids time services to all lan clients
-###    class { 'hp_ntp' : role => 'lanserver', peerntpip => '192.168.0.12' }
+    class { 'hp_ntp' : role => 'lanserver', peerntpip => '192.168.0.111' }
 
 	# hosts and fstab files
 	class { hp_hosts::config : puppetserver_hostname => 'dl380g7' }
@@ -168,7 +168,7 @@ node 'node-dl380g7.home.tld' {
 ###	}
 	
     # APACHE2 prefork
-###    include hp_apache2 
+###   include hp_apache2 
 		
 	## Define a new Apache2 virtual host (docroot directory writable by group 'root')
 ###    hp_apache2::vhost { 'hphome.home.tld' :
@@ -200,7 +200,7 @@ node 'node-dl380g7.home.tld' {
 	# Disable ipv6 in kernel/grub and use the more text lines in console mode	
 ###    class { hp_grub::install : defaultline => 'vga=791', appendline => 'true', ipv6 => 'false' }
 	
-###	include hp_chkrootkit
+	include hp_chkrootkit
 	include hp_hardening
 	include hp_sysctl
 	
