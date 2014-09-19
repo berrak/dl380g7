@@ -189,7 +189,7 @@ node 'node-dl380g7.home.tld' {
 	# latter parameters needs both apache and mod-security installed
     class { hp_iptables_fail2ban::config :
 		 puppetserver_hostname => 'dl380g7',
-		   fail2ban_trusted_ip => '192.168.0.0/24',
+		   fail2ban_trusted_ip => '192.168.0.0/24  81.237.0.0/16',
 		       fail2ban_apache => 'true',
 		       fail2ban_modsec => 'true',
 			  fail2ban_postfix => 'false',
