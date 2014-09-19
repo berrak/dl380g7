@@ -28,9 +28,9 @@ LogLevel VERBOSE
 
 # Authentication:
 LoginGraceTime 120
-PermitRootLogin yes
+PermitRootLogin no
 StrictModes yes
-AllowUsers root
+AllowGroups sshusers
 
 RSAAuthentication yes
 PubkeyAuthentication yes
