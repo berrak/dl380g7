@@ -192,7 +192,7 @@ node 'node-dl380g7.home.tld' {
 		   fail2ban_trusted_ip => '192.168.0.0/24  81.237.0.0/16',
 		       fail2ban_apache => 'true',
 		       fail2ban_modsec => 'true',
-			  fail2ban_postfix => 'false',
+			  fail2ban_postfix => 'true',
 	}
     # Automatic security upgrades with cron script
 	include hp_auto_upgrade
