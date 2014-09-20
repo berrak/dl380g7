@@ -40,7 +40,7 @@ class hp_rsyslog::config {
             ensure => directory,
         	 owner => 'root',
 	 	     group => 'adm',
-		      mode => '0750',
+		      mode => '0755',
            require => Class["hp_rsyslog::install"],              
         }				
         
@@ -61,7 +61,7 @@ class hp_rsyslog::config {
             ensure => directory,
         	 owner => 'root',
 	 	     group => 'adm',
-		      mode => '0750',
+		      mode => '0755',
            require => Class["hp_rsyslog::install"],              
         }
         
