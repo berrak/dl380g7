@@ -42,7 +42,10 @@ class hp_rsyslog::config {
 	 	     group => 'adm',
 		      mode => '0755',
            require => Class["hp_rsyslog::install"],              
-        }				
+        }
+		
+		# Not included here - if this would be a loghost, see bukkit, and create subdirectories
+		
         
         # this script add logs to logcheck to scan, and make sure files get rotated
         
