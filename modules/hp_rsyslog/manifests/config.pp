@@ -32,7 +32,17 @@ class hp_rsyslog::config {
               group => 'root',
                mode => '0644',
             require => File["/root/jobs/cron.update_remote_log_directories"],
-        }       
+        }
+		
+		# ensure that the directory referred by above script exist
+		
+        file { "/var/log/REMOTELOGS" :
+            ensure => directory,
+        	 owner => 'root',
+	 	     group => 'adm',
+		      mode => '0750',
+           require => Class["hp_rsyslog::install"],              
+        }				
         
         # this script add logs to logcheck to scan, and make sure files get rotated
         
