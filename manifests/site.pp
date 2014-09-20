@@ -104,7 +104,7 @@ node 'node-hphome.home.tld' {
 	
 	include hp_logwatch
 	
-    # Remote log disabled in config
+    # Remote log disabled in rsyslog config due to amount of traffic!
 	include hp_rsyslog
 	include hp_logrotate
 	
@@ -147,7 +147,7 @@ node 'node-dl380g7.home.tld' {
 	# Set up user's home directories and bash customization
     hp_user_bashrc::config { 'bekr' : }
 	hp_sudo::config { 'bekr': }
-###	hp_mutt::install { 'bekr': mailserver_hostname => 'hphome' }
+	hp_mutt::install { 'bekr': mailserver_hostname => 'dl380g7' }
 	
 	
 	## APPLICATIONS ##
@@ -157,15 +157,15 @@ node 'node-dl380g7.home.tld' {
 	    "bind9-host", "lynis", "pydf" , "dnsutils" , "ethtool", "parted", "lsof" ] }
 	
 	# MAIL server (relay external mails via google smtp)
-###	hp_postfix::install { 'mta' :
-#			            ensure => 'installed',
-#			install_cyrus_sasl => 'true',
-#			          mta_type => 'server',
-#		 server_root_mail_user => 'bekr',
-#	external_root_gmail_cc => 'bertil.kronlund',
-#		   smtp_relayhost_fqdn => 'smtp.gmail.com',
-#		  no_lan_outbound_mail => 'false',
-###	}
+	hp_postfix::install { 'mta' :
+			            ensure => 'installed',
+			install_cyrus_sasl => 'true',
+			          mta_type => 'server',
+		 server_root_mail_user => 'bekr',
+	external_root_gmail_cc => 'bertil.kronlund',
+		   smtp_relayhost_fqdn => 'smtp.gmail.com',
+		  no_lan_outbound_mail => 'false',
+	}
 	
     # APACHE2 prefork
     include hp_apache2 
@@ -209,9 +209,9 @@ node 'node-dl380g7.home.tld' {
 	
 	include hp_ssh_server
 	
-###	include hp_logwatch
+	include hp_logwatch
 
-    # Remote log disabled in config
+    # Remote log disabled in rsyslog config due to amount of traffic!
     include hp_rsyslog
     include hp_logrotate
 	
