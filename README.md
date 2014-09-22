@@ -1,4 +1,4 @@
-## Manage HP DL380 G7 and Debian GNU/Linux 7.5 with Puppet/Git   
+## Manage HP DL380 G7 and Debian GNU/Linux 7.6 with Puppet/Git   
 
 Having a few HP Servers to look after?
 
@@ -12,7 +12,7 @@ Description on the server setup itself can be found elsewhere.
     
 ### Version information
 
-Debian GNU/Linux 7.5 (wheezy)
+Debian GNU/Linux 7.6 (wheezy)
 
 Puppet 2.7.23
 
