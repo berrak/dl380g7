@@ -1,9 +1,32 @@
 #
-## site.pp
+## site.pp (Tested dists: Debian 7.X, OracleLinux 6.X)
 #
 $extlookup_precedence = ["fstab_sda1_uuid"]
 $extlookup_datadir = "/etc/puppet/files"
 
+## Development server, Oracle Linux 6.5
+node 'ol65.home.tld' {
+
+    ## BASIC
+    include hp_puppetize
+    include puppet_utils
+    
+    ## USER PROFILES
+    
+    
+    ## APPLICATIONS
+
+
+    ## SECURITY
+    
+    
+    ## MAINTENANCE
+
+}
+
+########################################################################
+
+## Development server, Debian 7 (wheezy)
 node 'node-hphome.home.tld' {
 
 	## BASIC
@@ -112,6 +135,8 @@ node 'node-hphome.home.tld' {
 	
 }
 ########################################################################
+
+## Original Debian wheezy based server
 node 'node-dl380g7.home.tld' {
 
 	## BASIC

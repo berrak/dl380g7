@@ -19,14 +19,17 @@ class hp_puppetize::config {
     $myhostname = $::hostname
     $mydomain = $::domain
     
-    # sets e.g. if agent runs as daemon or not (default)
-    file { '/etc/default/puppet' :
-        ensure => present,
-       content =>  template( 'hp_puppetize/puppet.erb' ),         
-         owner => 'root',
-         group => 'root',
-       require => Class['hp_puppetize::install'],
-        notify => Class['hp_puppetize::service'],
+    # In Debian sets e.g. if puppet agent daemon 'runs' or is 'stopped' (default)
+    if $::lsbdistid == 'Debian' {
+    
+        file { '/etc/default/puppet' :
+            ensure => present,
+           content =>  template( 'hp_puppetize/puppet.erb' ),         
+             owner => 'root',
+             group => 'root',
+           require => Class['hp_puppetize::install'],
+            notify => Class['hp_puppetize::service'],
+        }
     }
   
     if $puppetsrvfqdn in $::hp_puppetize::params::list_puppetservers_fqdn {

@@ -1,12 +1,11 @@
 ##
 ## Manage Puppet
+## Note: Oracle Linux 6.X requires puppet-labs repository.
+##   Pre-install with: rpm -ivh http://yum.puppetlabs.com/puppetlabs-release-el-6.noarch.rpm
 ##
 class hp_puppetize::install {
   
     include hp_puppetize::params
-  
-    # Debian defaults to install puppet-common which
-    # depends on facter - but just to show both.
   
     # Install puppet agent regardless if this is the puppet server or agent
   
@@ -37,13 +36,14 @@ class hp_puppetize::install {
 	      mode => '0700',
     }
 	
-  
     # For puppet server
     
     if $::fqdn in $::hp_puppetize::params::list_puppetservers_fqdn {
     
-	  package { 'puppetmaster' :
-	    ensure => present,
+		case $::lsbdistid {
+			'OracleServer': package { 'puppet-master' : ensure => present }
+			'Debian:        package { 'puppetmaster' : ensure => present }
+			default: { fail("FAIL: Unknown ($::lsbdistid) distribution. Aborting...") }
 	  }
 	    
     }
