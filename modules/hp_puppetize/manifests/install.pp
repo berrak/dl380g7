@@ -7,7 +7,7 @@ class hp_puppetize::install {
   
     include hp_puppetize::params
   
-    # Install puppet agent regardless if this is the puppet server or agent
+    # Install puppet agent regardless if this is the puppet server or an agent
   
     package { [ 'puppet', 'facter' ] :
         ensure => present,
@@ -38,14 +38,28 @@ class hp_puppetize::install {
 	
     # For puppet server
     
-    if $::fqdn in $::hp_puppetize::params::list_puppetservers_fqdn {
+    if  $::fqdn in $::hp_puppetize::params::list_puppetservers_fqdn  {
     
-		case $::lsbdistid {
-			'OracleServer': package { 'puppet-master' : ensure => present }
-			'Debian:        package { 'puppetmaster' : ensure => present }
-			default: { fail("FAIL: Unknown ($::lsbdistid) distribution. Aborting...") }
-	  }
-	    
+		$ostype = $::lsbdistid	
+	
+		if $ostype == 'OracleServer' {
+		
+			package { 'puppet-master':
+				ensure => present,
+			}
+		
+		} elsif $ostype == 'Debian' {
+		
+			package { 'puppetmaster':
+				ensure => present
+			}
+		
+		} else {
+		
+			fail("FAIL: Unknown $osype distribution. Aborting...")
+			
+		}
+		
     }
 
 }
