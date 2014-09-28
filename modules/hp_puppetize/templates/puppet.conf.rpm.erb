@@ -15,7 +15,10 @@
     # The default value is '$confdir/ssl'.
     ssldir = /etc/puppet/ssl
     
+[master]    
     server = <%= puppetsrvfqdn %>
+    certname = <%= puppetsrvfqdn %>
+    dns_alt_names = puppet.home.tld,puppet
 
 [agent]
     # The file in which puppetd stores a list of the classes
