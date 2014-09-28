@@ -19,29 +19,57 @@ class hp_puppetize::config {
     $myhostname = $::hostname
     $mydomain = $::domain
     
-    # In Debian sets e.g. if puppet agent daemon 'runs' or is 'stopped' (default)
-    if $::lsbdistid == 'Debian' {
+    ## DEBIAN 7 (runs Puppet 2.7)
     
-        file { '/etc/default/puppet' :
-            ensure => present,
-           content =>  template( 'hp_puppetize/puppet.erb' ),         
-             owner => 'root',
-             group => 'root',
-           require => Class['hp_puppetize::install'],
-            notify => Class['hp_puppetize::service'],
-        }
-    }
-  
-    if $puppetsrvfqdn in $::hp_puppetize::params::list_puppetservers_fqdn {
-
+    if $::lsbdistid == 'Debian' {
+            
         file { '/etc/puppet/puppet.conf' :
             ensure => present,
-           content =>  template( 'hp_puppetize/puppet.conf.erb' ),    
+           content =>  template( 'hp_puppetize/puppet.conf.deb.erb' ),    
              owner => 'root',
              group => 'root',
            require => Class['hp_puppetize::install'],
             notify => Class['hp_puppetize::service'],
         }
+        
+        # Client options: Sets if puppet agent daemon 'runs' or is 'stopped' (=default)
+        file { '/etc/default/puppet' :
+            ensure => present,
+           content =>  template( 'hp_puppetize/puppet.deb.erb' ),         
+             owner => 'root',
+             group => 'root',
+           require => Class['hp_puppetize::install'],
+            notify => Class['hp_puppetize::service'],
+        }
+        
+    }
+    
+    ## Oracle Linux 6.5 (runs Puppet 3.7)
+    
+    if $::lsbdistid == 'OracleServer' {
+            
+        file { '/etc/puppet/puppet.conf' :
+            ensure => present,
+           content =>  template( 'hp_puppetize/puppet.conf.rpm.erb' ),    
+             owner => 'root',
+             group => 'root',
+           require => Class['hp_puppetize::install'],
+            notify => Class['hp_puppetize::service'],
+        }
+        
+        # Client options: customize
+        file { '/etc/sysconfig/puppet' :
+            ensure => present,
+           content =>  template( 'hp_puppetize/puppet.rpm.erb' ),         
+             owner => 'root',
+             group => 'root',
+           require => Class['hp_puppetize::install'],
+            notify => Class['hp_puppetize::service'],
+        }    
+        
+    }    
+  
+    if $puppetsrvfqdn in $::hp_puppetize::params::list_puppetservers_fqdn {
 
         file { '/etc/puppet/auth.conf' :
             ensure => present,
@@ -61,15 +89,33 @@ class hp_puppetize::config {
             notify => Class['hp_puppetize::service'],
         }
 
-        # sets e.g. if puppet master runs as daemon (default) or not
-        file { '/etc/default/puppetmaster' :
-            ensure => present,
-            source => 'puppet:///modules/hp_puppetize/puppetmaster',
-             owner => 'root',
-             group => 'root',
-           require => Class['hp_puppetize::install'],
-            notify => Class['hp_puppetize::service'],
+        ## DEBIAN PUPPETMASTER OPTIONS
+        if $::lsbdistid == 'Debian' {
+        
+            # sets e.g. if puppetmaster runs as daemon (default) or not
+            file { '/etc/default/puppetmaster' :
+                ensure => present,
+                source => 'puppet:///modules/hp_puppetize/puppetmaster-deb',
+                 owner => 'root',
+                 group => 'root',
+               require => Class['hp_puppetize::install'],
+                notify => Class['hp_puppetize::service'],
+            }
         }
+        
+        ## OL6 PUPPETMASTER OPTIONS
+        if $::lsbdistid == 'OracleServer' {
+        
+            # sets e.g. if puppetmaster runs as daemon (default) or not
+            file { '/etc/sysconfig/puppetmaster' :
+                ensure => present,
+                source => 'puppet:///modules/hp_puppetize/puppetmaster-rpm',
+                 owner => 'root',
+                 group => 'root',
+               require => Class['hp_puppetize::install'],
+                notify => Class['hp_puppetize::service'],
+            }
+        }     
         
         # install job for puppetserver to pull updates from dl380g7.git repo
         file { '/etc/cron.daily/puppet-gitpull.sh' :

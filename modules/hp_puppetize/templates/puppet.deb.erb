@@ -5,11 +5,13 @@
 # Do not edit. Managed by Puppet. Changes will be wiped out. #
 ##############################################################
 
+## Client options
+
 # Defaults for puppet - sourced by /etc/init.d/puppet
 
 # Start puppet on boot?
 START=no
 
-# Startup options
+# Startup options (if client to be run as daemon)
 #DAEMON_OPTS="--certname node-<%= myhostname %>.<%= mydomain %> --server <%= puppetsrvfqdn %>"
 DAEMON_OPTS=""
