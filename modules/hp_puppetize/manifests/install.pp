@@ -44,7 +44,7 @@ class hp_puppetize::install {
 	
 		if $ostype == 'OracleServer' {
 		
-			package { 'puppet-master':
+			package { 'puppetmaster':
 				ensure => present,
 			}
 		
