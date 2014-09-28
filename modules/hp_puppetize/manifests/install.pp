@@ -42,24 +42,18 @@ class hp_puppetize::install {
     
 		$ostype = $::lsbdistid	
 	
-		if $ostype == 'OracleServer' {
-		
-			package { 'puppetmaster':
-				ensure => present,
-			}
-		
-		} elsif $ostype == 'Debian' {
+		# No need to test 'OracleServer' since no package puppetmaster
+		if $ostype == 'Debian' {
 		
 			package { 'puppetmaster':
 				ensure => present
 			}
 		
-		} else {
-		
-			fail("FAIL: Unknown $osype distribution. Aborting...")
-			
 		}
 		
-    }
+    } else {
+				
+		fail("FAIL: Unknown $osype distribution. Aborting...")
+	}
 
 }
