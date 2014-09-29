@@ -14,7 +14,7 @@
 
 # You may specify an alternate port on which your puppetmaster should listen. Default is: 8140
 # An example with puppetmaster on a different port, run with standard webrick servertype
-PUPPETMASTER_PORTS="8141"
+#PUPPETMASTER_PORTS="8141"
 
 # You may specify other parameters to the puppetmaster here
 #PUPPETMASTER_EXTRA_OPTS=--no-ca
