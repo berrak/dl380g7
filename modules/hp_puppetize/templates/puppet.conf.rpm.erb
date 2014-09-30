@@ -13,14 +13,12 @@
 
     # Where SSL certificates are kept.
     # The default value is '$confdir/ssl'.
-    ssldir = /etc/puppet/ssl
+    ssldir = $confdir/ssl
     
 [master]    
     server = puppet.<%= mydomain %>
     certname = puppet.<%= mydomain %>
     dns_alt_names = puppet.<%= mydomain %>,puppet
-
-
 
 [agent]
     # The file in which puppetd stores a list of the classes
@@ -35,5 +33,5 @@
     # The default value is '$confdir/localconfig'.
     localconfig = $vardir/localconfig
     
-    certname = node-<%= puppetsrvfqdn %>
+    certname = <%= puppetsrvfqdn %>
     server = puppet.<%= mydomain %>
