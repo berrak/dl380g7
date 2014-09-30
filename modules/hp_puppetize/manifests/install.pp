@@ -42,7 +42,7 @@ class hp_puppetize::install {
 		package { 'facter' :
 				ensure => latest,
 		 allow_virtual => true,
-		      requires => Package['puppet'],
+		      require => Package['puppet'],
 		}		
 		
 		# ensure agent is not running
