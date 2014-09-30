@@ -7,22 +7,9 @@ class hp_puppetize::install {
   
     include hp_puppetize::params
   
-    # Install puppet agent regardless if this is the puppet server or an agent
-  
-    package { [ 'puppet', 'facter' ] :
-               ensure => latest,
-		allow_virtual => true,
-    }
-	
-    # install some utilities for root
-    
-    file { '/root/bin' :
-        ensure => directory,
-         owner => 'root',
-         group => 'root',
-          mode => '0700',
-    }
-    
+    ## Install puppet agent
+	## regardless if this is the puppet server or an agent
+  	    
 	if $::lsbdistid == 'Debian' {
 	
 		file { '/root/bin/puppet.exec':
@@ -30,6 +17,11 @@ class hp_puppetize::install {
 			 owner => 'root',
 			 group => 'root',
 			  mode => '0700',
+		}
+		
+		package { [ 'puppet', 'facter' ] :
+				ensure => latest,
+		 allow_virtual => true,
 		}
 		
     } elsif $::lsbdistid == 'OracleServer' {
@@ -40,9 +32,36 @@ class hp_puppetize::install {
 			 group => 'root',
 			  mode => '0700',
 		}
+		
+		package { 'puppet' :
+				ensure => latest,
+		 allow_virtual => true,
+		 notify => Exec['Ensure_puppet_agent_daemon_not_running_at_boot'],
+		}
+		
+		package { 'facter' :
+				ensure => latest,
+		 allow_virtual => true,
+		      requires => Package['puppet'],
+		}		
+		
+		# ensure agent is not running
+		exec { 'Ensure_puppet_agent_daemon_not_running_at_boot':
+			cmd => '/sbin/chkconfig service puppet off',
+			path => '/usr/bin:/usr/sbin:/bin:/sbin',
+			subscribe => Package['puppet'],
+		}
 	
 	}
 	
+	## install some utilities for root
+    
+    file { '/root/bin' :
+        ensure => directory,
+         owner => 'root',
+         group => 'root',
+          mode => '0700',
+    }
 	
     file { '/root/bin/puppet.simulate':
 	    source => 'puppet:///modules/hp_puppetize/puppet.simulate',
@@ -51,7 +70,7 @@ class hp_puppetize::install {
 	      mode => '0700',
     }
 	
-    # For puppet server
+    ## For puppet server
     
     if  $::fqdn in $::hp_puppetize::params::list_puppetservers_fqdn  {
     

@@ -8,11 +8,13 @@ class hp_puppetize::service {
     # Reloads puppet agent.
 	
 	## Debian default config:
+	## ----------------------
 	## In file /etc/default/puppet, default setting for
     # agent is 'stopped'. If this is not wanted, configure that file.
     # and change 'ensure' below with 'ensure => running'
 	
-	## OracleLinux default config: unknown
+	## OracleServer config:
+	## --------------------
     
     service { 'puppet_agent':
               name => 'puppet',
