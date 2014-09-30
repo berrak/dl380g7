@@ -17,7 +17,9 @@
     
 [master]    
     server = <%= puppetsrvfqdn %>
-    certname = <%= puppetsrvfqdn %>
+    certname = puppet.<%= mydomain %>
+    dns_alt_names = puppet.<%= mydomain %>,puppet
+
 
 
 [agent]
