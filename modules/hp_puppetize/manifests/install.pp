@@ -47,7 +47,7 @@ class hp_puppetize::install {
 		
 		# ensure agent is not running
 		exec { 'Ensure_puppet_agent_daemon_not_running_at_boot':
-			  command => '/sbin/chkconfig service puppet off',
+			  command => '/sbin/chkconfig puppet off',
 			     path => '/usr/bin:/usr/sbin:/bin:/sbin',
 			subscribe => Package['puppet'],
 		}
