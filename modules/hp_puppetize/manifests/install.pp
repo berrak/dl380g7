@@ -31,7 +31,7 @@ class hp_puppetize::install {
 			  mode => '0700',
 		}
 		
-    } else if $::lsbdistid == 'OracleServer' {
+    } elsif $::lsbdistid == 'OracleServer' {
 	
 		file { '/root/bin/puppet.exec':
 			source => 'puppet:///modules/hp_puppetize/puppet.exec.rpm',
