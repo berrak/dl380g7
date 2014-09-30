@@ -57,6 +57,14 @@ class hp_puppetize::config {
             notify => Class['hp_puppetize::service'],
         }
         
+        # Ensure no puppet daemon start at boot
+		
+		exec { 'Ensure_puppet_agent_daemon_not_running_at_boot':
+			  command => '/sbin/chkconfig puppet off',
+			     path => '/usr/bin:/usr/sbin:/bin:/sbin',
+			subscribe => File['/etc/puppet/puppet.conf'],
+		}
+        
         # Client options: customize
         file { '/etc/sysconfig/puppet' :
             ensure => present,
