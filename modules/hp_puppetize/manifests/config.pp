@@ -63,6 +63,7 @@ class hp_puppetize::config {
 			  command => '/sbin/chkconfig puppet off',
 			     path => '/usr/bin:/usr/sbin:/bin:/sbin',
 			subscribe => File['/etc/puppet/puppet.conf'],
+          refreshonly => true,
 		}
         
         # Client options: customize
