@@ -20,7 +20,7 @@ class hp_puppetize::install {
 		}
 		
 		package { [ 'puppet', 'facter' ] :
-				ensure => latest,
+				ensure => present,
 		 allow_virtual => true,
 		}
 		
@@ -34,13 +34,13 @@ class hp_puppetize::install {
 		}
 		
 		package { 'puppet' :
-				ensure => latest,
+				ensure => present,
 		 allow_virtual => true,
 		 notify => Exec['Ensure_puppet_agent_daemon_not_running_at_boot'],
 		}
 		
 		package { 'facter' :
-				ensure => latest,
+				ensure => present,
 		 allow_virtual => true,
 		      require => Package['puppet'],
 		}		
