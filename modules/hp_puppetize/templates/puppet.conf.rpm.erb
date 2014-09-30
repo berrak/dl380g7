@@ -16,7 +16,7 @@
     ssldir = /etc/puppet/ssl
     
 [master]    
-    server = <%= puppetsrvfqdn %>
+    server = puppet.<%= mydomain %>
     certname = puppet.<%= mydomain %>
     dns_alt_names = puppet.<%= mydomain %>,puppet
 
@@ -36,4 +36,4 @@
     localconfig = $vardir/localconfig
     
     certname = node-<%= puppetsrvfqdn %>
-    server = <%= puppetsrvfqdn %>
+    server = puppet.<%= mydomain %>
