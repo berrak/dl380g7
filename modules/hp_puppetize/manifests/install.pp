@@ -6,6 +6,7 @@
 class hp_puppetize::install {
   
     include hp_puppetize::params
+	include hp_puppetize::config
   
     ## Install puppet agent
 	## regardless if this is the puppet server or an agent
@@ -36,7 +37,6 @@ class hp_puppetize::install {
 		package { 'puppet' :
 				ensure => present,
 		 allow_virtual => true,
-		 notify => Exec['Ensure_puppet_agent_daemon_not_running_at_boot'],
 		}
 		
 		package { 'facter' :
@@ -45,11 +45,13 @@ class hp_puppetize::install {
 		      require => Package['puppet'],
 		}		
 		
-		# ensure agent is not running
+		# Ensure no puppet daemon start at boot
+		
 		exec { 'Ensure_puppet_agent_daemon_not_running_at_boot':
 			  command => '/sbin/chkconfig puppet off',
 			     path => '/usr/bin:/usr/sbin:/bin:/sbin',
-			subscribe => Package['puppet'],
+			  require => Package['puppet'],
+			subscribe => File['/etc/puppet/puppet.conf'],
 		}
 	
 	}
