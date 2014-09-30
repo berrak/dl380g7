@@ -8,11 +8,14 @@ $extlookup_datadir = "/etc/puppet/files"
 node 'ol65.home.tld' {
 
     ## BASIC
-    include hp_puppetize
+    ##include hp_puppetize
     include puppet_utils
     
     ## USER PROFILES
     
+    # Set up root's home directories and bash customization
+    ##include hp_root_home
+    ##include hp_root_bashrc
     
     ## APPLICATIONS
 
