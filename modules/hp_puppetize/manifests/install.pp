@@ -10,7 +10,8 @@ class hp_puppetize::install {
     # Install puppet agent regardless if this is the puppet server or an agent
   
     package { [ 'puppet', 'facter' ] :
-        ensure => present,
+               ensure => latest,
+		allow_virtual => true,
     }
 	
     # install some utilities for root
@@ -56,13 +57,20 @@ class hp_puppetize::install {
     
 		$ostype = $::lsbdistid	
 	
-		# No need to test 'OracleServer' since no package puppetmaster
 		if $ostype == 'Debian' {
 		
 			package { 'puppetmaster':
-				ensure => present
+				       ensure => latest,
+				allow_virtual => true,
 			}
 		
+		} elsif $ostype == 'OracleServer' {
+		
+			package { 'puppet-server':
+				       ensure => latest,
+				allow_virtual => true,
+			}		
+	
 		}
 		
     } else {
