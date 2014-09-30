@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Runs the puppet agent one time and then exit (no deamon).
 # Primary purpose is to run this via cron. Set the '$server' in
@@ -18,7 +18,7 @@ else
     echo "$0: Skipping update of Debian packages. Place any character after the command to run aptitude update."
 fi
 
-# Run puppet agent
+# Run puppet agent once
 
 STARTTIME=`date +%H:%M:%S`
 echo "$0: Starting puppet run at time: $STARTTIME"

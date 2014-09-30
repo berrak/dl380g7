@@ -22,13 +22,27 @@ class hp_puppetize::install {
           mode => '0700',
     }
     
-    file { '/root/bin/puppet.exec':
-	    source => 'puppet:///modules/hp_puppetize/puppet.exec',
-	     owner => 'root',
-	     group => 'root',
-	      mode => '0700',
-    }
-    
+	if $::lsbdistid == 'Debian' {
+	
+		file { '/root/bin/puppet.exec':
+			source => 'puppet:///modules/hp_puppetize/puppet.exec.deb',
+			 owner => 'root',
+			 group => 'root',
+			  mode => '0700',
+		}
+		
+    } else if $::lsbdistid == 'OracleServer' {
+	
+		file { '/root/bin/puppet.exec':
+			source => 'puppet:///modules/hp_puppetize/puppet.exec.rpm',
+			 owner => 'root',
+			 group => 'root',
+			  mode => '0700',
+		}
+	
+	}
+	
+	
     file { '/root/bin/puppet.simulate':
 	    source => 'puppet:///modules/hp_puppetize/puppet.simulate',
 	     owner => 'root',
