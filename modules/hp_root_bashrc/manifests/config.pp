@@ -23,15 +23,9 @@ class hp_root_bashrc::config {
 			require => File['/root/.bashrc'],
 		}
 		
-		# if one or both of these files are created/changed, source .bashrc
-		exec { 'deb_reload_bashrc_due_to_changes':
-			command => '/bin/bash . /root/.bashrc',
-			subscribe => File['/root/.bashrc'],
-			refreshonly => true,
-		}
-		
-		exec { 'deb_reload_bashrc_due_to_changes_in_bashrc_root':
-			command => '/bin/bash . /root/.bashrc',
+		# if .bash_root changes, source it
+		exec { 'deb_source_changes_due_to_changes_in_bashrc_root':
+			command => '/bin/bash . /root/.bashrc_root',
 			subscribe => File['/root/.bashrc_root'],
 			refreshonly => true,
 		}	
@@ -62,34 +56,22 @@ class hp_root_bashrc::config {
 		   require => File['/root/.bash_profile'],
 		}
 	
-		# if any of these files are created/changed, source .bash_profile	
-		exec { 'rpm_reload_bash_profile_due_to_changes':
-			command => '/bin/bash . /root/.bash_profile',
-			subscribe => File['/root/.bash_profile'],
+		# if .bashrc changes, source it
+		exec { 'rpm_source_changes_due_to_changes_in_bashrc':
+			command => '/bin/bash . /root/.bashrc',
+			subscribe => File['/root/.bashrc'],
 			refreshonly => true,
 		}
 		
-		exec { 'rpm_reload_bash_profile_due_to_changes_in_bashrc':
-			command => '/bin/bash . /root/.bash_profile',
-			subscribe => File['/root/.bashrc'],
-			refreshonly => true,
-		}	
-	
-		exec { 'rpm_reload_bash_profile_due_to_changes_in_bash_root':
-			command => '/bin/bash . /root/.bash_profile',
+		# if .bash_root changes, source it
+		exec { 'rpm_source_changes_due_to_changes_in_bashrc_root':
+			command => '/bin/bash . /root/.bash_root',
 			subscribe => File['/root/.bashrc_root'],
 			refreshonly => true,
 		}		
 	
 	} else {
 		fail("FAIL: Unknown $ostype distribution. Aborting...")
-	}
-	
-	
-	
-	
-	
-
-	
+	}	
 
 }
