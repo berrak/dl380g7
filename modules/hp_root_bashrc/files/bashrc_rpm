@@ -1,0 +1,13 @@
+##############################################################
+# DO NOT EDIT. MANAGED BY PUPPET. CHANGES WILL BE WIPED OUT. #
+##############################################################
+#
+# THIS IS FOR 'REDHAT' ONLY. THIS FILE (/root/.bashrc) IS
+# SOURCED FROM ~/.bash_profile WHICH CONTAINS ROOT CUSTOMIZATION
+##############################################################
+# .bashrc
+
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+        . /etc/bashrc
+fi

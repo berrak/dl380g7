@@ -80,7 +80,7 @@ class hp_puppetize::install {
 		
     } else {
 				
-		fail("FAIL: Unknown $osype distribution. Aborting...")
+		fail("FAIL: Unknown $ostype distribution. Aborting...")
 	}
 
 }

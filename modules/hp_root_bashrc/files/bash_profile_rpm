@@ -1,0 +1,20 @@
+##############################################################
+# DO NOT EDIT. MANAGED BY PUPPET. CHANGES WILL BE WIPED OUT. #
+##############################################################
+#
+# THIS IS FOR 'REDHAT' ONLY. THIS FILE (/root/.bash_profile)
+# SOURCE (~/.bashrc) AND USER ROOT (~/.bashrc_root) CUSTOMIZATION 
+##############################################################
+# .bash_profile
+
+# Get the default local customization (really global - see .bashrc)
+if [ -f ~/.bashrc ]; then
+    . ~/.bashrc
+fi
+
+# Source root user specific environment and startup programs
+if [ -f ~/.bashrc_root ] ; then
+	. ~/.bashrc_root
+fi
+
+test -x /etc/puppet && cd /etc/puppet

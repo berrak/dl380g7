@@ -1,0 +1,31 @@
+##############################################################
+# DO NOT EDIT. MANAGED BY PUPPET. CHANGES WILL BE WIPED OUT. #
+##############################################################
+#
+# THIS IS FOR 'DEBIAN' ONLY. LOCAL USER ROOT CUSTOMIZATION
+# THIS FILE (/root/.bashrc_root) IS SOURCED FROM ~/.bashrc
+##############################################################
+
+# You may uncomment the following lines if you want `ls' to be colorized:
+export LS_OPTIONS='--color=auto'
+eval "`dircolors`"
+alias l='ls $LS_OPTIONS'
+alias ll='ls $LS_OPTIONS -l'
+alias la='ls $LS_OPTIONS -la'
+
+# Some more alias to avoid making mistakes:
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+
+alias cls='clear'
+
+PATH=$PATH:/root/bin
+
+function backup() {
+	newname=$1.`date +%Y%m%d.%H%M.UTC.bak`;
+	mv $1 $newname;
+	echo "Backed up $1 to $newname."; 
+	cp -p $newname $1;
+}
+

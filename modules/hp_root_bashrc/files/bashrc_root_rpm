@@ -1,7 +1,12 @@
-# /root/.bashrc_root: Local root's .bashrc customization
-# This file is sourced from .bashrc 
+##############################################################
+# DO NOT EDIT. MANAGED BY PUPPET. CHANGES WILL BE WIPED OUT. #
+##############################################################
+#
+# THIS IS FOR 'REDHAT' ONLY. LOCAL USER ROOT CUSTOMIZATION. THIS
+# FILE (/root/.bashrc_root) IS SOURCED FROM /root/.bash_profile
+##############################################################
 
-# You may uncomment the following lines if you want `ls' to be colorized:
+unset LS_OPTIONS
 export LS_OPTIONS='--color=auto'
 eval "`dircolors`"
 alias l='ls $LS_OPTIONS'
@@ -23,4 +28,3 @@ function backup() {
 	echo "Backed up $1 to $newname."; 
 	cp -p $newname $1;
 }
-

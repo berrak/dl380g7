@@ -3,35 +3,93 @@
 ##
 class hp_root_bashrc::config {
 
-    # This file is Debian original + one source statement for .bash_root 
-	file { '/root/.bashrc':
-		source => 'puppet:///modules/hp_root_bashrc/bashrc',
-		 owner => 'root',
-		 group => 'root',
-		  mode => '0600',
+    $ostype = $::lsbdistid	
+	
+	if $ostype == 'Debian' {
+	 
+		file { '/root/.bashrc':
+			source => 'puppet:///modules/hp_root_bashrc/bashrc_deb',
+			 owner => 'root',
+			 group => 'root',
+			  mode => '0600',
+		}
+	
+		# This file contains all customization for root
+		file { '/root/.bashrc_root':
+			source => 'puppet:///modules/hp_root_bashrc/bashrc_root_deb',
+			 owner => 'root',
+			 group => 'root',
+			  mode => '0600',
+			require => File['/root/.bashrc'],
+		}
+		
+		# if one or both of these files are created/changed, source .bashrc
+		exec { 'deb_reload_bashrc_due_to_changes':
+			command => '/bin/bash . /root/.bashrc',
+			subscribe => File['/root/.bashrc'],
+			refreshonly => true,
+		}
+		
+		exec { 'deb_reload_bashrc_due_to_changes_in_bashrc_root':
+			command => '/bin/bash . /root/.bashrc',
+			subscribe => File['/root/.bashrc_root'],
+			refreshonly => true,
+		}	
+	
+	} elsif $ostype == 'OracleServer' {
+	
+		file { '/root/.bash_profile':
+			source => 'puppet:///modules/hp_root_bashrc/bash_profile_rpm',
+			 owner => 'root',
+			 group => 'root',
+			  mode => '0600',
+		}
+	
+		file { '/root/.bashrc':
+			source => 'puppet:///modules/hp_root_bashrc/bashrc_rpm',
+			 owner => 'root',
+			 group => 'root',
+			  mode => '0600',
+		   require => File['/root/.bash_profile'],
+		}
+	
+		# This file contains all customization for root
+		file { '/root/.bashrc_root':
+			source => 'puppet:///modules/hp_root_bashrc/bashrc_root_rpm',
+			 owner => 'root',
+			 group => 'root',
+			  mode => '0600',
+		   require => File['/root/.bash_profile'],
+		}
+	
+		# if any of these files are created/changed, source .bash_profile	
+		exec { 'rpm_reload_bash_profile_due_to_changes':
+			command => '/bin/bash . /root/.bash_profile',
+			subscribe => File['/root/.bash_profile'],
+			refreshonly => true,
+		}
+		
+		exec { 'rpm_reload_bash_profile_due_to_changes_in_bashrc':
+			command => '/bin/bash . /root/.bash_profile',
+			subscribe => File['/root/.bashrc'],
+			refreshonly => true,
+		}	
+	
+		exec { 'rpm_reload_bash_profile_due_to_changes_in_bash_root':
+			command => '/bin/bash . /root/.bash_profile',
+			subscribe => File['/root/.bashrc_root'],
+			refreshonly => true,
+		}		
+	
+	} else {
+		fail("FAIL: Unknown $ostype distribution. Aborting...")
 	}
+	
+	
+	
+	
+	
 
-    # This file contains all customization for root
-	file { '/root/.bashrc_root':
-		source => 'puppet:///modules/hp_root_bashrc/bashrc_root',
-		 owner => 'root',
-		 group => 'root',
-		  mode => '0600',
-		require => File['/root/.bashrc'],
-	}
-	
-	# if one or both of these files are created/changed, source .bashrc
-	exec { 'reloadbashrc':
-		command => '/bin/sh . /root/.bashrc',
-		subscribe => File['/root/.bashrc'],
-		refreshonly => true,
-	}
-	
-	exec { 'reloadadmbashrc':
-		command => '/bin/sh . /root/.bashrc',
-		subscribe => File['/root/.bashrc_root'],
-		refreshonly => true,
-	}
 	
 
 }
