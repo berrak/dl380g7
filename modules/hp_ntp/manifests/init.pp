@@ -13,7 +13,21 @@ class hp_ntp(
     $peerntpip='UNSET',
 ) {
         
-    package { "ntp" : ensure => present }
+    package { "ntp" :
+               ensure => present,
+        allow_virtual => true,
+    }
+    
+    $ostype = $::lsbdistid
+    
+    if $ostype == 'Debian' {
+        $ntpservicename = 'ntp'
+    }
+    elsif $ostype == 'OracleServer'  {
+        $ntpservicename = 'ntpd'
+    } else {
+    	fail("FAIL: Unknown $ostype distribution. Aborting...")
+    }
     
     case $role {
 
@@ -28,7 +42,7 @@ class hp_ntp(
                 notify => Service["ntp"],
             }
             
-            service { "ntp":
+            service { "$ntpservicename":
                 ensure => running,
                 hasstatus => true,
                 hasrestart => true,
@@ -51,7 +65,7 @@ class hp_ntp(
             }
             
             
-            service { "ntp":
+            service { "$ntpservicename":
                 ensure => running,
                 hasstatus => true,
                 hasrestart => true,
@@ -67,6 +81,18 @@ class hp_ntp(
         }
             
     }
+    
+    # Enable ntpd at boot
+    if $ostype == 'OracleServer'  {
+        
+        exec { 'Enable_OL6_ntpd_at_boot':
+		command => '/sbin/chklconfig ntpd on',
+		path   => '/usr/bin:/usr/sbin:/bin:/sbin',
+		require => Package['ntp'],
+        }
+          
+    } 
+    
     
     # Practical time and status script
     
