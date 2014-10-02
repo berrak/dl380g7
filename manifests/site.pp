@@ -31,7 +31,9 @@ node 'ol65.home.tld' {
     ## SECURITY
     hp_sudo::config { 'bekr': }
     
+    
     ## MAINTENANCE
+	include hp_ssh_server
 
 }
 

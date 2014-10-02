@@ -20,6 +20,13 @@ class hp_ssh_server::config {
 			owner => 'root',
 			group => 'root',
 		  require => Package["openssh-server"],
-	}		
+	}
+	
+	exec { "add_group_sshusers" :
+            command => "groupadd -r sshusers",
+               path => '/usr/bin:/usr/sbin:/bin',
+             unless => "cat /etc/group | grep sshusers",	
+	    require => Package["openssh-server"],
+	}
 
 }
