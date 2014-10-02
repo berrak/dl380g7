@@ -7,12 +7,19 @@ define hp_sudo::config {
     include hp_sudo
     
     $ostype = $::lsbdistid
-    
+	
+	exec { "Add_group_sudo" :
+            command => "groupadd -r sudo",
+               path => '/usr/bin:/usr/sbin:/bin',
+             unless => "cat group | grep sudo",	
+	    require => Package["sudo"],
+	}
+	
     exec { "Add_${name}_To_Administrator_Group" :
             command => "usermod -a -G sudo $name",
                path => '/usr/bin:/usr/sbin:/bin',
-             unless => "groups $name | grep sudo",
-            require => Package["sudo"],
+             unless => "cat group| grep sudo | grep $name",
+            require => Exec["Add_group_sudo"],
     }
     
     # use '/etc/sudoers.d' directory to add group sudo for OracleLinux
