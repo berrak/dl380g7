@@ -2,7 +2,12 @@
 # MANAGED BY PUPPET. DO NOT EDIT. CHANGES WILL BE WIPED OUT. #
 ##############################################################
 # $HOME/.bashrc.d/bekr: Local user (bekr) .bashrc 
-# snippet customization. This file is sourced from .bashrc 
+# snippet customization.
+# This file is sourced from:
+#
+#	~/.bashrc (Debian)
+#
+#   ~/.bash_profile (OracleLinux)
 
 # set standard umask
 umask 022
