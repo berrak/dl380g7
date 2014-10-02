@@ -114,6 +114,7 @@ define hp_user_bashrc::config {
 			command => "/bin/sh . /home/${name}/bashrc.d/${name}",
 	      subscribe => File["/home/${name}/bashrc.d/${name}"],
 	    refreshonly => true,
+		    require => File["/home/${name}/bashrc.d/${name}"]
 		}
 		
 		# perl rc file, automatically sourced at login
