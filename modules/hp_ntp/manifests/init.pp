@@ -39,7 +39,7 @@ class hp_ntp(
                 owner => "root",
                 group => "root",
                 require => Package["ntp"],
-                notify => Service["ntp"],
+                notify => Service["$ntpservicename"],
             }
             
             service { "$ntpservicename":
@@ -61,7 +61,7 @@ class hp_ntp(
                 owner => "root",
                 group => "root",
                 require => Package["ntp"],
-                notify => Service["ntp"],
+                notify => Service["$ntpservicename"],
             }
             
             
