@@ -8,10 +8,6 @@ define hp_sudo::config {
     
     $ostype = $::lsbdistid
     
-    if $ostype ! in [ 'Debian' , 'OracleServer' ] {
-    	fail("FAIL: Unknown $ostype distribution. Aborting...")
-    }
-    
     exec { "Add_${name}_To_Administrator_Group" :
             command => "usermod -a -G sudo $name",
                path => '/usr/bin:/usr/sbin:/bin',
