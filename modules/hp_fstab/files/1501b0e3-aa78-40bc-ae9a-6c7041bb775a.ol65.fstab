@@ -1,0 +1,25 @@
+##############################################################
+# Managed by Puppet. Do not edit. Changes will be wiped out. # 
+##############################################################
+#
+# /etc/fstab
+#
+# Accessible filesystems, by reference, are maintained under '/dev/disk'
+# See man pages fstab(5), findfs(8), mount(8) and/or blkid(8) for more info
+#
+UUID=f797ad6e-21eb-4971-8af6-392b0078c9b7 /                       ext4    defaults        1 1
+UUID=74df7119-878b-486b-b147-8545d476b6f2 /backup                 ext4    defaults        1 2
+UUID=1501b0e3-aa78-40bc-ae9a-6c7041bb775a /boot                   ext4    defaults        1 2
+UUID=48b771c4-a463-4c6f-996e-67a00deb0160 /home                   ext4    defaults        1 2
+UUID=591ba5b0-5259-4148-b907-c031cb3af879 /srv                    ext4    defaults        1 2
+UUID=89e5a26c-7d63-487e-bab3-b0ba40f683d3 /tmp                    ext4    defaults        1 2
+UUID=f69acb68-fa69-4222-b0ee-866449ff29e9 /var                    ext4    defaults        1 2
+UUID=dc434f78-ab57-4b8a-ae8a-32fe60625a2c /var/log                ext4    defaults        1 2
+UUID=aeceb452-0487-4df2-a5b7-77cb01aa76e7 /var/log/audit          ext4    defaults        1 2
+UUID=d8eec041-e3f0-45d7-b70f-b38777e8735d /var/tmp                ext4    defaults        1 2
+UUID=03d3f3f8-a760-4d13-8222-47c1154a01c8 /virtimages             ext4    defaults        1 2
+UUID=c8c54843-8549-4fd3-afae-4cdd4e38ddd4 swap                    swap    defaults        0 0
+tmpfs                   /dev/shm                tmpfs   defaults        0 0
+devpts                  /dev/pts                devpts  gid=5,mode=620  0 0
+sysfs                   /sys                    sysfs   defaults        0 0
+proc                    /proc                   proc    defaults        0 0
