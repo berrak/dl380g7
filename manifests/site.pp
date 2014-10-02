@@ -20,13 +20,14 @@ node 'ol65.home.tld' {
     include hp_root_bashrc
     ## add local users
     hp_user_bashrc::config { 'bekr' : }
+
     
     
     ## APPLICATIONS
 
 
     ## SECURITY
-    
+    hp_sudo::config { 'bekr': }
     
     ## MAINTENANCE
 
