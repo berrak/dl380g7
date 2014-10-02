@@ -20,7 +20,7 @@ class hp_ntp(
     
     $ostype = $::lsbdistid
     
-    # Handle som ediffrences bertween Debian and OracleServer
+    # Handle some differences between Debian and OracleServer(OracleLinux)
     
     if $ostype == 'Debian' {
         $ntpservicename = 'ntp'
