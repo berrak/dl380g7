@@ -20,11 +20,15 @@ class hp_ntp(
     
     $ostype = $::lsbdistid
     
+    # Handle som ediffrences bertween Debian and OracleServer
+    
     if $ostype == 'Debian' {
         $ntpservicename = 'ntp'
+        $ntpqbinpath = '/usr/bin/ntpq' 
     }
     elsif $ostype == 'OracleServer'  {
         $ntpservicename = 'ntpd'
+        $ntpqbinpath = '/usr/sbin/ntpq' 
     } else {
     	fail("FAIL: Unknown $ostype distribution. Aborting...")
     }
