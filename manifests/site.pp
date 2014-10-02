@@ -11,6 +11,9 @@ node 'ol65.home.tld' {
     include hp_puppetize
     include puppet_utils
     
+    # This is the ntp server for localnet
+    class { 'hp_ntp' : role => 'lanserver', peerntpip => '192.168.0.66' }
+    
     ## USER PROFILES
     
     # Set up root's home directories and bash customization
