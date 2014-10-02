@@ -8,7 +8,7 @@ define hp_sudo::config {
     
     $ostype = $::lsbdistid
     
-    if ! $ostype in [ 'Debian' , 'OracleServer' ] {
+    if $ostype ! in [ 'Debian' , 'OracleServer' ] {
     	fail("FAIL: Unknown $ostype distribution. Aborting...")
     }
     
