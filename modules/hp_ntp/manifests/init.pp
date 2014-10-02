@@ -86,7 +86,7 @@ class hp_ntp(
     if $ostype == 'OracleServer'  {
         
         exec { 'Enable_OL6_ntpd_at_boot':
-		command => '/sbin/chklconfig ntpd on',
+		command => '/sbin/chkconfig ntpd on',
 		path   => '/usr/bin:/usr/sbin:/bin:/sbin',
 		require => Package['ntp'],
         }
