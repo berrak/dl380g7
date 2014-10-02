@@ -107,15 +107,6 @@ define hp_user_bashrc::config {
 			  mode => '0644',
 		   require => File["/home/${name}/bashrc.d"],
 	   	}
-	
-		# if the local customization file is changed, source it again
-	
-	    exec { "reloadlocaluserbashrc.${name}":
-			command => "/bin/sh . /home/${name}/bashrc.d/${name}",
-	      subscribe => File["/home/${name}/bashrc.d/${name}"],
-	    refreshonly => true,
-		    require => File["/home/${name}/bashrc.d/${name}"]
-		}
 		
 		# perl rc file, automatically sourced at login
 		
