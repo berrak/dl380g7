@@ -7,7 +7,7 @@
 # set standard umask
 umask 022
 
-# You may uncomment the following lines if you want `ls' to be colorized:
+unset LS_OPTIONS
 export LS_OPTIONS='--color=auto'
 eval "`dircolors`"
 alias l='ls $LS_OPTIONS'

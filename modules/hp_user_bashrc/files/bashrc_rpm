@@ -3,7 +3,7 @@
 ##############################################################
 #
 # THIS IS FOR 'REDHAT' ONLY. THIS FILE (/root/.bashrc) IS
-# SOURCED FROM ~/.bash_profile WHICH CONTAINS USER CUSTOMIZATION
+# SOURCED FROM ~/.bash_profile (WHICH CONTAINS USER CUSTOMIZATION)
 ##############################################################
 # .bashrc
 

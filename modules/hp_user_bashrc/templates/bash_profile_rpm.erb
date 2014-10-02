@@ -1,0 +1,17 @@
+##############################################################
+# DO NOT EDIT. MANAGED BY PUPPET. CHANGES WILL BE WIPED OUT. #
+##############################################################
+#
+# THIS IS FOR 'REDHAT' ONLY. THIS FILE (/root/.bash_profile)
+# SOURCE (~/.bashrc) AND ALL CUSTOM USER SNIPPETS IN  (~/bashrc.d)
+##############################################################
+# .bash_profile
+
+# Get the default local customization (really global - see .bashrc)
+if [ -f ~/.bashrc ]; then
+    . ~/.bashrc
+fi
+
+# Source user specific environment snippets
+[ -f ~/bashrc.d/<%= name %> ] && source ~/bashrc.d/<%= name %>
+

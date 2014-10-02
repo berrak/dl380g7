@@ -6,7 +6,32 @@
 ##
 define hp_user_bashrc::config {
     
-	include puppet_utils	
+	include puppet_utils
+	
+	# user directory must exist (but may have been created outside puppet)
+	file { "/home/${name}":
+		ensure => "directory",
+		 owner => "${name}",
+		 group => "${name}",
+	}	
+	
+    # Handle some differences between Debian and OracleServer(OracleLinux)
+	
+    $ostype = $::lsbdistid
+
+	# replace OL6 default .bashrc (to only source global bashrc)
+    if $ostype == 'OracleServer'  {
+
+	    file { "/home/${name}/.bashrc":
+			source => "puppet:///modules/hp_user_bashrc/bashrc_rpm",
+			 owner => "${name}",
+			 group => "${name}",
+			  mode => '0644',
+		   require => File["/home/${name}"],
+	   	}
+
+    } 
+	
 
     # array of real users...(not root, or system accounts)
 		
@@ -18,42 +43,59 @@ define hp_user_bashrc::config {
 		    ensure => "directory",
 		     owner => "${name}",
 		     group => "${name}",
+		   require => File["/home/${name}"],
 	    }		
 		
         file { "/home/${name}/tmp":
 		    ensure => "directory",
 		     owner => "${name}",
 		     group => "${name}",
+		   require => File["/home/${name}"],
 	    }		
 	
         file { "/home/${name}/bashwork":
 		    ensure => "directory",
 		     owner => "${name}",
 		     group => "${name}",
+		   require => File["/home/${name}"],
 	    }			
 
         file { "/home/${name}/perlwork":
 		    ensure => "directory",
 		     owner => "${name}",
 		     group => "${name}",
+		   require => File["/home/${name}"],			 
 	    }			
 	
-		
         # ensure that a local .bashrc sub directory for our snippets exist 
     
         file { "/home/${name}/bashrc.d":
 		    ensure => "directory",
 		     owner => "${name}",
 		     group => "${name}",
+		   require => File["/home/${name}"],
 	    }		
 		
-		# Now append one line to original .bashrc to source user customizations.
+		if $ostype == 'Debian' {
 		
-		puppet_utils::append_if_no_such_line { "enable_${name}_customization" :
-				
-		    file => "/home/${name}/.bashrc",
-		    line => "[ -f ~/bashrc.d/${name} ] && source ~/bashrc.d/${name}" 
+			# Now append one line to original .bashrc to source user customizations.
+			puppet_utils::append_if_no_such_line { "enable_${name}_customization" :
+					
+				file => "/home/${name}/.bashrc",
+				line => "[ -f ~/bashrc.d/${name} ] && source ~/bashrc.d/${name}" 
+			
+			}
+		} elsif $ostype == 'OracleServer' {
 		
+           	file { "/home/${name}/.bash_profile":
+				content =>  template( "hp_user_bashrc/bash_profile_rpm.erb" ),
+				  owner => "${name}",
+				  group => "${name}",
+				require => File["/home/${name}"],
+            }		
+		
+		} else {
+		    fail("FAIL: Unknown $ostype distribution. Aborting...")
 		}
 	
 	    # add the actual 'user' customization file to the .bashrc.d snippet directory
@@ -66,15 +108,15 @@ define hp_user_bashrc::config {
 		   require => File["/home/${name}/bashrc.d"],
 	   	}
 	
-		# if the local customization file is changed, source .bashrc again
+		# if the local customization file is changed, source it again
 	
 	    exec { "reloadlocaluserbashrc.${name}":
-			command => "/bin/sh . /home/${name}/.bashrc",
+			command => "/bin/sh . /home/${name}/bashrc.d/${name}",
 	      subscribe => File["/home/${name}/bashrc.d/${name}"],
 	    refreshonly => true,
 		}
 		
-		# perl rc file, sourced at login
+		# perl rc file, automatically sourced at login
 		
 	    file { "/home/${name}/bashrc.d/perl.rc":
 			source => "puppet:///modules/hp_user_bashrc/perl.rc",
