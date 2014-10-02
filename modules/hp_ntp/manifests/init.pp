@@ -91,8 +91,9 @@ class hp_ntp(
         
         exec { 'Enable_OL6_ntpd_at_boot':
 		command => '/sbin/chkconfig ntpd on',
-		path   => '/usr/bin:/usr/sbin:/bin:/sbin',
+		 path   => '/usr/bin:/usr/sbin:/bin:/sbin',
 		require => Package['ntp'],
+         onlyif => "chkconfig | grep 'ntpd ' | grep 3:off",
         }
           
     } 
