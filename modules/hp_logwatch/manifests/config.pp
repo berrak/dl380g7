@@ -8,7 +8,7 @@ class hp_logwatch::config {
 		source => "puppet:///modules/hp_logwatch/logwatch.conf",
 		 owner => 'root',
 		 group => 'root',
-		  mode => '0640',
+		  mode => '0644',
 	   require => Package["logwatch"],
     }
 	
@@ -16,9 +16,14 @@ class hp_logwatch::config {
 		source => "puppet:///modules/hp_logwatch/00logwatch",
 		 owner => 'root',
 		 group => 'root',
-		  mode => '0750',
+		  mode => '0755',
 	   require => Package["logwatch"],
     }
+	
+	# remove OracleLinux default cron.daily-file (since we add our own)
+	file { "/etc/cron.daily/0logwatch":
+	  ensure => absent,
+	}
 		
 	# Since we have configured this to be logwatch tmp directory	
 	file { "/var/tmp/logwatch":
