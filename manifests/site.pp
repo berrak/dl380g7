@@ -8,12 +8,19 @@ $extlookup_datadir = "/etc/puppet/files"
 node 'ol65.home.tld' {
 
     ## BASIC
+    # use dnsmasq DNS for OracleLinux hosts (no need for hp_host-module)
+    class { 'hp_dnsmasq' :
+                dns1 => '8.8.8.8',
+                dns2 => '8.8.4.4',
+                real_hostname => 'ol65',
+    }
+    # above DNS must resolv before 'hp_pupetize'. Note that 'puppet-server'
+    # host will be named 'puppet'. Oracle use latest puppet-server 3.7
     include hp_puppetize
     include puppet_utils
     
     # This is the ntp server for localnet
     class { 'hp_ntp' : role => 'lanserver', peerntpip => '192.168.0.66' }
-    class { hp_hosts::config : puppetserver_hostname => 'ol65' }
     class { hp_fstab::config : fstabhost => 'ol65' }
     
     ## USER PROFILES

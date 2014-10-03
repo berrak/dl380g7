@@ -1,0 +1,34 @@
+##############################################################
+# Managed by Puppet. Do not edit. Changes will be wiped out. # 
+##############################################################
+# Configuration file for dnsmasq.
+#
+# Never forward plain names (without a dot or domain part)
+domain-needed
+# Never forward addresses in the non-routed address spaces.
+bogus-priv
+
+# Add other name servers here, with domain specs if they are for
+# non-public domains.
+server=<%= dns1 %>
+server=<%= dns2 %>
+
+# If you want dnsmasq to listen for DHCP and DNS requests only on
+# specified interfaces (and the loopback) give the name of the
+# interface (eg eth0) here.
+# Repeat the line for more than one interface.
+interface=eth0
+# Or which to listen on by address (remember to include 127.0.0.1 if
+# you use this.)
+listen-address=127.0.0.1
+listen-address=<%= myip_eth0 %>
+
+# Set the cachesize here.
+cache-size=150
+
+# For debugging purposes, log each DNS query as it passes through
+# dnsmasq.
+log-queries
+
+#conf-file=/etc/dnsmasq.more.conf
+#conf-dir=/etc/dnsmasq.d
