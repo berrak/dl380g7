@@ -26,6 +26,6 @@ class hp_logwatch::config {
 		 owner => 'root',
 		 group => 'root',
 		  mode => '0770',
-	   require => File ["/etc/logwatch/logwatch.conf"],
+	   require => File ["/etc/logwatch/conf/logwatch.conf"],
     }
 }
