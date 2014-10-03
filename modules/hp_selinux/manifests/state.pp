@@ -4,13 +4,17 @@
 ## Sample usage:
 ##		hp_selinux::state { 'enforcing' : }
 ##		hp_selinux::state { 'permissive' : }
-##		hp_selinux::state { 'disable' : }
+##		hp_selinux::state { 'disabled' : }
 ##
 define hp_selinux::state {
     
     if $name == '' {
         fail("FAIL: SELINUX wanted state not given! Aborting...")
     }
+	
+	if ! ( $name in [ 'enforcing', 'permissive', 'disabled' ] ) {
+        fail("FAIL: SELINUX unknown state given! Aborting...")	
+	}
     
 	$ostype = $::lsbdistid
 	
