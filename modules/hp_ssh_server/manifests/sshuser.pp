@@ -18,5 +18,13 @@ define hp_ssh_server::sshuser {
              unless => "cat /etc/group | grep sshusers | grep $name",
             require => Class["hp_ssh_server"],
     }
+    
+    # ensure user .ssh directory exist with right permissions
+    
+    file { '/home/$name/.ssh':
+		owner => $name,
+		group => $name,
+		mode => '0700',
+	}	
 
 }
