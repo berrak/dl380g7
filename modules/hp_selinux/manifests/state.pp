@@ -7,9 +7,6 @@
 ##		hp_selinux::state { 'disable' : }
 ##
 define hp_selinux::state {
-
-    include hp_selinux
-    
     
     if $name == '' {
         fail("FAIL: SELINUX wanted state not given! Aborting...")
@@ -19,30 +16,21 @@ define hp_selinux::state {
 	
 	if $ostype == 'OracleServer' {
 	
-		case $name {
-		  'enforcing': {
-		  
-		  fail("FAIL: $name. Halting puppet run (test)")
-		  
-		  
-		  }
-		  'permissive': {
-		  
-		  
-		  fail("FAIL: $name. Halting puppet run (test)")		  
-		  
-		  }
-		  'disable': {
-		  
-		  fail("FAIL: $name. Halting puppet run (test)")		  
-		  
-		  
-		  }
-		  default: { 
-			fail("FAIL: SELINUX unknown state $name. Aborting...")
-		  }
-		  
-		}
+        file { "/etc/selinux/config":
+            content =>  template( "hp_selinux/config.erb" ),
+              owner => 'root',
+              group => 'root',
+               mode => '0644',
+        }
+		
+		# need to reboot after any config changes
+		exec { 'REBOOTING_SYSTEM_DUE_TO_CHANGES_IN_SELINUX_CONFIG':
+			    command => 'reboot',
+			       path => '/bin:/sbin:/usr/bin:/usr/sbin',
+			  subscribe => File['/etc/selinux/config'],
+			refreshonly => true,
+		}	
+		
         
 	} else {
 		fail("FAIL: SELINUX on unsupported $ostype distribution. Aborting...")

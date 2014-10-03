@@ -29,7 +29,7 @@ node 'ol65.home.tld' {
 
 
     ## SECURITY
-    hp_selinux::state { 'enforcing' : }
+    hp_selinux::state { 'disable' : }
     hp_sudo::config { 'bekr': }
     
     
