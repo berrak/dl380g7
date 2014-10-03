@@ -3,7 +3,7 @@
 ##
 class hp_dnsmasq::install {
 
-    package { 'dnsmasq' :
+    package { "dnsmasq" :
                ensure => present,
         allow_virtual => true,
     }
