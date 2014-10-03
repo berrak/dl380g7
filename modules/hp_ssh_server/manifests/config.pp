@@ -20,7 +20,7 @@ class hp_ssh_server::config {
 			owner => 'root',
 			group => 'root',
 		  require => Package["openssh-server"],
-		   notify => Service["$sshservicename"],
+		   notify => Service[$sshservicename],
 	}
 	
 	# our custom ssh login banner (warning for unauthorized access)
