@@ -45,6 +45,7 @@ node 'ol65.home.tld' {
     ## MAINTENANCE
 	include hp_ssh_server
     hp_ssh_server::sshuser { 'bekr' : }
+    include hp_auto_upgrade
 
 }
 
