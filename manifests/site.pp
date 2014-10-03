@@ -39,6 +39,7 @@ node 'ol65.home.tld' {
     ## SECURITY
     hp_selinux::state { 'enforcing' : }
     hp_sudo::config { 'bekr': }
+    include hp_logwatch
     
     
     ## MAINTENANCE
@@ -141,6 +142,7 @@ node 'node-hphome.home.tld' {
 	include hp_chkrootkit
 	include hp_hardening
 	include hp_sysctl
+    include hp_logwatch
 	
 
 	## MAINTENANCE
@@ -148,7 +150,6 @@ node 'node-hphome.home.tld' {
 	# SSH server
 	include hp_ssh_server
 	
-	include hp_logwatch
 	
     # Remote log disabled in rsyslog config due to amount of traffic!
 	include hp_rsyslog

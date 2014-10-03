@@ -4,7 +4,7 @@
 class hp_logwatch::config {
  
  
-	file { "/etc/logwatch/logwatch.conf":
+	file { "/etc/logwatch/conf/logwatch.conf":
 		source => "puppet:///modules/hp_logwatch/logwatch.conf",
 		 owner => 'root',
 		 group => 'root',
