@@ -9,7 +9,7 @@ class hp_ssh_server::config {
 	
 	if $ostype == 'Debian' {
 		$sshservicename = 'ssh'
-	} elsif {
+	} elsif $ostype == 'OracleServer' {
 		$sshservicename = 'sshd'
 	} else {
 		fail("FAIL: Unknown $ostype distribution. Aborting...")
