@@ -3,7 +3,7 @@
 ##
 class hp_dnsmasq::config ( $dns1='', $dns2='', $real_hostname='' ) {
 
-    include hp_dnsmasq::service
+    include hp_dnsmasq
     
     # template variables
     
