@@ -9,7 +9,7 @@ node 'ol65.home.tld' {
 
     ## BASIC
     # use dnsmasq DNS for OracleLinux hosts (no need for hp_host-module)
-    class { 'hp_dnsmasq' :
+    class { 'hp_dnsmasq::config' :
                 dns1 => '8.8.8.8',
                 dns2 => '8.8.4.4',
                 real_hostname => 'ol65',
