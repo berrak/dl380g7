@@ -3,14 +3,24 @@
 ##
 class hp_ssh_server::config {
     
-    $myhostname = $::hostname	
+    $myhostname = $::hostname
+	
+	$ostype = $::lsbdistid
+	
+	if $ostype == 'Debian' {
+		$sshservicename = 'ssh'
+	} elsif {
+		$sshservicename = 'sshd'
+	} else {
+		fail("FAIL: Unknown $ostype distribution. Aborting...")
+	}
 	
 	file { '/etc/ssh/sshd_config' :
            source => "puppet:///modules/hp_ssh_server/sshd_config",		  
 			owner => 'root',
 			group => 'root',
 		  require => Package["openssh-server"],
-		   notify => Service["ssh"],
+		   notify => Service["$sshservicename"],
 	}
 	
 	# our custom ssh login banner (warning for unauthorized access)
@@ -22,6 +32,7 @@ class hp_ssh_server::config {
 		  require => Package["openssh-server"],
 	}
 	
+	# only non-priveleged users in this group are allowed to ssh-login
 	exec { "add_group_sshusers" :
             command => "groupadd -r sshusers",
                path => '/usr/bin:/usr/sbin:/bin',
