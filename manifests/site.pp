@@ -31,8 +31,9 @@ node 'ol65.home.tld' {
     hp_user_bashrc::config { 'bekr' : }
 
     
-    
     ## APPLICATIONS
+	# REDHAT packages without any special configurations
+    class { hp_install_rpms : rpms => [ "tree", "ethtool", "parted", "lsof" ] }
 
 
     ## SECURITY
