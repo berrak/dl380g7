@@ -5,7 +5,9 @@
 # THIS IS FOR 'REDHAT' ONLY. THIS FILE (/root/.bash_profile)
 # SOURCE (~/.bashrc) AND ALL CUSTOM USER SNIPPETS IN  (~/bashrc.d)
 ##############################################################
-# .bash_profile
+#
+# ~/.bash_profile
+#
 
 # Get the default local customization (really global - see .bashrc)
 if [ -f ~/.bashrc ]; then
@@ -13,5 +15,7 @@ if [ -f ~/.bashrc ]; then
 fi
 
 # Source user specific environment snippets
-[ -f ~/bashrc.d/<%= name %> ] && source ~/bashrc.d/<%= name %>
+if [ -f ~/bashrc.d/<%= name %> ] ; then
+	. ~/bashrc.d/<%= name %>
+fi
 
