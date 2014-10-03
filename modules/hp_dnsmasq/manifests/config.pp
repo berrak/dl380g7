@@ -4,6 +4,10 @@
 class hp_dnsmasq::config ( $dns1='', $dns2='', $real_hostname='' ) {
 
     # template variables
+    
+    $mydns1 = $dns1
+    $mydns2 = $dns2 
+    
     $puppetsrvfqdn = $::fqdn
     $myhostname = $::hostname
     $myip_eth0 = $::ipaddress_eth0
