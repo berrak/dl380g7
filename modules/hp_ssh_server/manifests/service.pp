@@ -4,6 +4,8 @@
 class hp_ssh_server::service {
     
 	
+	$ostype = $::lsbdistid
+	
 	if $ostype == 'Debian' {
 		$sshservicename = 'ssh'
 	} elsif $ostype == 'OracleServer' {
