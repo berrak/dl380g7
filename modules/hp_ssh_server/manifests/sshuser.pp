@@ -1,18 +1,21 @@
 ##
 ## Add non-privileged sshuser to login to the ssh-server
 ##
-define hp_ssh_server::config::sshuser ( $loginuser='' ) {
+## Sample usage:
+##		hp_ssh_server::sshuser { 'bekr' : }
+##
+define hp_ssh_server::sshuser {
 
     include hp_ssh_server
     
-    if $loginuser == '' {
-        fail("FAIL: No non-priveleged user give!. Aborting...")
+    if $name == '' {
+        fail("FAIL: No non-priveleged user given!. Aborting...")
     }
 
-    exec { "add_${loginuser}_to_sshusers_group" :
-            command => "usermod -a -G sshusers $loginuser",
+    exec { "add_${name}_to_sshusers_group" :
+            command => "usermod -a -G sshusers $name",
                path => '/usr/bin:/usr/sbin:/bin',
-             unless => "cat /etc/group | grep sshusers | grep $loginuser",
+             unless => "cat /etc/group | grep sshusers | grep $name",
             require => Class["hp_ssh_server"],
     }
 

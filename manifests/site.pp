@@ -34,7 +34,7 @@ node 'ol65.home.tld' {
     
     ## MAINTENANCE
 	include hp_ssh_server
-    hp_ssh_server::config::sshuser { "add_sshuser_bekr": loginuser => 'bekr' }
+    hp_ssh_server::sshuser { 'bekr' : }
 
 }
 
