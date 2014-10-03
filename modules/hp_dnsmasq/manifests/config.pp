@@ -34,7 +34,7 @@ class hp_dnsmasq::config ( $dns1='', $dns2='', $real_hostname='' ) {
               owner => 'root',
               group => 'root',
                mode => '0644',
-             notify => Service['dnsmasq'],
+             notify => Service["dnsmasq"],
         }        
         
         
