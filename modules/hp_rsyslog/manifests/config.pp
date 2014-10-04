@@ -90,6 +90,16 @@ class hp_rsyslog::config {
             require => Class["hp_rsyslog::install"],
              notify => Class["hp_rsyslog::service"],
         }
+		
+		# logrotate snippets go into the /logrotate.d
+		# NOTE: for OL6 hosts -- this directory allready conatains a 'syslog'
+		
+		file { '/etc/logrotate.d/rsyslog':
+			 source => "puppet:///modules/hp_rsyslog/rsyslog",    
+			  owner => 'root',
+			  group => 'root',
+			require => Class["hp_logrotate::install"],
+		}	
     
     }
     
