@@ -43,10 +43,10 @@ node 'ol65.home.tld' {
     include hp_iptables_rpm
     
     # disable unnecessary services
-    hp_service::disable { 'cups' : }
+    hp_service::disable { 'atd' : }
     
-    # remove these REDHAT packages
-    class { hp_remove_rpms : rpms => [ "nfs-utils" ] }
+    # remove these server unnecessary REDHAT packages
+    class { hp_remove_rpms : rpms => [ "nfs-utils", "rpcbind", "cups" ] }
     
     
     ## MAINTENANCE

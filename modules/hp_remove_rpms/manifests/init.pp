@@ -11,7 +11,8 @@ class hp_remove_rpms ( $rpms ='' ) {
     # rpms is an array of rpm package names, defined in site.pp
     
     package { $rpms :
-        ensure => purged,
+               ensure => purged,
+        allow_virtual => true,
     }
 
 }
