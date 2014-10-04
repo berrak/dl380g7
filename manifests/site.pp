@@ -46,7 +46,8 @@ node 'ol65.home.tld' {
     hp_service::disable { 'atd' : }
     hp_service::disable { 'autofs' : }
     hp_service::disable { 'kdump' : }
-    hp_service::disable { 'rhnsd' : } 
+    hp_service::disable { 'rhnsd' : }
+    hp_service::disable { 'mdmonitor' : } 
     
     # remove these, for a server unnecessary REDHAT packages
     class { hp_remove_rpms : rpms => [ "nfs-utils", "rpcbind", "cups" ] }
