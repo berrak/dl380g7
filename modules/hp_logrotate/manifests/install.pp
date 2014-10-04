@@ -4,7 +4,8 @@
 class hp_logrotate::install {
 
     package { 'logrotate' :
-        ensure => installed,
+               ensure => installed,
+        allow_virtual => true, 
     }
     
 }
