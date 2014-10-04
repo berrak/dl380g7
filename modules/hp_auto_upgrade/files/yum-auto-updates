@@ -8,8 +8,8 @@ echo "#######################" >> /var/log/yum-auto-updates
 date +%Y-%m-%d-UTC-%H:%M:%S >> /var/log/yum-auto-updates
 echo "#######################" >> /var/log/yum-auto-updates
 
-/usr/bin/yum -e 0 -d 0 -y update yum 2>&1 >> /var/log/yum-auto-updates
+/usr/bin/yum -e 0 -d 2 -y update yum 2>&1 >> /var/log/yum-auto-updates
 
-/usr/bin/yum -e 0 -d 0 -y update 2>&1 >> /var/log/yum-auto-updates
+/usr/bin/yum -e 0 -d 2 -y update 2>&1 >> /var/log/yum-auto-updates
 
 echo "[OK] Oracle Linux updates (if any) is installed on $FQDN." >> /var/log/yum-auto-updates
