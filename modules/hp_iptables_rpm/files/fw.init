@@ -42,8 +42,6 @@ $IPTABLES -P INPUT ACCEPT
 $IPTABLES -P OUTPUT ACCEPT
 $IPTABLES -P FORWARD ACCEPT
 
-----------------------------------------------------------------------------
-
 ## ======================
 ##   LOOPBACK TRAFFIC
 ## ======================
