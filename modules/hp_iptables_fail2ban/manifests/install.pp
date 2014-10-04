@@ -3,6 +3,11 @@
 ##
 class hp_iptables_fail2ban::install {
 
+    
+    if not ( $:lsbdistid == 'Debian' ) {
+        fail("FAIL: Aborting. This module is only for Debian based distributions!")
+    }
+    
     package  { 'iptables' :
                 ensure => installed }
 
