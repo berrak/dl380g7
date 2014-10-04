@@ -48,7 +48,8 @@ node 'ol65.home.tld' {
     hp_service::disable { 'kdump' : }
     hp_service::disable { 'rhnsd' : }
     hp_service::disable { 'mdmonitor' : }
-    hp_service::disable { 'portreserve' : } 
+    hp_service::disable { 'lvm2-monitor' : }     
+    hp_service::disable { 'portreserve' : }
     
     # remove these, for a server unnecessary REDHAT packages
     class { hp_remove_rpms : rpms => [ "nfs-utils", "rpcbind", "cups" ] }
