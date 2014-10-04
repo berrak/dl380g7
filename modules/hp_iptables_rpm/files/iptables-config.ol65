@@ -52,3 +52,4 @@ IPTABLES_STATUS_LINENUMBERS="yes"
 # Space separated list of sysctl items which are to be reloaded on start.
 # List items will be matched by fgrep.
 #IPTABLES_SYSCTL_LOAD_LIST=".nf_conntrack .bridge-nf"
+IPTABLES_SYSCTL_LOAD_LIST="nf_conntrack"

@@ -46,9 +46,8 @@ LOGOPT="LOG --log-level 7 --log-ip-options --log-tcp-options"
 ## Prevent excessive logging
 RLIMIT="-m limit --limit 3/s --limit-burst 8"
 
-## Load modules
-$MODPROBE ip_conntrack
-$MODPROBE ip_conntrack_ftp
+## Load module
+$MODPROBE nf_conntrack
 
 ## Flush old rules, old custom rules
 $IPTABLES -F
