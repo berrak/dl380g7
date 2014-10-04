@@ -32,7 +32,7 @@ node 'ol65.home.tld' {
 
     
     ## APPLICATIONS
-	# REDHAT packages without any special configurations
+	# Install REDHAT packages without any special configurations
     class { hp_install_rpms : rpms => [ "tree", "ethtool", "parted", "lsof" ] }
 
 
@@ -41,6 +41,9 @@ node 'ol65.home.tld' {
     hp_sudo::config { 'bekr': }
     include hp_logwatch
     include hp_iptables_rpm
+    
+    # disable unnecessary services
+    hp_service::disable { 'cups' : }
     
     
     ## MAINTENANCE
