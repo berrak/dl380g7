@@ -17,19 +17,12 @@ class hp_iptables_rpm::config  {
 	    notify => Service['iptables'],
 	}
 
-	# iptables file in production
+	# iptables file in production (manual activation)
 	file { "/root/bin/fw.${myhostname}" :
 		 source => "puppet:///modules/hp_iptables_rpm/fw.${myhostname}",
 		  owner => 'root',
 		  group => 'root',
 		   mode => '0700',
-		 notify => Exec["activate_new_iptable_for_${myhostname}"],
-	}
-	
-	exec { "activate_new_iptable_for_${myhostname}":
-			command => "/bin/bash /root/bin/fw.${myhostname}",
-		refreshonly => true,
-			require => File["/root/bin/fw.${myhostname}"],
 	}
 	
 	# iptables file for initial setup (manual activation)

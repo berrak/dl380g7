@@ -193,18 +193,14 @@ $IPTABLES -A OUTPUT -m state --state INVALID -j DROP
 $IPTABLES -A OUTPUT ! -o lo -j $LOGOPT $RLIMIT --log-prefix "DROP OUTPUT DEFAULT "
 $IPTABLES -A OUTPUT ! -o lo -j DROP
 
-#############################
-## SAVE THE FILE AND RESTART
-#############################
-
-$SERVICE iptables save
-$SERVICE iptables restart
-
-#############################
-## LIST LOADED IPTABLES RULES
-#############################
-
-$IPTABLES -L -v --line-numbers
+##############################
+# To use this, manually run:
+#
+#    service iptables save
+#    service iptables restart
+#    iptables -L -v --line-numbers
+#
+##############################
 
 exit 0
 
