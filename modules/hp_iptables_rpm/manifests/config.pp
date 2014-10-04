@@ -22,7 +22,7 @@ class hp_iptables_rpm::config  {
 		 source => "puppet:///modules/hp_iptables_rpm/fw.${myhostname}",
 		  owner => 'root',
 		  group => 'root',
-		   mode => '0600',
+		   mode => '0700',
 		 notify => Exec["activate_new_iptable_for_${myhostname}"],
 	}
 	
@@ -37,7 +37,7 @@ class hp_iptables_rpm::config  {
 		 source => "puppet:///modules/hp_iptables_rpm/fw.init",
 		  owner => 'root',
 		  group => 'root',
-		   mode => '0600',
+		   mode => '0700',
 	}
 	
 
