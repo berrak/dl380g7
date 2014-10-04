@@ -45,6 +45,9 @@ node 'ol65.home.tld' {
     # disable unnecessary services
     hp_service::disable { 'cups' : }
     
+    # remove these REDHAT packages
+    class { hp_remove_rpms : rpms => [ "nfs-utils" ] }
+    
     
     ## MAINTENANCE
 	include hp_ssh_server
