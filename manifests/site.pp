@@ -44,8 +44,9 @@ node 'ol65.home.tld' {
     
     # disable unnecessary services
     hp_service::disable { 'atd' : }
+    hp_service::disable { 'autofs' : } 
     
-    # remove these server unnecessary REDHAT packages
+    # remove these, for a server unnecessary REDHAT packages
     class { hp_remove_rpms : rpms => [ "nfs-utils", "rpcbind", "cups" ] }
     
     
