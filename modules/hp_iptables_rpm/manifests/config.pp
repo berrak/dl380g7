@@ -3,13 +3,13 @@
 ## 
 class hp_iptables_rpm::config  {
 
-	include hp_iptables_rpm
+	include hp_iptables_rpm::install, hp_iptables_rpm::service
 	
 	$myhostname = $::hostname
 
 	# configuration for iptables
-	file { '/etc/sysconfig/iptables-conf' :
-		source => "puppet:///modules/hp_iptables_rpm/iptables-conf.${myhostname}",
+	file { '/etc/sysconfig/iptables-config' :
+		source => "puppet:///modules/hp_iptables_rpm/iptables-config.${myhostname}",
 		 owner => 'root',
 		 group => 'root',
 		  mode => '0600',

@@ -75,18 +75,14 @@ $IPTABLES -A INPUT -j REJECT --reject-with icmp-host-prohibited
 
 $IPTABLES -A FORWARD -j REJECT --reject-with icmp-host-prohibited
 
-#############################
-## SAVE THE FILE AND RESTART
-#############################
-
-$SERVICE iptables save
-$SERVICE iptables restart
-
-#############################
-## LIST LOADED IPTABLES RULES
-#############################
-
-$IPTABLES -L -v --line-numbers
+##############################
+# To use this, manually run:
+#
+#    service iptables save
+#    service iptables restart
+#    iptables -L -v --line-numbers
+#
+##############################
 
 exit 0
 

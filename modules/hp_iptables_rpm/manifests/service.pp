@@ -3,7 +3,7 @@
 #
 class hp_iptables_rpm::service {
 
-	include hp_iptables_rpm
+	include hp_iptables_rpm::install
 
     service { 'iptables':
         enable => true,
