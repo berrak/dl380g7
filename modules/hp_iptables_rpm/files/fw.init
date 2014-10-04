@@ -1,0 +1,96 @@
+#!/bin/bash
+# /root/bin/fw.init
+##############################################################
+# DO NOT EDIT. MANAGES BY PUPPET. CHANGES WILL BE WIPED OUT. #
+##############################################################
+#
+# Rules for HP server (external host).
+#
+# Copyright (C) (2014) K-B.Kronlund <bkronmailbox-copyright@yahoo.se>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+## Basic data
+
+IPTABLES=/sbin/iptables
+MODPROBE=/sbin/modprobe
+SERVICE=/sbin/service
+
+## Load modules
+$MODPROBE ip_conntrack
+$MODPROBE ip_conntrack_ftp
+
+## Flush old rules, old custom chains
+$IPTABLES -F
+$IPTABLES -X
+
+#---------------------------------------------------------------------
+# Default policies
+#---------------------------------------------------------------------
+$IPTABLES -P INPUT ACCEPT
+$IPTABLES -P OUTPUT ACCEPT
+$IPTABLES -P FORWARD ACCEPT
+
+----------------------------------------------------------------------------
+
+## ======================
+##   LOOPBACK TRAFFIC
+## ======================
+
+$IPTABLES -I INPUT 1 -i lo -j ACCEPT
+
+## ======================
+##    INBOUND TRAFFIC
+## ======================
+
+# allow all established and related traffic in
+$IPTABLES -A INPUT -p all -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+# allow ping
+$IPTABLES -A INPUT -p icmp -j ACCEPT
+
+# ssh client access for management
+$IPTABLES -A INPUT -p tcp -m tcp --dport 22 -m state --state NEW -j ACCEPT
+
+# allow puppet client and server communication
+$IPTABLES -A INPUT -p tcp -m tcp --dport 8139:8140 -m state --state NEW -j ACCEPT
+
+# default reject rule
+$IPTABLES -A INPUT -j REJECT --reject-with icmp-host-prohibited
+
+## ==========================
+##     FORWARD TRAFFIC
+## ==========================
+
+$IPTABLES -A FORWARD -j REJECT --reject-with icmp-host-prohibited
+
+#############################
+## SAVE THE FILE AND RESTART
+#############################
+
+$SERVICE iptables save
+$SERVICE iptables restart
+
+#############################
+## LIST LOADED IPTABLES RULES
+#############################
+
+$IPTABLES -L -v --line-numbers
+
+exit 0
+
+
+
+
+

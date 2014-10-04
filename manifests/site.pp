@@ -40,6 +40,7 @@ node 'ol65.home.tld' {
     hp_selinux::state { 'enforcing' : }
     hp_sudo::config { 'bekr': }
     include hp_logwatch
+    include hp_iptables_rpm
     
     
     ## MAINTENANCE
