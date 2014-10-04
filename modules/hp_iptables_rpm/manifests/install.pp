@@ -4,7 +4,7 @@
 class hp_iptables_rpm::install {
 
     
-    if not ( $::lsbdistid == 'OracleServer' ) {
+    if ! ( $::lsbdistid == 'OracleServer' ) {
         fail("FAIL: Aborting. This module (iptables) is only for OracleLinux based distributions!")
     }
     
