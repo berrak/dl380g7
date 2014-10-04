@@ -58,16 +58,8 @@ $IPTABLES -X
 # Default policies
 #---------------------------------------------------------------------
 $IPTABLES -P INPUT DROP
-$IPTABLES -P OUTPUT DROP
+$IPTABLES -P OUTPUT ACCEPT
 $IPTABLES -P FORWARD DROP
-
-#--------------------------------------------------------------------------------------
-## Drop broadcast-packages (only log for initial test -- comment out not to fill logs)
-$IPTABLES -N broadcast-drop
-# $IPTABLES -A broadcast-drop -m pkttype --pkt-type broadcast -j $LOGOPT $RLIMIT --log-prefix "BROADCAST DROP "
-$IPTABLES -A broadcast-drop -m pkttype --pkt-type broadcast -j DROP
-$IPTABLES -A broadcast-drop -j RETURN
-#--------------------------------------------------------------------------------------
 
 ## ======================
 ## LOOPBACK TRAFFIC
@@ -81,10 +73,10 @@ $IPTABLES -I OUTPUT 1 -o lo -j ACCEPT
 ## ALLOW INBOUND TRAFFIC
 ## ======================
 
-# allow all established and related in
+# allow all established and related inbound traffic
 $IPTABLES -A INPUT -p all -m state --state ESTABLISHED,RELATED -j ACCEPT
 
-# allow Google access
+# allow Google identification access
 $IPTABLES -A INPUT -p tcp -s $GOOGLENET -m tcp -m state --state NEW -j ACCEPT
 
 # ssh client access for management
@@ -92,7 +84,7 @@ $IPTABLES -A INPUT -p tcp -s $BKTRUSTEDNET -m tcp --dport 22 -m state --state NE
 $IPTABLES -A INPUT -p tcp -s $BKTRUSTEDADDR -m tcp --dport 22 -m state --state NEW -j ACCEPT
 $IPTABLES -A INPUT -p tcp -s $BKTRUSTEDRANGE -m tcp --dport 22 -m state --state NEW -j ACCEPT
 
-# allow DHCP requests
+# allow inbound DHCP
 $IPTABLES -A INPUT -p udp -m udp --dport 67:68 --sport 67:68 -m state --state NEW -j ACCEPT
 
 # allow dns (udp/tcp) queries to our host
@@ -107,91 +99,36 @@ $IPTABLES -A INPUT -p tcp -s $BKTRUSTEDADDR -m tcp --dport 80 -m state --state N
 $IPTABLES -A INPUT -p tcp -s $BKTRUSTEDNET -m tcp --dport 8080 -m state --state NEW -j ACCEPT
 $IPTABLES -A INPUT -p tcp -s $BKTRUSTEDADDR -m tcp --dport 8080 -m state --state NEW -j ACCEPT
 
-# allow NTP to communicate with external time servers
+# allow inbound NTP communication
 $IPTABLES -A INPUT -p udp -m udp --dport 123 -m state --state NEW -j ACCEPT
 
-# Puppet client: allow puppet server input to this puppet client
-$IPTABLES -A INPUT -p tcp -m tcp --dport 8139 -m state --state NEW -j ACCEPT
-
-# Puppet server: allow puppet client requests to this puppet server
-$IPTABLES -A INPUT -p tcp -m tcp --dport 8140 -m state --state NEW -j ACCEPT
+# allow puppet server/client communication
+$IPTABLES -A INPUT -p tcp -m tcp --dport 8139:8140 -m state --state NEW -j ACCEPT
 
 # allow possible multicast mDNS packets
 $IPTABLES -A INPUT -p udp -m udp --dport 5353 -j ACCEPT
 
-# allow Git (port 9418) access for trusted users
+# allow Git (port 9418) input for trusted users
 $IPTABLES -A INPUT -p tcp -s $BKTRUSTEDNET -m tcp --dport 9418 -m state --state NEW -j ACCEPT
 $IPTABLES -A INPUT -p tcp -s $BKTRUSTEDADDR -m tcp --dport 9418 -m state --state NEW -j ACCEPT
 
 # accept inbound ping requests to this server
 $IPTABLES -A INPUT -p icmp --icmp-type echo-request -m state --state NEW -j ACCEPT
 
-## ==========================
-## DROP OTHER INBOUND TRAFFIC
-## ==========================
+## =====================================
+## LOG/DROP/REJECT OTHER INBOUND TRAFFIC
+## =====================================
 
-#---------------------------------------------------------------------------
-# CATCH ALL INPUT LOG-and-DROP RULES (you may be suprised what ends up here)
-#---------------------------------------------------------------------------
+#-------------------------------------------
+# CATCH ALL INPUT LOG-and-DROP/REJECT RULES
+#-------------------------------------------
 
 ## Prevent invalid input packages
 $IPTABLES -A INPUT -m state --state INVALID -j $LOGOPT $RLIMIT --log-prefix "DROP INPUT INVALID "
 $IPTABLES -A INPUT -m state --state INVALID -j DROP
 
-$IPTABLES -A INPUT ! -i lo -j $LOGOPT $RLIMIT --log-prefix "DROP INPUT DEFAULT "
-$IPTABLES -A INPUT ! -i lo -j DROP
-
-## ======================
-## ALLOW OUTBOUND TRAFFIC
-## ======================
-
-# allow established and related traffic out
-$IPTABLES -A OUTPUT -p all -m state --state ESTABLISHED,RELATED -j ACCEPT
-
-# allow ssh pass out
-$IPTABLES -A OUTPUT -p tcp -m tcp --dport 22 -m state --state NEW -j ACCEPT
-
-# allow whois
-$IPTABLES -A OUTPUT -p tcp -m tcp --dport 43 -m state --state NEW -j ACCEPT
-
-# allow DNS queries
-$IPTABLES -A OUTPUT -p tcp -m tcp --dport 53 -m state --state NEW -j ACCEPT
-$IPTABLES -A OUTPUT -p udp -m udp --dport 53 -m state --state NEW -j ACCEPT
-
-# Allow mail out from host
-$IPTABLES -A OUTPUT -p tcp -m tcp --dport 25 -m state --state NEW -j ACCEPT
-$IPTABLES -A OUTPUT -p tcp -m tcp --dport 465 -m state --state NEW -j ACCEPT
-$IPTABLES -A OUTPUT -p tcp -m tcp --dport 587 -m state --state NEW -j ACCEPT
-
-# allow web traffic out
-$IPTABLES -A OUTPUT -p tcp -m tcp --dport 80 -m state --state NEW -j ACCEPT
-
-# allow https out
-$IPTABLES -A OUTPUT -p tcp -m tcp --dport 443 -m state --state NEW -j ACCEPT
-
-# allow this NTP server communicate with other external time servers (broadcast)
-$IPTABLES -A OUTPUT -p udp -m udp --dport 123 -m state --state NEW -j ACCEPT
-
-# allow an outbound ping request from this host
-$IPTABLES -A OUTPUT -p icmp --icmp-type echo-request -m state --state NEW -j ACCEPT
-
-## ===========================
-## DROP OTHER OUTBOUND TRAFFIC
-## ===========================
-
-# deny any broadcasts from host to external
-$IPTABLES -t filter -A OUTPUT -j broadcast-drop
-
-#-----------------------------------------------------------
-# CATCH ALL LOG RULES (you may be suprise what ends up here)
-#-----------------------------------------------------------
-
-## Prevent invalid output packages
-$IPTABLES -A OUTPUT -m state --state INVALID -j $LOGOPT $RLIMIT --log-prefix "DROP OUTPUT INVALID "
-$IPTABLES -A OUTPUT -m state --state INVALID -j DROP
-
-$IPTABLES -A OUTPUT ! -o lo -j $LOGOPT $RLIMIT --log-prefix "DROP OUTPUT DEFAULT "
-$IPTABLES -A OUTPUT ! -o lo -j DROP
+$IPTABLES -A INPUT ! -i lo -j $LOGOPT $RLIMIT --log-prefix "REJECT INPUT DEFAULT "
+$IPTABLES -A INPUT ! -i lo -j REJECT --reject-with icmp-host-prohibited
 
 ##############################
 # To use this, manually run:
