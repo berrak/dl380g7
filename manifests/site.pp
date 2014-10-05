@@ -52,7 +52,7 @@ node 'ol65.home.tld' {
     hp_service::disable { 'portreserve' : }
     
     # remove these, for a server unnecessary REDHAT packages
-    class { hp_remove_rpms : rpms => [ "nfs-utils", "rpcbind", "cups" ] }
+    class { hp_remove_rpms : rpms => [ "cups" ] }
     
     
     ## MAINTENANCE
