@@ -54,21 +54,7 @@ class hp_root_bashrc::config {
 			 group => 'root',
 			  mode => '0600',
 		   require => File['/root/.bash_profile'],
-		}
-	
-		# if .bashrc changes, source it
-		exec { 'rpm_source_changes_due_to_changes_in_bashrc':
-			command => '/bin/bash . /root/.bashrc',
-			subscribe => File['/root/.bashrc'],
-			refreshonly => true,
-		}
-		
-		# if .bash_root changes, source it
-		exec { 'rpm_source_changes_due_to_changes_in_bashrc_root':
-			command => '/bin/bash . /root/.bash_root',
-			subscribe => File['/root/.bashrc_root'],
-			refreshonly => true,
-		}		
+		}	
 	
 	} else {
 		fail("FAIL: Unknown $ostype distribution. Aborting...")
