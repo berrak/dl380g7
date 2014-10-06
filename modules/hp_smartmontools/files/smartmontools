@@ -1,0 +1,6 @@
+##############################################################
+# MANAGED BY PUPPET. DO NOT EDIT. CHANGES WILL BE WIPED OUT. #
+##############################################################
+# command line options for smartd
+smartd_opts="-q never"
+

@@ -22,6 +22,7 @@ node 'ol65.home.tld' {
     # This is the ntp server for localnet
     class { 'hp_ntp' : role => 'lanserver', peerntpip => '192.168.0.66' }
     class { hp_fstab::config : fstabhost => 'ol65' }
+    include hp_smartmontools
     
     ## USER PROFILES
     
