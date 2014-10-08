@@ -20,8 +20,9 @@ alias mv='mv -i'
 
 alias cls='clear'
 
-PATH=$PATH:/root/bin
-EDITOR=nano
+export PATH=$PATH:/root/bin
+export EDITOR=nano
+export VISUAL=nano
 
 function backup() {
 	newname=$1.`date +%Y%m%d.%H%M.UTC.bak`;
