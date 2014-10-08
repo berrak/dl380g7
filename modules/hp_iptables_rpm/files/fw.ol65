@@ -129,9 +129,24 @@ $IPTABLES -A INPUT -m state --state INVALID -j DROP
 $IPTABLES -A INPUT ! -i lo -j $LOGOPT $RLIMIT --log-prefix "REJECT INPUT DEFAULT "
 $IPTABLES -A INPUT ! -i lo -j REJECT --reject-with icmp-host-prohibited
 
+
+## ================================
+## OUTBOUND NAT
+## ================================
+
+#$IPTABLES -t nat -A POSTROUTING -o br0 -j MASQUERADE
+
+#----------------------------------------------------------------
+## Internal outbound traffic (from internal net --> external net)
+#----------------------------------------------------------------
+# allow established and related traffic pass
+#$IPTABLES -I FORWARD 1 -i tap1 -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+
 ##############################
 # To use this, manually run:
 #
+#    /root/bin/fw.ol65
 #    service iptables save
 #    service iptables restart
 #    iptables -L -v --line-numbers
