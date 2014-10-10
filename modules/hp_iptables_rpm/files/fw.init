@@ -27,9 +27,10 @@ IPTABLES=/sbin/iptables
 MODPROBE=/sbin/modprobe
 SERVICE=/sbin/service
 
-## Load modules
-$MODPROBE ip_conntrack
-$MODPROBE ip_conntrack_ftp
+## Load module (state tracking)
+$MODPROBE nf_conntrack
+## Load module (RELATED used for ftp, tftp, irc, sctp, amanda)
+$MODPROBE nf_conntrack_ftp
 
 ## Flush old rules, old custom chains
 $IPTABLES -F
@@ -43,7 +44,7 @@ $IPTABLES -P OUTPUT ACCEPT
 $IPTABLES -P FORWARD ACCEPT
 
 ## ======================
-##   LOOPBACK TRAFFIC
+##   LOOPBACK TRAFFIC (first rule)
 ## ======================
 
 $IPTABLES -I INPUT 1 -i lo -j ACCEPT
@@ -55,27 +56,28 @@ $IPTABLES -I INPUT 1 -i lo -j ACCEPT
 # allow all established and related traffic in
 $IPTABLES -A INPUT -p all -m state --state ESTABLISHED,RELATED -j ACCEPT
 
-# allow ping
-$IPTABLES -A INPUT -p icmp -j ACCEPT
-
 # ssh client access for management
 $IPTABLES -A INPUT -p tcp -m tcp --dport 22 -m state --state NEW -j ACCEPT
 
 # allow puppet client and server communication
 $IPTABLES -A INPUT -p tcp -m tcp --dport 8139:8140 -m state --state NEW -j ACCEPT
 
+# allow ping
+$IPTABLES -A INPUT -p icmp -j ACCEPT
+
 # default reject rule
 $IPTABLES -A INPUT -j REJECT --reject-with icmp-host-prohibited
 
 ## ==========================
-##     FORWARD TRAFFIC
+##     FORWARD TRAFFIC (default)
 ## ==========================
 
-$IPTABLES -A FORWARD -j REJECT --reject-with icmp-host-prohibited
+#$IPTABLES -A FORWARD -j REJECT --reject-with icmp-host-prohibited
 
 ##############################
 # To use this, manually run:
 #
+#    /root/bin/fw.init
 #    service iptables save
 #    service iptables restart
 #    iptables -L -v --line-numbers
