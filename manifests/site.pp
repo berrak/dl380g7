@@ -42,6 +42,7 @@ node 'ol65.home.tld' {
     hp_sudo::config { 'bekr': }
     include hp_logwatch
     include hp_iptables_rpm
+    hp_service::enable { 'ebtables' : }
     
     # disable unnecessary services
     hp_service::disable { 'atd' : }
