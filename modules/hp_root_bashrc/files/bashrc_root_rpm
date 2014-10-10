@@ -20,6 +20,9 @@ alias mv='mv -i'
 
 alias cls='clear'
 
+alias iptables-show='iptables -L -v --line-numbers'
+alias ebtables-show='ebtables -Ln --Lmac2'
+
 export PATH=$PATH:/root/bin
 export EDITOR=nano
 export VISUAL=nano

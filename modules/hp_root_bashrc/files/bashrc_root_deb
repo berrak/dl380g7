@@ -20,7 +20,12 @@ alias mv='mv -i'
 
 alias cls='clear'
 
-PATH=$PATH:/root/bin
+alias iptables-show='iptables -L -v --line-numbers'
+alias ebtables-show='ebtables -Ln --Lmac2'
+
+export PATH=$PATH:/root/bin
+export EDITOR=nano
+export VISUAL=nano
 
 function backup() {
 	newname=$1.`date +%Y%m%d.%H%M.UTC.bak`;
