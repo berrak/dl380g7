@@ -20,13 +20,8 @@ server=<%= mydns2 %>
 interface=eth0
 # Or which to listen on by address (remember to include 127.0.0.1 if
 # you use this.)
-
-##
-## BK. Don't use 127.0.0.1 here on host (KVM/libvirtd can use lo)
-##     and bind to 'myip' address (allows KVM/libvirt to run its dnsmasq)
-##
+listen-address=127.0.0.1
 listen-address=<%= myip %>
-bind-interfaces
 
 # Set the cachesize here.
 cache-size=150
