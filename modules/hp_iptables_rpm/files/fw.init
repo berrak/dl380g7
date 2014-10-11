@@ -46,6 +46,8 @@ LOGOPTOUT="LOG --log-level crit --log-ip-options --log-tcp-options"
 $MODPROBE nf_conntrack
 ## Load module (RELATED used for ftp, tftp, irc, sctp, amanda)
 $MODPROBE nf_conntrack_ftp
+## Load module to used with broadcasts/multicaste rules
+$MODPROBE xt_pkttype
 
 ## Flush old rules, old custom chains
 $IPTABLES -F
@@ -55,8 +57,8 @@ $IPTABLES -X
 # Default policies
 #---------------------------------------------------------------------
 $IPTABLES -P INPUT DROP
-$IPTABLES -P OUTPUT ACCEPT
 $IPTABLES -P FORWARD DROP
+$IPTABLES -P OUTPUT ACCEPT
 
 ## ======================
 ##   LOOPBACK TRAFFIC (first rule)
@@ -64,9 +66,9 @@ $IPTABLES -P FORWARD DROP
 
 $IPTABLES -I INPUT 1 -i lo -j ACCEPT
 
-## ======================
-##    INBOUND TRAFFIC
-## ======================
+## ================================
+##    INBOUND TRAFFIC (POLICY DROP)
+## ================================
 
 # allow all established and related traffic in
 $IPTABLES -A INPUT -p all -m state --state ESTABLISHED,RELATED -j ACCEPT
@@ -80,16 +82,17 @@ $IPTABLES -A INPUT -p tcp -m tcp --dport 8139:8140 -m state --state NEW -j ACCEP
 # allow ping
 $IPTABLES -A INPUT -p icmp -j ACCEPT
 
-#¤ drop broadcasts like to 224.0.0.0/4
+#¤ drop broadcasts and multicasts like 224.0.0.0/4
 $IPTABLES -A INPUT -m pkttype --pkt-type broadcast -j DROP
+$IPTABLES -A INPUT -m pkttype --pkt-type multicast -j DROP
 
 # default reject rule
 $IPTABLES -A INPUT -j $LOGOPTIN --log-prefix "REJECT INPUT " 
 $IPTABLES -A INPUT -j REJECT --reject-with icmp-host-prohibited
 
-## ==========================
-##     FORWARD TRAFFIC
-## ==========================
+## =================================
+##     FORWARD TRAFFIC (POLICY DROP)
+## =================================
 
 # allow established and related traffic pass in and out
 $IPTABLES -I FORWARD 1 -m state --state ESTABLISHED,RELATED -j ACCEPT
@@ -126,6 +129,14 @@ $IPTABLES -A FORWARD ! -s $FWHOSTADDR -d $VM1HOSTADDR -j $LOGOPTFWD --log-prefix
 #$IPTABLES -A FORWARD ! -s $FWHOSTADDR -d $VM1HOSTADDR -j REJECT --reject-with icmp-host-prohibited
 $IPTABLES -A FORWARD ! -s $FWHOSTADDR -d $VM1HOSTADDR  -j ACCEPT
 
+
+## ===================================
+##    OUTBOUND TRAFFIC (POLICY ACCEPT)
+## ===================================
+
+#¤ drop broadcasts and multicasts like 224.0.0.0/4
+$IPTABLES -A OUTPUT -m pkttype --pkt-type broadcast -j DROP
+$IPTABLES -A OUTPUT -m pkttype --pkt-type multicast -j DROP
 
 ##############################
 # To use this, manually run:
