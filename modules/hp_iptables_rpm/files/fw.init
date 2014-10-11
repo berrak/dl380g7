@@ -47,7 +47,7 @@ $IPTABLES -X
 # Default policies
 #---------------------------------------------------------------------
 $IPTABLES -P INPUT DROP
-$IPTABLES -P OUTPUT DROP
+$IPTABLES -P OUTPUT ACCEPT
 $IPTABLES -P FORWARD DROP
 
 ## ======================
