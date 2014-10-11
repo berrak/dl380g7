@@ -30,17 +30,11 @@ SERVICE=/sbin/service
 FWHOSTADDR="192.168.0.66"
 VM1HOSTADDR="192.168.0.100"
 
-##
-## Note: rsyslog.conf must be configured to map below seldom occurring levels
-##
-## Log forward options, use logfile 'var/log/iptables/forward.log'
-LOGOPTFWD="LOG --log-level emerg --log-ip-options --log-tcp-options"
 
-## Log input options, use logfile '/var/log/iptables/input.log'
-LOGOPTIN="LOG --log-level alert --log-ip-options --log-tcp-options"
-
-## Log input options, use logfile '/var/log/iptables/output.log'
-LOGOPTOUT="LOG --log-level crit --log-ip-options --log-tcp-options"
+## rsyslog: Configured to match log prefic 'FORWARD', 'INPUT' and 
+##  'OUTPUT' to separate out log to files in /var/log/iptables/
+## 
+LOGOPT="LOG --log-ip-options --log-tcp-options"
 
 ## Load module (state tracking)
 $MODPROBE nf_conntrack
@@ -49,9 +43,10 @@ $MODPROBE nf_conntrack_ftp
 ## Load module to used with broadcasts/multicaste rules
 $MODPROBE xt_pkttype
 
-## Flush old rules, old custom chains
+## Flush old rules, old custom chains and counters 
 $IPTABLES -F
 $IPTABLES -X
+$IPTABLES -Z
 
 #---------------------------------------------------------------------
 # Default policies
@@ -60,15 +55,15 @@ $IPTABLES -P INPUT DROP
 $IPTABLES -P FORWARD DROP
 $IPTABLES -P OUTPUT ACCEPT
 
-## ======================
-##   LOOPBACK TRAFFIC (first rule)
-## ======================
+## ==============================
+##   LOOPBACK TRAFFIC (1st rule)
+## ==============================
 
 $IPTABLES -I INPUT 1 -i lo -j ACCEPT
 
-## ================================
-##    INBOUND TRAFFIC (POLICY DROP)
-## ================================
+## ===============================================================
+##   *** DANGER *** INBOUND TRAFFIC (POLICY DROP) *** DANGER ***
+## ===============================================================
 
 # allow all established and related traffic in
 $IPTABLES -A INPUT -p all -m state --state ESTABLISHED,RELATED -j ACCEPT
@@ -79,20 +74,22 @@ $IPTABLES -A INPUT -p tcp -m tcp --dport 22 -m state --state NEW -j ACCEPT
 # allow puppet client and server communication
 $IPTABLES -A INPUT -p tcp -m tcp --dport 8139:8140 -m state --state NEW -j ACCEPT
 
-# allow ping
-$IPTABLES -A INPUT -p icmp -j ACCEPT
+# allow ping (for test disable)
+#$IPTABLES -A INPUT -p icmp -j ACCEPT
 
-#¤ drop broadcasts and multicasts like 224.0.0.0/4
+# drop inbound broadcasts and multicasts on public interfaces
+$IPTABLES -A INPUT -m pkttype --pkt-type broadcast -j $LOGOPT --log-prefix "INPUT BRDCAST DROP " 
 $IPTABLES -A INPUT -m pkttype --pkt-type broadcast -j DROP
+$IPTABLES -A INPUT -m pkttype --pkt-type multicast -j $LOGOPT --log-prefix "INPUT MLTCAST DROP " 
 $IPTABLES -A INPUT -m pkttype --pkt-type multicast -j DROP
 
 # default reject rule
-$IPTABLES -A INPUT -j $LOGOPTIN --log-prefix "REJECT INPUT " 
+$IPTABLES -A INPUT -j $LOGOPT --log-prefix "INPUT REJECT " 
 $IPTABLES -A INPUT -j REJECT --reject-with icmp-host-prohibited
 
-## =================================
-##     FORWARD TRAFFIC (POLICY DROP)
-## =================================
+## ==================================
+##   VM FORWARD TRAFFIC (POLICY DROP)
+## ==================================
 
 # allow established and related traffic pass in and out
 $IPTABLES -I FORWARD 1 -m state --state ESTABLISHED,RELATED -j ACCEPT
@@ -101,7 +98,7 @@ $IPTABLES -I FORWARD 1 -m state --state ESTABLISHED,RELATED -j ACCEPT
 ## Internal OUTBOUND traffic (from internal VMs --> external net)
 #----------------------------------------------------------------
 
-$IPTABLES -A FORWARD -s $VM1HOSTADDR ! -d $FWHOSTADDR -j $LOGOPTFWD --log-prefix "REJECT VM2EXT " 
+$IPTABLES -A FORWARD -s $VM1HOSTADDR ! -d $FWHOSTADDR -j $LOGOPT --log-prefix "FORWARD REJECT VM2EXT " 
 #$IPTABLES -A FORWARD -s $VM1HOSTADDR ! -d $FWHOSTADDR -j REJECT --reject-with icmp-host-prohibited
 $IPTABLES -A FORWARD -s $VM1HOSTADDR ! -d $FWHOSTADDR -j ACCEPT
 
@@ -109,7 +106,7 @@ $IPTABLES -A FORWARD -s $VM1HOSTADDR ! -d $FWHOSTADDR -j ACCEPT
 ## Internal OUTBOUND traffic (from internal VMs --> fw host)
 #----------------------------------------------------------------
 
-$IPTABLES -A FORWARD -s $VM1HOSTADDR -d $FWHOSTADDR -j $LOGOPTFWD --log-prefix "REJECT VM2FW " 
+$IPTABLES -A FORWARD -s $VM1HOSTADDR -d $FWHOSTADDR -j $LOGOPT --log-prefix "FORWARD REJECT VM2FW " 
 #$IPTABLES -A FORWARD -s $FWHOSTADDR -d $FWHOSTADDR -j REJECT --reject-with icmp-host-prohibited
 $IPTABLES -A FORWARD -s $VM1HOSTADDR -d $FWHOSTADDR -j ACCEPT
 
@@ -117,25 +114,27 @@ $IPTABLES -A FORWARD -s $VM1HOSTADDR -d $FWHOSTADDR -j ACCEPT
 ## Internal INBOUND traffic (from fw host to internal VMs)
 #----------------------------------------------------------------
 
-$IPTABLES -A FORWARD -s $FWHOSTADDR -d $VM1HOSTADDR -j $LOGOPTFWD --log-prefix "REJECT FW2VM " 
+$IPTABLES -A FORWARD -s $FWHOSTADDR -d $VM1HOSTADDR -j $LOGOPT --log-prefix "FORWARD REJECT FW2VM " 
 #$IPTABLES -A FORWARD -s $FWHOSTADDR -d $VM1HOSTADDR  -j REJECT --reject-with icmp-host-prohibited
 $IPTABLES -A FORWARD -s $FWHOSTADDR -d $VM1HOSTADDR  -j ACCEPT
 
-#---------------------------------------------------------------
+#--------------------------------------------------------------------------------------
 ## DANGER *** External INBOUND traffic (from external net --> internal VMs) *** DANGER
-#---------------------------------------------------------------
+#--------------------------------------------------------------------------------------
 
-$IPTABLES -A FORWARD ! -s $FWHOSTADDR -d $VM1HOSTADDR -j $LOGOPTFWD --log-prefix "REJECT EXT2VM " 
+$IPTABLES -A FORWARD ! -s $FWHOSTADDR -d $VM1HOSTADDR -j $LOGOPT --log-prefix "FORWARD REJECT EXT2VM " 
 #$IPTABLES -A FORWARD ! -s $FWHOSTADDR -d $VM1HOSTADDR -j REJECT --reject-with icmp-host-prohibited
 $IPTABLES -A FORWARD ! -s $FWHOSTADDR -d $VM1HOSTADDR  -j ACCEPT
 
 
-## ===================================
-##    OUTBOUND TRAFFIC (POLICY ACCEPT)
-## ===================================
+## ========================================
+##    HOST OUTBOUND TRAFFIC (POLICY ACCEPT)
+## ========================================
 
-#¤ drop broadcasts and multicasts like 224.0.0.0/4
+# drop outbound broadcasts and multicasts on public interfaces
+$IPTABLES -A OUTPUT -m pkttype --pkt-type broadcast -j $LOGOPT --log-prefix "OUTPUT BRDCAST DROP " 
 $IPTABLES -A OUTPUT -m pkttype --pkt-type broadcast -j DROP
+$IPTABLES -A OUTPUT -m pkttype --pkt-type multicast -j $LOGOPT --log-prefix "OUTPUT MLTCAST DROP " 
 $IPTABLES -A OUTPUT -m pkttype --pkt-type multicast -j DROP
 
 ##############################
@@ -149,8 +148,4 @@ $IPTABLES -A OUTPUT -m pkttype --pkt-type multicast -j DROP
 ##############################
 
 exit 0
-
-
-
-
 
