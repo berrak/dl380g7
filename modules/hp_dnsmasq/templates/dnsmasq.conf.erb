@@ -22,9 +22,11 @@ interface=eth0
 # you use this.)
 
 ##
-## BK. Don't use 127.0.0.1 here on host, use it for VM built in dnsmasq!
+## BK. Don't use 127.0.0.1 here on host (KVM/libvirtd can use lo)
+##     and bind to 'myip' address (allows KVM/libvirt to run its dnsmasq)
 ##
 listen-address=<%= myip %>
+bind-interfaces
 
 # Set the cachesize here.
 cache-size=150
