@@ -81,7 +81,7 @@ $IPTABLES -A INPUT -p tcp -m tcp --dport 8139:8140 -m state --state NEW -j ACCEP
 $IPTABLES -A INPUT -p icmp -j ACCEPT
 
 #¤ drop broadcasts like to 224.0.0.0/4
-$IPTABLES -A broadcast-drop -m pkttype --pkt-type broadcast -j DROP
+$IPTABLES -A INPUT -m pkttype --pkt-type broadcast -j DROP
 
 # default reject rule
 $IPTABLES -A INPUT -j $LOGOPTIN --log-prefix "REJECT INPUT " 
