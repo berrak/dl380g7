@@ -30,8 +30,14 @@ SERVICE=/sbin/service
 FWHOSTADDR="192.168.0.66"
 VM1HOSTADDR="192.168.0.100"
 
-## Log options, log all info for 'psad' and use logfile 'iptables.log'
-LOGOPT="LOG --log-level emerg --log-ip-options --log-tcp-options"
+##
+## Note: rsyslog.conf must be configured to map to below levels
+##
+## Log forward options, use logfile 'var/log/iptables/forward.log'
+LOGOPTFWD="LOG --log-level emerg --log-ip-options --log-tcp-options"
+
+## Log input options, use logfile '/var/log/iptables/input.log'
+LOGOPTIN="LOG --log-level debug --log-ip-options --log-tcp-options"
 
 ## Load module (state tracking)
 $MODPROBE nf_conntrack
@@ -72,7 +78,7 @@ $IPTABLES -A INPUT -p tcp -m tcp --dport 8139:8140 -m state --state NEW -j ACCEP
 $IPTABLES -A INPUT -p icmp -j ACCEPT
 
 # default reject rule
-$IPTABLES -A INPUT -j $LOGOPT --log-prefix "REJECT INPUT " 
+$IPTABLES -A INPUT -j $LOGOPTIN --log-prefix "REJECT INPUT " 
 $IPTABLES -A INPUT -j REJECT --reject-with icmp-host-prohibited
 
 ## ==========================
@@ -86,7 +92,7 @@ $IPTABLES -I FORWARD 1 -m state --state ESTABLISHED,RELATED -j ACCEPT
 ## Internal OUTBOUND traffic (from internal VMs --> external net)
 #----------------------------------------------------------------
 
-$IPTABLES -A FORWARD -s $VM1HOSTADDR ! -d $FWHOSTADDR -j $LOGOPT --log-prefix "REJECT VM2EXT " 
+$IPTABLES -A FORWARD -s $VM1HOSTADDR ! -d $FWHOSTADDR -j $LOGOPTFWD --log-prefix "REJECT VM2EXT " 
 #$IPTABLES -A FORWARD -s $VM1HOSTADDR ! -d $FWHOSTADDR -j REJECT --reject-with icmp-host-prohibited
 $IPTABLES -A FORWARD -s $VM1HOSTADDR ! -d $FWHOSTADDR -j ACCEPT
 
@@ -94,7 +100,7 @@ $IPTABLES -A FORWARD -s $VM1HOSTADDR ! -d $FWHOSTADDR -j ACCEPT
 ## Internal OUTBOUND traffic (from internal VMs --> fw host)
 #----------------------------------------------------------------
 
-$IPTABLES -A FORWARD -s $VM1HOSTADDR -d $FWHOSTADDR -j $LOGOPT --log-prefix "REJECT VM2FW " 
+$IPTABLES -A FORWARD -s $VM1HOSTADDR -d $FWHOSTADDR -j $LOGOPTFWD --log-prefix "REJECT VM2FW " 
 #$IPTABLES -A FORWARD -s $FWHOSTADDR -d $FWHOSTADDR -j REJECT --reject-with icmp-host-prohibited
 $IPTABLES -A FORWARD -s $VM1HOSTADDR -d $FWHOSTADDR -j ACCEPT
 
@@ -102,7 +108,7 @@ $IPTABLES -A FORWARD -s $VM1HOSTADDR -d $FWHOSTADDR -j ACCEPT
 ## Internal INBOUND traffic (from fw host to internal VMs)
 #----------------------------------------------------------------
 
-$IPTABLES -A FORWARD -s $FWHOSTADDR -d $VM1HOSTADDR -j $LOGOPT --log-prefix "REJECT FW2VM " 
+$IPTABLES -A FORWARD -s $FWHOSTADDR -d $VM1HOSTADDR -j $LOGOPTFWD --log-prefix "REJECT FW2VM " 
 #$IPTABLES -A FORWARD -s $FWHOSTADDR -d $VM1HOSTADDR  -j REJECT --reject-with icmp-host-prohibited
 $IPTABLES -A FORWARD -s $FWHOSTADDR -d $VM1HOSTADDR  -j ACCEPT
 
@@ -110,7 +116,7 @@ $IPTABLES -A FORWARD -s $FWHOSTADDR -d $VM1HOSTADDR  -j ACCEPT
 ## DANGER *** External INBOUND traffic (from external net --> internal VMs) *** DANGER
 #---------------------------------------------------------------
 
-$IPTABLES -A FORWARD ! -s $FWHOSTADDR -d $VM1HOSTADDR -j $LOGOPT --log-prefix "REJECT EXT2VM " 
+$IPTABLES -A FORWARD ! -s $FWHOSTADDR -d $VM1HOSTADDR -j $LOGOPTFWD --log-prefix "REJECT EXT2VM " 
 #$IPTABLES -A FORWARD ! -s $FWHOSTADDR -d $VM1HOSTADDR -j REJECT --reject-with icmp-host-prohibited
 $IPTABLES -A FORWARD ! -s $FWHOSTADDR -d $VM1HOSTADDR  -j ACCEPT
 
