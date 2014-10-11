@@ -31,8 +31,8 @@ FWHOSTADDR="192.168.0.66"
 VM1HOSTADDR="192.168.0.100"
 
 
-## rsyslog: Configured to match log prefic 'FORWARD', 'INPUT' and 
-##  'OUTPUT' to separate out log to files in /var/log/iptables/
+## rsyslog: Configured to match log prefix 'FORWARD', 'INPUT' and 
+##  'OUTPUT' to separate out logs to files in /var/log/iptables/
 ## 
 LOGOPT="LOG --log-ip-options --log-tcp-options"
 
@@ -42,6 +42,9 @@ $MODPROBE nf_conntrack
 $MODPROBE nf_conntrack_ftp
 ## Load module to used with broadcasts/multicaste rules
 $MODPROBE xt_pkttype
+## Load module xt_limit to limit excessive logging on public interfaces
+$MODPROBE xt_limit
+RLIMIT="-m limit --limit 3/s --limit-burst 8"
 
 ## Flush old rules, old custom chains and counters 
 $IPTABLES -F
@@ -65,26 +68,30 @@ $IPTABLES -I INPUT 1 -i lo -j ACCEPT
 ##   *** DANGER *** INBOUND TRAFFIC (POLICY DROP) *** DANGER ***
 ## ===============================================================
 
+## prevent invalid input packages
+$IPTABLES -A INPUT -m state --state INVALID -j $LOGOPT $RLIMIT --log-prefix "INPUT DROP INVALID "
+$IPTABLES -A INPUT -m state --state INVALID -j DROP
+
 # allow all established and related traffic in
 $IPTABLES -A INPUT -p all -m state --state ESTABLISHED,RELATED -j ACCEPT
 
-# ssh client access for management
-$IPTABLES -A INPUT -p tcp -m tcp --dport 22 -m state --state NEW -j ACCEPT
+# ssh client access for management of host
+$IPTABLES -A INPUT -p tcp -m tcp --dport 22 --syn -m state --state NEW -j ACCEPT
 
 # allow puppet client and server communication
-$IPTABLES -A INPUT -p tcp -m tcp --dport 8139:8140 -m state --state NEW -j ACCEPT
+$IPTABLES -A INPUT -p tcp -m tcp --dport 8139:8140 --syn -m state --state NEW -j ACCEPT
 
-# allow ping (for test disable)
-#$IPTABLES -A INPUT -p icmp -j ACCEPT
+# allow ping
+$IPTABLES -A INPUT -p icmp -j ACCEPT
 
 # drop inbound broadcasts and multicasts on public interfaces
-$IPTABLES -A INPUT -m pkttype --pkt-type broadcast -j $LOGOPT --log-prefix "INPUT BRDCAST DROP " 
+$IPTABLES -A INPUT -m pkttype --pkt-type broadcast -j $LOGOPT $RLIMIT --log-prefix "INPUT BRDCAST DROP " 
 $IPTABLES -A INPUT -m pkttype --pkt-type broadcast -j DROP
-$IPTABLES -A INPUT -m pkttype --pkt-type multicast -j $LOGOPT --log-prefix "INPUT MLTCAST DROP " 
+$IPTABLES -A INPUT -m pkttype --pkt-type multicast -j $LOGOPT $RLIMIT --log-prefix "INPUT MLTCAST DROP " 
 $IPTABLES -A INPUT -m pkttype --pkt-type multicast -j DROP
 
 # default reject rule
-$IPTABLES -A INPUT -j $LOGOPT --log-prefix "INPUT REJECT " 
+$IPTABLES -A INPUT -j $LOGOPT $RLIMIT --log-prefix "INPUT DEFAULT REJECT " 
 $IPTABLES -A INPUT -j REJECT --reject-with icmp-host-prohibited
 
 ## ==================================
@@ -95,34 +102,82 @@ $IPTABLES -A INPUT -j REJECT --reject-with icmp-host-prohibited
 $IPTABLES -I FORWARD 1 -m state --state ESTABLISHED,RELATED -j ACCEPT
 
 #----------------------------------------------------------------
-## Internal OUTBOUND traffic (from internal VMs --> external net)
+## Internal OUTBOUND traffic (from internal VMs --> external net) - is now default accept
 #----------------------------------------------------------------
+
+#
+
+#
+
+#
 
 $IPTABLES -A FORWARD -s $VM1HOSTADDR ! -d $FWHOSTADDR -j $LOGOPT --log-prefix "FORWARD REJECT VM2EXT " 
 #$IPTABLES -A FORWARD -s $VM1HOSTADDR ! -d $FWHOSTADDR -j REJECT --reject-with icmp-host-prohibited
 $IPTABLES -A FORWARD -s $VM1HOSTADDR ! -d $FWHOSTADDR -j ACCEPT
 
-#----------------------------------------------------------------
-## Internal OUTBOUND traffic (from internal VMs --> fw host)
-#----------------------------------------------------------------
+
+#-----------------------------------------------------------
+## Internal OUTBOUND traffic (from internal VMs --> fw host) - is now default accept
+#-----------------------------------------------------------
+
+## keep host isolated as seen from VMs except bare essential host-to-KVM communication ##
+# ---------------------------------------------------------------------------------------
+# allow puppet client and server communication
+$IPTABLES -A FORWARD -p tcp -m tcp -s $VM1HOSTADDR -d $FWHOSTADDR --dport 8139:8140 --syn -m state --state NEW -j ACCEPT
+
+#
+
+#
+
+#
 
 $IPTABLES -A FORWARD -s $VM1HOSTADDR -d $FWHOSTADDR -j $LOGOPT --log-prefix "FORWARD REJECT VM2FW " 
 #$IPTABLES -A FORWARD -s $FWHOSTADDR -d $FWHOSTADDR -j REJECT --reject-with icmp-host-prohibited
 $IPTABLES -A FORWARD -s $VM1HOSTADDR -d $FWHOSTADDR -j ACCEPT
 
-#----------------------------------------------------------------
-## Internal INBOUND traffic (from fw host to internal VMs)
-#----------------------------------------------------------------
+
+#---------------------------------------------------------
+## Internal INBOUND traffic (from fw host to internal VMs) - is now default accept
+#---------------------------------------------------------
+
+## keep host isolated as seen from each VMs, except bare essential host-to-KVM communication ##
+# ---------------------------------------------------------------------------------------------
+
+# allow local ssh for management of VMs from host only
+$IPTABLES -A FORWARD -p tcp -m tcp -s $FWHOSTADDR -d $VM1HOSTADDR --dport 22 --syn -m state --state NEW -j ACCEPT
+
+# allow puppet client and server communication
+$IPTABLES -A FORWARD -p tcp -m tcp -s $FWHOSTADDR -d $VM1HOSTADDR --dport 8139:8140 --syn -m state --state NEW -j ACCEPT
+
+#
+
+#
+
+#
 
 $IPTABLES -A FORWARD -s $FWHOSTADDR -d $VM1HOSTADDR -j $LOGOPT --log-prefix "FORWARD REJECT FW2VM " 
 #$IPTABLES -A FORWARD -s $FWHOSTADDR -d $VM1HOSTADDR  -j REJECT --reject-with icmp-host-prohibited
 $IPTABLES -A FORWARD -s $FWHOSTADDR -d $VM1HOSTADDR  -j ACCEPT
 
+
 #--------------------------------------------------------------------------------------
-## DANGER *** External INBOUND traffic (from external net --> internal VMs) *** DANGER
+## DANGER *** External INBOUND traffic (from external net --> internal VMs) *** DANGER - is now default accept
 #--------------------------------------------------------------------------------------
 
-$IPTABLES -A FORWARD ! -s $FWHOSTADDR -d $VM1HOSTADDR -j $LOGOPT --log-prefix "FORWARD REJECT EXT2VM " 
+## prevent invalid input packages
+$IPTABLES -A FORWARD ! -s $FWHOSTADDR -d $VM1HOSTADDR -m state --state INVALID -j $LOGOPT $RLIMIT --log-prefix "FORWARD DROP INVALID "
+$IPTABLES -A FORWARD ! -s $FWHOSTADDR -d $VM1HOSTADDR -m state --state INVALID -j DROP
+
+## few input VM access rules here like web server port 80, 443
+
+#
+
+#
+
+#
+
+## default reject to VMs
+$IPTABLES -A FORWARD ! -s $FWHOSTADDR -d $VM1HOSTADDR -j $LOGOPT $RLIMIT --log-prefix "FORWARD REJECT EXT2VM " 
 #$IPTABLES -A FORWARD ! -s $FWHOSTADDR -d $VM1HOSTADDR -j REJECT --reject-with icmp-host-prohibited
 $IPTABLES -A FORWARD ! -s $FWHOSTADDR -d $VM1HOSTADDR  -j ACCEPT
 
@@ -131,11 +186,26 @@ $IPTABLES -A FORWARD ! -s $FWHOSTADDR -d $VM1HOSTADDR  -j ACCEPT
 ##    HOST OUTBOUND TRAFFIC (POLICY ACCEPT)
 ## ========================================
 
+## explicit show whats are allowed out ##
+# ---------------------------------------
+$IPTABLES -A OUTPUT -p tcp -m tcp --dport 22 --syn -m state --state NEW -j ACCEPT
+$IPTABLES -A OUTPUT -p tcp -m tcp --dport 43 --syn -m state --state NEW -j ACCEPT
+$IPTABLES -A OUTPUT -p tcp -m tcp --dport 53 --syn -m state --state NEW -j ACCEPT
+$IPTABLES -A OUTPUT -p udp -m udp --dport 53 -m state --state NEW -j ACCEPT
+$IPTABLES -A OUTPUT -p udp -m udp --dport 80 -m state --state NEW -j ACCEPT
+$IPTABLES -A OUTPUT -p udp -m udp --dport 123 -m state --state NEW -j ACCEPT
+$IPTABLES -A OUTPUT -p udp -m udp --dport 443 -m state --state NEW -j ACCEPT
+$IPTABLES -A OUTPUT -p tcp -m tcp --dport 8139:8140 --syn -m state --state NEW -j ACCEPT
+$IPTABLES -A OUTPUT -p icmp -j ACCEPT
+
 # drop outbound broadcasts and multicasts on public interfaces
 $IPTABLES -A OUTPUT -m pkttype --pkt-type broadcast -j $LOGOPT --log-prefix "OUTPUT BRDCAST DROP " 
 $IPTABLES -A OUTPUT -m pkttype --pkt-type broadcast -j DROP
 $IPTABLES -A OUTPUT -m pkttype --pkt-type multicast -j $LOGOPT --log-prefix "OUTPUT MLTCAST DROP " 
 $IPTABLES -A OUTPUT -m pkttype --pkt-type multicast -j DROP
+
+# default logs i.e. what else goes out from host
+$IPTABLES -A OUTPUT -j $LOGOPT $RLIMIT --log-prefix "OUTPUT DEFAULT LOGONLY " 
 
 ##############################
 # To use this, manually run:
