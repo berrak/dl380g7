@@ -28,7 +28,7 @@ MODPROBE=/sbin/modprobe
 SERVICE=/sbin/service
 
 FWHOSTADDR="192.168.0.66"
-VM1HOSTADDR="192.168.0.100"
+VMHOSTSADDR="192.168.0.100:192.168.0.105"
 
 
 ## rsyslog: Configured to match log prefix 'FORWARD', 'INPUT' and 
@@ -111,9 +111,9 @@ $IPTABLES -I FORWARD 1 -m state --state ESTABLISHED,RELATED -j ACCEPT
 
 #
 
-$IPTABLES -A FORWARD -s $VM1HOSTADDR ! -d $FWHOSTADDR -j $LOGOPT --log-prefix "FORWARD REJECT VM2EXT " 
-#$IPTABLES -A FORWARD -s $VM1HOSTADDR ! -d $FWHOSTADDR -j REJECT --reject-with icmp-host-prohibited
-$IPTABLES -A FORWARD -s $VM1HOSTADDR ! -d $FWHOSTADDR -j ACCEPT
+$IPTABLES -A FORWARD -s $VMHOSTSADDR ! -d $FWHOSTADDR -j $LOGOPT --log-prefix "FORWARD REJECT VM2EXT " 
+#$IPTABLES -A FORWARD -s $VMHOSTSADDR ! -d $FWHOSTADDR -j REJECT --reject-with icmp-host-prohibited
+$IPTABLES -A FORWARD -s $VMHOSTSADDR ! -d $FWHOSTADDR -j ACCEPT
 
 
 #-----------------------------------------------------------
@@ -123,7 +123,7 @@ $IPTABLES -A FORWARD -s $VM1HOSTADDR ! -d $FWHOSTADDR -j ACCEPT
 ## keep host isolated as seen from VMs except bare essential host-to-KVM communication ##
 # ---------------------------------------------------------------------------------------
 # allow puppet client and server communication
-$IPTABLES -A FORWARD -p tcp -m tcp -s $VM1HOSTADDR -d $FWHOSTADDR --dport 8139:8140 --syn -m state --state NEW -j ACCEPT
+$IPTABLES -A FORWARD -p tcp -m tcp -s $VMHOSTSADDR -d $FWHOSTADDR --dport 8139:8140 --syn -m state --state NEW -j ACCEPT
 
 #
 
@@ -131,9 +131,9 @@ $IPTABLES -A FORWARD -p tcp -m tcp -s $VM1HOSTADDR -d $FWHOSTADDR --dport 8139:8
 
 #
 
-$IPTABLES -A FORWARD -s $VM1HOSTADDR -d $FWHOSTADDR -j $LOGOPT --log-prefix "FORWARD REJECT VM2FW " 
+$IPTABLES -A FORWARD -s $VMHOSTSADDR -d $FWHOSTADDR -j $LOGOPT --log-prefix "FORWARD REJECT VM2FW " 
 #$IPTABLES -A FORWARD -s $FWHOSTADDR -d $FWHOSTADDR -j REJECT --reject-with icmp-host-prohibited
-$IPTABLES -A FORWARD -s $VM1HOSTADDR -d $FWHOSTADDR -j ACCEPT
+$IPTABLES -A FORWARD -s $VMHOSTSADDR -d $FWHOSTADDR -j ACCEPT
 
 
 #---------------------------------------------------------
@@ -144,10 +144,10 @@ $IPTABLES -A FORWARD -s $VM1HOSTADDR -d $FWHOSTADDR -j ACCEPT
 # ---------------------------------------------------------------------------------------------
 
 # allow local ssh for management of VMs from host only
-$IPTABLES -A FORWARD -p tcp -m tcp -s $FWHOSTADDR -d $VM1HOSTADDR --dport 22 --syn -m state --state NEW -j ACCEPT
+$IPTABLES -A FORWARD -p tcp -m tcp -s $FWHOSTADDR -d $VMHOSTSADDR --dport 22 --syn -m state --state NEW -j ACCEPT
 
 # allow puppet client and server communication
-$IPTABLES -A FORWARD -p tcp -m tcp -s $FWHOSTADDR -d $VM1HOSTADDR --dport 8139:8140 --syn -m state --state NEW -j ACCEPT
+$IPTABLES -A FORWARD -p tcp -m tcp -s $FWHOSTADDR -d $VMHOSTSADDR --dport 8139:8140 --syn -m state --state NEW -j ACCEPT
 
 #
 
@@ -155,9 +155,9 @@ $IPTABLES -A FORWARD -p tcp -m tcp -s $FWHOSTADDR -d $VM1HOSTADDR --dport 8139:8
 
 #
 
-$IPTABLES -A FORWARD -s $FWHOSTADDR -d $VM1HOSTADDR -j $LOGOPT --log-prefix "FORWARD REJECT FW2VM " 
-#$IPTABLES -A FORWARD -s $FWHOSTADDR -d $VM1HOSTADDR  -j REJECT --reject-with icmp-host-prohibited
-$IPTABLES -A FORWARD -s $FWHOSTADDR -d $VM1HOSTADDR  -j ACCEPT
+$IPTABLES -A FORWARD -s $FWHOSTADDR -d $VMHOSTSADDR -j $LOGOPT --log-prefix "FORWARD REJECT FW2VM " 
+#$IPTABLES -A FORWARD -s $FWHOSTADDR -d $VMHOSTSADDR  -j REJECT --reject-with icmp-host-prohibited
+$IPTABLES -A FORWARD -s $FWHOSTADDR -d $VMHOSTSADDR  -j ACCEPT
 
 
 #--------------------------------------------------------------------------------------
@@ -165,8 +165,8 @@ $IPTABLES -A FORWARD -s $FWHOSTADDR -d $VM1HOSTADDR  -j ACCEPT
 #--------------------------------------------------------------------------------------
 
 ## prevent invalid input packages
-$IPTABLES -A FORWARD ! -s $FWHOSTADDR -d $VM1HOSTADDR -m state --state INVALID -j $LOGOPT $RLIMIT --log-prefix "FORWARD DROP INVALID "
-$IPTABLES -A FORWARD ! -s $FWHOSTADDR -d $VM1HOSTADDR -m state --state INVALID -j DROP
+$IPTABLES -A FORWARD ! -s $FWHOSTADDR -d $VMHOSTSADDR -m state --state INVALID -j $LOGOPT $RLIMIT --log-prefix "FORWARD DROP INVALID "
+$IPTABLES -A FORWARD ! -s $FWHOSTADDR -d $VMHOSTSADDR -m state --state INVALID -j DROP
 
 ## few input VM access rules here like web server port 80, 443
 
@@ -177,9 +177,9 @@ $IPTABLES -A FORWARD ! -s $FWHOSTADDR -d $VM1HOSTADDR -m state --state INVALID -
 #
 
 ## default reject to VMs
-$IPTABLES -A FORWARD ! -s $FWHOSTADDR -d $VM1HOSTADDR -j $LOGOPT $RLIMIT --log-prefix "FORWARD REJECT EXT2VM " 
-#$IPTABLES -A FORWARD ! -s $FWHOSTADDR -d $VM1HOSTADDR -j REJECT --reject-with icmp-host-prohibited
-$IPTABLES -A FORWARD ! -s $FWHOSTADDR -d $VM1HOSTADDR  -j ACCEPT
+$IPTABLES -A FORWARD ! -s $FWHOSTADDR -d $VMHOSTSADDR -j $LOGOPT $RLIMIT --log-prefix "FORWARD REJECT EXT2VM " 
+#$IPTABLES -A FORWARD ! -s $FWHOSTADDR -d $VMHOSTSADDR -j REJECT --reject-with icmp-host-prohibited
+$IPTABLES -A FORWARD ! -s $FWHOSTADDR -d $VMHOSTSADDR  -j ACCEPT
 
 
 ## ========================================
