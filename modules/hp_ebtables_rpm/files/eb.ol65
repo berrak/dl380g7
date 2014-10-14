@@ -1,0 +1,69 @@
+#!/bin/bash
+# /root/bin/eb.ol65
+##############################################################
+# DO NOT EDIT. MANAGES BY PUPPET. CHANGES WILL BE WIPED OUT. #
+##############################################################
+#
+# Ethernet rules for HP server (production).
+#
+# Copyright (C) (2014) K-B.Kronlund <bkronmailbox-copyright@yahoo.se>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+## Basic data
+
+EBTABLES=/sbin/ebtables
+
+## Flush old rules and old custom rules
+$EBTABLES -F
+$EBTABLES -X
+
+#---------------------------------------------------------------------
+# Default policies
+#---------------------------------------------------------------------
+$EBTABLES -P INPUT ACCEPT
+$EBTABLES -P OUTPUT ACCEPT
+$EBTABLES -P FORWARD ACCEPT
+
+
+## ======================
+##    INBOUND TRAFFIC
+## ======================
+
+
+
+## ======================
+##    FORWARD TRAFFIC
+## ======================
+
+
+
+## ======================
+##    OUTBOUND TRAFFIC
+## ======================
+
+
+##############################
+# To activate rules, execute:
+#
+#    /root/bin/eb.ol65
+#    service ebtables save
+#    service ebtables restart
+#    ebtables -Lc --Lmac2
+#    ebtables -t nat -Lc --Lmac2
+#
+##############################
+
+exit 0
+
