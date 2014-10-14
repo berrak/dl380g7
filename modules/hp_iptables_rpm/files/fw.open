@@ -1,10 +1,10 @@
 #!/bin/bash
-# /root/bin/eb.init
+# /root/bin/fw.open
 ##############################################################
 # DO NOT EDIT. MANAGES BY PUPPET. CHANGES WILL BE WIPED OUT. #
 ##############################################################
 #
-# Ethernet rules for HP server (development).
+# Rules for HP server (development).
 #
 # Copyright (C) (2014) K-B.Kronlund <bkronmailbox-copyright@yahoo.se>
 #
@@ -23,48 +23,28 @@
 #
 ## Basic data
 
-EBTABLES=/sbin/ebtables
+IPTABLES=/sbin/iptables
 
-## Flush old rules and old custom rules and zero counters
-$EBTABLES -F
-$EBTABLES -t nat -F
-$EBTABLES -t broute -F
-$EBTABLES -X
-$EBTABLES -Z
+## Flush old rules, old custom chains and zero counters 
+$IPTABLES -F
+$IPTABLES -t nat -F
+$IPTABLES -X
+$IPTABLES -Z
 
 #---------------------------------------------------------------------
 # Default policies
 #---------------------------------------------------------------------
-$EBTABLES -P INPUT ACCEPT
-$EBTABLES -P OUTPUT ACCEPT
-$EBTABLES -P FORWARD ACCEPT
-
-
-## ======================
-##    INBOUND TRAFFIC
-## ======================
-
-
-
-## ======================
-##    FORWARD TRAFFIC
-## ======================
-
-
-
-## ======================
-##    OUTBOUND TRAFFIC
-## ======================
-
+$IPTABLES -P INPUT ACCEPT
+$IPTABLES -P FORWARD ACCEPT
+$IPTABLES -P OUTPUT ACCEPT
 
 ##############################
-# To activate rules, execute:
+# To use this, manually run:
 #
-#    /root/bin/eb.ol65
-#    service ebtables save
-#    service ebtables restart
-#    ebtables -Lc --Lmac2
-#    ebtables -t nat -Lc --Lmac2
+#    /root/bin/fw.open
+#    service iptables save
+#    service iptables restart
+#    iptables -L -v --line-numbers
 #
 ##############################
 

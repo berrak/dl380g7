@@ -4,7 +4,7 @@
 # DO NOT EDIT. MANAGES BY PUPPET. CHANGES WILL BE WIPED OUT. #
 ##############################################################
 #
-# Rules for HP server (external host).
+# Rules for HP server (production).
 #
 # Copyright (C) (2014) K-B.Kronlund <bkronmailbox-copyright@yahoo.se>
 #
@@ -51,9 +51,11 @@ $MODPROBE nf_conntrack
 ## Load module (RELATED used for ftp, tftp, irc, sctp, amanda)
 $MODPROBE nf_conntrack_ftp
 
-## Flush old rules, old custom rules
+## Flush old rules, old custom chains and zero counters 
 $IPTABLES -F
+$IPTABLES -t nat -F
 $IPTABLES -X
+$IPTABLES -Z
 
 #---------------------------------------------------------------------
 # Default policies

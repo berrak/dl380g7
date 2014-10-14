@@ -33,7 +33,13 @@ class hp_ebtables_rpm::config  {
 		   mode => '0700',
 	}
 	
-
+	# ebtables file to clear all rules and set policy accept (manual activation)
+	file { '/root/bin/eb.open' :
+		 source => "puppet:///modules/hp_ebtables_rpm/eb.open",
+		  owner => 'root',
+		  group => 'root',
+		   mode => '0700',
+	}
         
 
 

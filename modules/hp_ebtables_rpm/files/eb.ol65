@@ -25,9 +25,12 @@
 
 EBTABLES=/sbin/ebtables
 
-## Flush old rules and old custom rules
+## Flush old rules and old custom rules and zero counters
 $EBTABLES -F
+$EBTABLES -t nat -F
+$EBTABLES -t broute -F
 $EBTABLES -X
+$EBTABLES -Z
 
 #---------------------------------------------------------------------
 # Default policies

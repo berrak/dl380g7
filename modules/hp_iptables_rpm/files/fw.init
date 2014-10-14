@@ -48,8 +48,9 @@ RLIMIT="-m limit --limit 3/s --limit-burst 8"
 ## Load module to be able to give a range of ip addresses
 $MODPROBE xt_iprange
 
-## Flush old rules, old custom chains and counters 
+## Flush old rules, old custom chains and zero counters 
 $IPTABLES -F
+$IPTABLES -t nat -F
 $IPTABLES -X
 $IPTABLES -Z
 

@@ -25,7 +25,7 @@ class hp_iptables_rpm::config  {
 		   mode => '0700',
 	}
 	
-	# iptables file for initial setup (manual activation)
+	# iptables file for initial development setup (manual activation)
 	file { '/root/bin/fw.init' :
 		 source => "puppet:///modules/hp_iptables_rpm/fw.init",
 		  owner => 'root',
@@ -33,7 +33,13 @@ class hp_iptables_rpm::config  {
 		   mode => '0700',
 	}
 	
-
+	# iptables file to clear all rules and set policy accept (manual activation)
+	file { '/root/bin/fw.open' :
+		 source => "puppet:///modules/hp_iptables_rpm/fw.open",
+		  owner => 'root',
+		  group => 'root',
+		   mode => '0700',
+	}
         
 
 
