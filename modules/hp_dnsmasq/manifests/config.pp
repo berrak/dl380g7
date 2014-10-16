@@ -12,7 +12,7 @@ class hp_dnsmasq::config ( $dns1='', $dns2='', $real_hostname='' ) {
     
     $puppetsrvfqdn = $::fqdn
     $myhostname = $::hostname
-    $myip = $::ipaddress
+    $hostip = $::ipaddress
     $mydomain = $::domain
 
     if $myhostname == $real_hostname {

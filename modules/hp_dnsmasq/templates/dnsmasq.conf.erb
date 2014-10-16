@@ -17,12 +17,10 @@ server=<%= mydns2 %>
 # specified interfaces (and the loopback) give the name of the
 # interface (eg eth0) here.
 # Repeat the line for more than one interface.
-interface=eth0
-interface=br0
+interface=lo
 # Or which to listen on by address (remember to include 127.0.0.1 if
 # you use this.)
 listen-address=127.0.0.1
-listen-address=<%= myip %>
 
 # Set the cachesize here.
 cache-size=150
