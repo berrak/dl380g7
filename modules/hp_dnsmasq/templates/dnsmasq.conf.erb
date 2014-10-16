@@ -22,6 +22,9 @@ interface=lo
 # you use this.)
 listen-address=127.0.0.1
 
+# Set this such that multiple instances of dnsmasq can run (e.g. with KVM)
+bind-interfaces
+
 # Set the cachesize here.
 cache-size=150
 
