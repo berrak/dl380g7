@@ -27,9 +27,17 @@ IPTABLES=/sbin/iptables
 MODPROBE=/sbin/modprobe
 SERVICE=/sbin/service
 
-FIREWALL="192.168.0.66"
-VMACHINESADR="192.168.0.100-192.168.0.101"
+IF_EXT="eth0"
 
+FIREWALL="192.168.0.66"
+PUBVM1="192.168.0.41"
+PUBVM2="192.168.0.42"
+VMACHINESADR="192.168.0.41-192.168.0.42"
+
+PRIVATENET="192.168.122.0/255.255.255.0"
+
+INTVM1="192.168.122.41"
+INTVM2="192.168.122.42"
 
 ## rsyslog: Configured to match log prefix 'FORWARD', 'INPUT' and 
 ##  'OUTPUT' to separate out logs to files in /var/log/iptables/
@@ -60,6 +68,22 @@ $IPTABLES -Z
 $IPTABLES -P INPUT DROP
 $IPTABLES -P FORWARD DROP
 $IPTABLES -P OUTPUT ACCEPT
+$IPTABLES -t nat -P PREROUTING ACCEPT
+$IPTABLES -t nat -P OUTPUT ACCEPT
+$IPTABLES -t nat -POSTROUTING ACCEPT
+
+#---------------------------------------------------------------------
+# Custom chains
+#---------------------------------------------------------------------
+$IPTABLES -t nat -N public-to-vm
+$IPTABLES -t nat -N public-to-vm -A PREROUTING -d $PUBVM1 -i eth0 -p tcp -j DNAT --to-destination $INTVM1
+$IPTABLES -t nat -N public-to-vm -A PREROUTING -d $PUBVM2 -i eth0 -p tcp -j DNAT --to-destination $INTVM2
+$IPTABLES -t nat -A public-to-vm -j RETURN
+#--------------------------------------------------------------------------------------
+$IPTABLES -t nat -N vm-to-public
+$IPTABLES -t nat -N vm-to-public -A POSTROUTING -s $INTVM1 ! -d $PRIVATENET -j SNAT --to -source $PUBVM1
+$IPTABLES -t nat -N vm-to-public -A POSTROUTING -s $INTVM2 ! -d $PRIVATENET -j SNAT --to -source $PUBVM2
+$IPTABLES -t nat -N vm-to-public -j RETURN
 
 ## ==============================
 ##   LOOPBACK TRAFFIC (1st rule)
@@ -67,109 +91,84 @@ $IPTABLES -P OUTPUT ACCEPT
 
 $IPTABLES -I INPUT 1 -i lo -j ACCEPT
 
-## ===============================================================
-##   *** DANGER *** INBOUND TRAFFIC (POLICY DROP) *** DANGER ***
-## ===============================================================
+## ==============================
+##   PRE/POST ROUTING 1:1 NAT
+## ==============================
 
-## prevent invalid input packages
+# masquerade in-outgoing vm traffic
+$IPTABLES -t nat -j vm-to-public
+$IPTABLES -t nat -j public-to-vm
+
+#-----------------------------------------
+# INBOUND to FW rules regardless where from
+#-----------------------------------------
+## prevent all invalid input packages on INPUT
 $IPTABLES -A INPUT -m state --state INVALID -j $LOGOPT $RLIMIT --log-prefix "INPUT DROP INVALID "
 $IPTABLES -A INPUT -m state --state INVALID -j DROP
 
 # allow all established and related traffic in
 $IPTABLES -A INPUT -p all -m state --state ESTABLISHED,RELATED -j ACCEPT
 
-# ssh client access for management of host
-$IPTABLES -A INPUT -p tcp -m tcp --dport 22 --syn -m state --state NEW -j ACCEPT
-
-# allow puppet client and server communication
+# allow all puppet client and server communication
 $IPTABLES -A INPUT -p tcp -m tcp --dport 8139:8140 --syn -m state --state NEW -j ACCEPT
 
-# allow ping
-$IPTABLES -A INPUT -p icmp -j ACCEPT
+## ============================================================================
+##   *** DANGER *** INBOUND PUBLIC TRAFFIC TO FW  *** DANGER *** (POLICY DROP)
+## ============================================================================
 
-# drop inbound broadcasts and multicasts on public interfaces
-$IPTABLES -A INPUT -m pkttype --pkt-type broadcast -j $LOGOPT $RLIMIT --log-prefix "INPUT BRDCAST DROP " 
-$IPTABLES -A INPUT -m pkttype --pkt-type broadcast -j DROP
-$IPTABLES -A INPUT -m pkttype --pkt-type multicast -j $LOGOPT $RLIMIT --log-prefix "INPUT MLTCAST DROP " 
-$IPTABLES -A INPUT -m pkttype --pkt-type multicast -j DROP
+# ssh client access for management of host
+$IPTABLES -A INPUT ! -s $PRIVATENET -p tcp -m tcp --dport 22 --syn -m state --state NEW -j ACCEPT
+
+# allow ping
+$IPTABLES -A INPUT ! -s $PRIVATENET -p icmp -j ACCEPT
 
 # default reject rule
-$IPTABLES -A INPUT -j $LOGOPT $RLIMIT --log-prefix "INPUT DEFAULT REJECT " 
-$IPTABLES -A INPUT -j REJECT --reject-with icmp-host-prohibited
+$IPTABLES -A INPUT ! -s $PRIVATENET -j $LOGOPT $RLIMIT --log-prefix "INPUT REJECT EXT2INT " 
+$IPTABLES -A INPUT ! -s $PRIVATENET -j REJECT --reject-with icmp-host-prohibited
+
+#---------------------------------------
+# INBOUND traffic from VMs to FW HOST
+#---------------------------------------
+$IPTABLES -A INPUT -s $PRIVATENET -p tcp -m tcp --dport 53 --syn -m state --state NEW -j ACCEPT
+$IPTABLES -A INPUT -s $PRIVATENET -p udp -m udp --dport 53 -m state --state NEW -j ACCEPT
+
+# allow ping
+$IPTABLES -A INPUT -s $PRIVATENET -p icmp -j ACCEPT
+
+# default reject rule
+$IPTABLES -A INPUT -s $PRIVATENET -j $LOGOPT --log-prefix "INPUT ACCEPT VM2INT "
+#$IPTABLES -A INPUT -s $PRIVATENET -j $LOGOPT --log-prefix "INPUT REJECT VM2INT "
+#$IPTABLES -A INPUT -s $PRIVATENET -j REJECT --reject-with icmp-host-prohibited
+$IPTABLES -A INPUT -s $PRIVATENET-j ACCEPT
+
 
 ## ==================================
 ##   VM FORWARD TRAFFIC (POLICY DROP)
 ## ==================================
 
+#----------------------------------------------------------------
+## Internal OUTBOUND traffic (from internal VMs --> external net)
+#----------------------------------------------------------------
+
 # allow established and related traffic pass in and out
-$IPTABLES -I FORWARD 1 -m state --state ESTABLISHED,RELATED -j ACCEPT
-
-#----------------------------------------------------------------
-## Internal OUTBOUND traffic (from internal VMs --> external net) - is now default accept
-#----------------------------------------------------------------
+$IPTABLES -A FORWARD -s $PRIVATENET ! -d $FIREWALL -m state --state ESTABLISHED,RELATED -j ACCEPT
 
 #
 
 #
 
-#
-
-$IPTABLES -A FORWARD -m iprange --src-range $VMACHINESADR ! -d $FIREWALL -j $LOGOPT --log-prefix "FORWARD REJECT VM2EXT " 
-#$IPTABLES -A FORWARD -m iprange --src-range $VMACHINESADR ! -d $FIREWALL -j REJECT --reject-with icmp-host-prohibited
-$IPTABLES -A FORWARD -m iprange --src-range $VMACHINESADR ! -d $FIREWALL -j ACCEPT
-
-
-#-----------------------------------------------------------
-## Internal OUTBOUND traffic (from internal VMs --> fw host) - is now default accept
-#-----------------------------------------------------------
-
-## keep host isolated as seen from VMs except bare essential host-to-KVM communication ##
-# ---------------------------------------------------------------------------------------
-# allow puppet client and server communication
-$IPTABLES -A FORWARD -p tcp -m tcp -m iprange --src-range $VMACHINESADR -d $FIREWALL --dport 8139:8140 --syn -m state --state NEW -j ACCEPT
-
-#
-
-#
-
-#
-
-$IPTABLES -A FORWARD -m iprange --src-range $VMACHINESADR -d $FIREWALL -j $LOGOPT --log-prefix "FORWARD REJECT VM2FW " 
-#$IPTABLES -A FORWARD -m iprange --src-range $FIREWALL -d $FIREWALL -j REJECT --reject-with icmp-host-prohibited
-$IPTABLES -A FORWARD -m iprange --src-range $VMACHINESADR -d $FIREWALL -j ACCEPT
-
-
-#---------------------------------------------------------
-## Internal INBOUND traffic (from fw host to internal VMs) - is now default accept
-#---------------------------------------------------------
-
-## keep host isolated as seen from each VMs, except bare essential host-to-KVM communication ##
-# ---------------------------------------------------------------------------------------------
-
-# allow local ssh for management of VMs from host only
-$IPTABLES -A FORWARD -p tcp -m tcp -s $FIREWALL -m iprange --src-range $VMACHINESADR --dport 22 --syn -m state --state NEW -j ACCEPT
-
-# allow puppet client and server communication
-$IPTABLES -A FORWARD -p tcp -m tcp -s $FIREWALL -m iprange --src-range $VMACHINESADR --dport 8139:8140 --syn -m state --state NEW -j ACCEPT
-
-#
-
-#
-
-#
-
-$IPTABLES -A FORWARD -s $FIREWALL -m iprange --src-range $VMACHINESADR -j $LOGOPT --log-prefix "FORWARD REJECT FW2VM " 
-#$IPTABLES -A FORWARD -s $FIREWALL -m iprange --src-range $VMACHINESADR  -j REJECT --reject-with icmp-host-prohibited
-$IPTABLES -A FORWARD -s $FIREWALL -m iprange --src-range $VMACHINESADR  -j ACCEPT
-
+$IPTABLES -A FORWARD -s $PRIVATENET ! -d $FIREWALL -j $LOGOPT --log-prefix "FORWARD ACCEPT VM2EXT "
+#$IPTABLES -A FORWARD -s $PRIVATENET ! -d $FIREWALL -j $LOGOPT --log-prefix "FORWARD REJECT VM2EXT "
+#$IPTABLES -A FORWARD -s $PRIVATENET ! -d $FIREWALL -j REJECT --reject-with icmp-host-prohibited
+$IPTABLES -A FORWARD -s $PRIVATENET ! -d $FIREWALL -j ACCEPT
 
 #--------------------------------------------------------------------------------------
-## DANGER *** External INBOUND traffic (from external net --> internal VMs) *** DANGER - is now default accept
+## DANGER *** External INBOUND traffic (from external net --> internal VMs) *** DANGER
 #--------------------------------------------------------------------------------------
 
 ## prevent invalid input packages
-$IPTABLES -A FORWARD ! -s $FIREWALL -m iprange --src-range $VMACHINESADR -m state --state INVALID -j $LOGOPT $RLIMIT --log-prefix "FORWARD DROP INVALID "
-$IPTABLES -A FORWARD ! -s $FIREWALL -m iprange --src-range $VMACHINESADR -m state --state INVALID -j DROP
+$IPTABLES -A FORWARD ! -s $FIREWALL -m iprange --dst-range $VMACHINESADR -m state --state INVALID -j $LOGOPT $RLIMIT --log-prefix "FORWARD DROP INVALID "
+$IPTABLES -A FORWARD ! -s $FIREWALL -m iprange --dst-range $VMACHINESADR -m state --state INVALID -j DROP
 
 ## few input VM access rules here like web server port 80, 443
 
@@ -180,14 +179,15 @@ $IPTABLES -A FORWARD ! -s $FIREWALL -m iprange --src-range $VMACHINESADR -m stat
 #
 
 ## default reject to VMs
-$IPTABLES -A FORWARD ! -s $FIREWALL -m iprange --src-range $VMACHINESADR -j $LOGOPT $RLIMIT --log-prefix "FORWARD REJECT EXT2VM " 
+$IPTABLES -A FORWARD ! -s $FIREWALL -m iprange --dst-range $VMACHINESADR -j $LOGOPT $RLIMIT --log-prefix "FORWARD ACCEPT EXT2VM " 
+#$IPTABLES -A FORWARD ! -s $FIREWALL -m iprange --dst-range $VMACHINESADR -j $LOGOPT $RLIMIT --log-prefix "FORWARD REJECT EXT2VM " 
 #$IPTABLES -A FORWARD ! -s $FIREWALL -m iprange --src-range $VMACHINESADR -j REJECT --reject-with icmp-host-prohibited
-$IPTABLES -A FORWARD ! -s $FIREWALL -m iprange --src-range $VMACHINESADR  -j ACCEPT
+$IPTABLES -A FORWARD ! -s $FIREWALL -m iprange --dst-range $VMACHINESADR  -j ACCEPT
 
 
-## ========================================
-##    HOST OUTBOUND TRAFFIC (POLICY ACCEPT)
-## ========================================
+## ============================================
+##    FW HOST OUTBOUND TRAFFIC (POLICY ACCEPT)
+## ============================================
 
 ## explicit show whats are allowed out ##
 # ---------------------------------------
@@ -201,12 +201,6 @@ $IPTABLES -A OUTPUT -p udp -m udp --dport 443 -m state --state NEW -j ACCEPT
 $IPTABLES -A OUTPUT -p tcp -m tcp --dport 8139:8140 --syn -m state --state NEW -j ACCEPT
 $IPTABLES -A OUTPUT -p icmp -j ACCEPT
 
-# drop outbound broadcasts and multicasts on public interfaces
-$IPTABLES -A OUTPUT -m pkttype --pkt-type broadcast -j $LOGOPT --log-prefix "OUTPUT BRDCAST DROP " 
-$IPTABLES -A OUTPUT -m pkttype --pkt-type broadcast -j DROP
-$IPTABLES -A OUTPUT -m pkttype --pkt-type multicast -j $LOGOPT --log-prefix "OUTPUT MLTCAST DROP " 
-$IPTABLES -A OUTPUT -m pkttype --pkt-type multicast -j DROP
-
 # default logs i.e. what else goes out from host
 $IPTABLES -A OUTPUT -j $LOGOPT $RLIMIT --log-prefix "OUTPUT DEFAULT LOGONLY " 
 
@@ -217,6 +211,7 @@ $IPTABLES -A OUTPUT -j $LOGOPT $RLIMIT --log-prefix "OUTPUT DEFAULT LOGONLY "
 #    service iptables save
 #    service iptables restart
 #    iptables -L -v --line-numbers
+#    iptables -t nat -L -v --line-numbers
 #
 ##############################
 
