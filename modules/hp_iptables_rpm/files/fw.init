@@ -70,7 +70,7 @@ $IPTABLES -P FORWARD DROP
 $IPTABLES -P OUTPUT ACCEPT
 $IPTABLES -t nat -P PREROUTING ACCEPT
 $IPTABLES -t nat -P OUTPUT ACCEPT
-$IPTABLES -t nat -POSTROUTING ACCEPT
+$IPTABLES -t nat -P POSTROUTING ACCEPT
 
 #---------------------------------------------------------------------
 # Custom chains
