@@ -129,7 +129,7 @@ $IPTABLES -A INPUT -s $PRIVATENET -p icmp -j ACCEPT
 $IPTABLES -A INPUT -s $PRIVATENET -j $LOGOPT --log-prefix "INPUT ACCEPT VM2INT "
 #$IPTABLES -A INPUT -s $PRIVATENET -j $LOGOPT --log-prefix "INPUT REJECT VM2INT "
 #$IPTABLES -A INPUT -s $PRIVATENET -j REJECT --reject-with icmp-host-prohibited
-$IPTABLES -A INPUT -s $PRIVATENET-j ACCEPT
+$IPTABLES -A INPUT -s $PRIVATENET -j ACCEPT
 
 
 ## ==================================
