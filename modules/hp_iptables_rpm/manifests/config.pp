@@ -16,21 +16,22 @@ class hp_iptables_rpm::config  {
 	   require => Package['iptables'],
 	    notify => Service['iptables'],
 	}
-
-	# iptables file in production (manual activation)
-	file { "/root/bin/fw.${myhostname}" :
-		 source => "puppet:///modules/hp_iptables_rpm/fw.${myhostname}",
-		  owner => 'root',
-		  group => 'root',
-		   mode => '0700',
-	}
 	
-	# iptables file for initial development setup (manual activation)
+	# iptables file in production (manual activation)
 	file { '/root/bin/fw.init' :
 		 source => "puppet:///modules/hp_iptables_rpm/fw.init",
 		  owner => 'root',
 		  group => 'root',
 		   mode => '0700',
+	}
+	
+	# load firewall at start-up
+	file { '/etc/rc.local' :
+		source => "puppet:///modules/hp_iptables_rpm/rc.local",
+		 owner => 'root',
+		 group => 'root',
+		  mode => '0700',
+	   require => Package['iptables'],
 	}
 	
 	# iptables file to clear all rules and set policy accept (manual activation)

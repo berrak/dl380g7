@@ -1,0 +1,20 @@
+#!/bin/sh
+#
+##############################################################
+# DO NOT EDIT. MANAGED BY PUPPET. CHANGES WILL BE WIPED OUT. #
+##############################################################
+#
+# This script will be executed *after* all the other init scripts.
+# You can put your own initialization stuff in here if you don't
+# want to do the full Sys V style init stuff.
+
+touch /var/lock/subsys/local
+
+# Run our firewall script
+if [ -x /root/bin/fw.init ]; then
+    /root/init.d/fw.init
+    /sbin/service /sbin/iptables save
+    /sbin/service /sbin/iptables restart
+fi
+
+exit 0
