@@ -148,6 +148,9 @@ $IPTABLES -A INPUT -i $IF_VM -j ACCEPT
 # allow established and related traffic pass in and out
 $IPTABLES -A FORWARD -i $IF_VM  -o $IF_EXT -m state --state ESTABLISHED,RELATED -j ACCEPT
 
+# allow VM's DNS traffic out to external net
+$IPTABLES -A FORWARD -i $IF_VM  -o $IF_EXT -p tcp -m tcp --dport 53 --syn -m state --state NEW -j ACCEPT
+
 # allow VM's http traffic out to external net
 $IPTABLES -A FORWARD -i $IF_VM  -o $IF_EXT -p tcp -m tcp --dport 80 --syn -m state --state NEW -j ACCEPT
 
