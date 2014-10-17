@@ -91,6 +91,8 @@ $IPTABLES -t nat -A PREROUTING -d $PUBVM2 -p tcp -j DNAT --to-destination $INTVM
 #$IPTABLES -t nat -A POSTROUTING -s $INTVM1 ! -d $PRIVATENET -j SNAT --to-source $PUBVM1
 #$IPTABLES -t nat -A POSTROUTING -s $INTVM2 ! -d $PRIVATENET -j SNAT --to-source $PUBVM2
 
+$IPTABLES -t nat -A POSTROUTING -p tcp -s $PRIVATENET ! -d $PRIVATENET --to-ports 1024:65535 -j MASQUERADE
+$IPTABLES -t nat -A POSTROUTING -p udp -s $PRIVATENET ! -d $PRIVATENET --to-ports 1024:65535 -j MASQUERADE
 $IPTABLES -t nat -A POSTROUTING -p all -s $PRIVATENET ! -d $PRIVATENET -j MASQUERADE
 
 #==============================================================================
