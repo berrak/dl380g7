@@ -53,7 +53,7 @@ $MODPROBE xt_pkttype
 ## Load module xt_limit to limit excessive logging on public interfaces
 $MODPROBE xt_limit
 RLIMIT="-m limit --limit 3/s --limit-burst 8"
-## Load module to be able to give a range of ip addresses
+## Load module to be able to give a range of ip addresses (not used yet)
 ## $MODPROBE xt_iprange
 
 ## Flush old rules, old custom chains and zero counters 
@@ -138,7 +138,7 @@ $IPTABLES -A INPUT -i $IF_VM -j ACCEPT
 
 
 ## ============================================================================
-##   VM FORWARD TRAFFIC (POLICY DROP)
+##   VM TRAFFIC (POLICY DROP)
 ## ============================================================================
 
 #------------------------------------------------------------------------------
@@ -148,10 +148,12 @@ $IPTABLES -A INPUT -i $IF_VM -j ACCEPT
 # allow established and related traffic pass in and out
 $IPTABLES -A FORWARD -i $IF_VM  -o $IF_EXT -m state --state ESTABLISHED,RELATED -j ACCEPT
 
-#
+# allow VM's http traffic out to external net
+$IPTABLES -A FORWARD -i $IF_VM  -o $IF_EXT -p tcp -m tcp --dport 80 --syn -m state --state NEW -j ACCEPT
 
+# allow VM's https traffic out to external net
+$IPTABLES -A FORWARD -i $IF_VM  -o $IF_EXT -p tcp -m tcp --dport 443 --syn -m state --state NEW -j ACCEPT
 
-#
 
 # default reject other VM traffic to external net
 $IPTABLES -A FORWARD -i $IF_VM  -o $IF_EXT -j $LOGOPT --log-prefix "FORWARD ACCEPT VM2EXT "
@@ -189,7 +191,7 @@ $IPTABLES -A FORWARD -i $IF_EXT  -o $IF_VM  -j ACCEPT
 ##    FW HOST OUTBOUND TRAFFIC (POLICY ACCEPT)
 ## ============================================================================
 
-## OUTPUT is only used for FW host external outbound (-o eth0) traffic!
+## FW OUTPUT traffic is both to External net (public) and to Internal VMs.
 ## Explicit shows whats are allowed out.  ##
 # ---------------------------------------
 $IPTABLES -A OUTPUT -p tcp -m tcp --dport 22 --syn -m state --state NEW -j ACCEPT
@@ -199,7 +201,11 @@ $IPTABLES -A OUTPUT -p udp -m udp --dport 53 -m state --state NEW -j ACCEPT
 $IPTABLES -A OUTPUT -p udp -m udp --dport 80 -m state --state NEW -j ACCEPT
 $IPTABLES -A OUTPUT -p udp -m udp --dport 123 -m state --state NEW -j ACCEPT
 $IPTABLES -A OUTPUT -p udp -m udp --dport 443 -m state --state NEW -j ACCEPT
+
 $IPTABLES -A OUTPUT -p icmp -j ACCEPT
+
+# allow Git pulls (port 9418)
+$IPTABLES -A OUTPUT -p tcp -m tcp --dport 9418 --syn -m state --state NEW -j ACCEPT
 
 # default logs i.e. what else goes out from host
 $IPTABLES -A OUTPUT -j $LOGOPT $RLIMIT --log-prefix "OUTPUT DEFAULT LOGONLY " 
