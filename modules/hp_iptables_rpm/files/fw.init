@@ -152,8 +152,8 @@ $IPTABLES -A FORWARD -i $IF_VM  -o $IF_EXT -m state --state ESTABLISHED,RELATED 
 $IPTABLES -A FORWARD -i $IF_VM  -o $IF_EXT -p tcp -m tcp --dport 21 --syn -m state --state NEW -j ACCEPT
 
 # allow VM's DNS traffic out to external net
-$IPTABLES -A FORWARD -i $IF_VM  -o $IF_EXT -p tcp -m tcp --dport 53 -m state --state NEW -j ACCEPT
-$IPTABLES -A FORWARD -i $IF_VM  -o $IF_EXT -p tcp -m udp --dport 53 --syn -m state --state NEW -j ACCEPT
+$IPTABLES -A FORWARD -i $IF_VM  -o $IF_EXT -p tcp -m tcp --dport 53 --syn -m state --state NEW -j ACCEPT
+$IPTABLES -A FORWARD -i $IF_VM  -o $IF_EXT -p udp -m udp --dport 53 -m state --state NEW -j ACCEPT
 
 # allow VM's http traffic out to external net
 $IPTABLES -A FORWARD -i $IF_VM  -o $IF_EXT -p tcp -m tcp --dport 80 --syn -m state --state NEW -j ACCEPT
