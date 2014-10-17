@@ -38,7 +38,6 @@ INTVM2="192.168.122.42"
 #------------------------------------------------------------------------------
 # ISP data
 #------------------------------------------------------------------------------
-DMZNET="192.168.0.0/255.255.255.0"
 GATEWAY="192-168.0.1"
 SERVER="192.168.0.66"
 PUBVM1="192.168.0.41"
@@ -147,58 +146,56 @@ $IPTABLES -A INPUT -i $IF_VM -j ACCEPT
 ##   VM TRAFFIC (POLICY ACCEPT)
 ## ============================================================================
 
+# allow established and related traffic pass in and out
+$IPTABLES -A FORWARD -i $IF_VM  -o $IF_EXT -m state --state ESTABLISHED,RELATED -j ACCEPT
+
 #------------------------------------------------------------------------------
 ## Internal OUTBOUND traffic (from Internal VMs --> External net)
 #------------------------------------------------------------------------------
 
-# allow established and related traffic pass in and out
-$IPTABLES -A FORWARD -i $IF_VM  -o $IF_EXT ! -d $DMZNET -m state --state ESTABLISHED,RELATED -j ACCEPT
-
 # allow ftp out
-$IPTABLES -A FORWARD -i $IF_VM  -o $IF_EXT ! -d $DMZNET -p tcp -m tcp --dport 21 --syn -m state --state NEW -j ACCEPT
+$IPTABLES -A FORWARD -i $IF_VM  -o $IF_EXT  -p tcp -m tcp --dport 21 --syn -m state --state NEW -j ACCEPT
 
 # allow VM's DNS traffic out to external net
-$IPTABLES -A FORWARD -i $IF_VM  -o $IF_EXT ! -d $DMZNET -p tcp -m tcp --dport 53 --syn -m state --state NEW -j ACCEPT
-$IPTABLES -A FORWARD -i $IF_VM  -o $IF_EXT ! -d $DMZNET -p udp -m udp --dport 53 -m state --state NEW -j ACCEPT
+$IPTABLES -A FORWARD -i $IF_VM  -o $IF_EXT -p tcp -m tcp --dport 53 --syn -m state --state NEW -j ACCEPT
+$IPTABLES -A FORWARD -i $IF_VM  -o $IF_EXT -p udp -m udp --dport 53 -m state --state NEW -j ACCEPT
 
 # allow VM's http traffic out to external net
-$IPTABLES -A FORWARD -i $IF_VM  -o $IF_EXT ! -d $DMZNET -p tcp -m tcp --dport 80 --syn -m state --state NEW -j ACCEPT
+$IPTABLES -A FORWARD -i $IF_VM  -o $IF_EXT -p tcp -m tcp --dport 80 --syn -m state --state NEW -j ACCEPT
 
 # allow VM's https traffic out to external net
-$IPTABLES -A FORWARD -i $IF_VM  -o $IF_EXT ! -d $DMZNET -p tcp -m tcp --dport 443 --syn -m state --state NEW -j ACCEPT
+$IPTABLES -A FORWARD -i $IF_VM  -o $IF_EXT -p tcp -m tcp --dport 443 --syn -m state --state NEW -j ACCEPT
 
 # default reject other VM traffic to external net
-#$IPTABLES -A FORWARD -i $IF_VM  -o $IF_EXT -j $LOGOPT --log-prefix "FORWARD ACCEPT VM2EXT "
-#$IPTABLES -A FORWARD -i $IF_VM  -o $IF_EXT -j ACCEPT
-$IPTABLES -A FORWARD -i $IF_VM  -o $IF_EXT ! -d $DMZNET -j $LOGOPT --log-prefix "FORWARD REJECT VM2EXT "
-$IPTABLES -A FORWARD -i $IF_VM  -o $IF_EXT ! -d $DMZNET -j REJECT --reject-with icmp-host-prohibited
+$IPTABLES -A FORWARD -i $IF_VM  -o $IF_EXT -j $LOGOPT --log-prefix "FORWARD REJECT VM2EXT "
+$IPTABLES -A FORWARD -i $IF_VM  -o $IF_EXT -j REJECT --reject-with icmp-host-prohibited
 
 
 #------------------------------------------------------------------------------
 ##   DANGER *** INBOUND traffic (Any incoming --> Internal VMs) *** DANGER
 #------------------------------------------------------------------------------
 
+# allow established and related traffic pass in
+$IPTABLES -A FORWARD -i $IF_EXT -o $IF_VM -d $INTNET -m state --state ESTABLISHED,RELATED -j ACCEPT
+
 ## prevent invalid input packages
-$IPTABLES -A FORWARD -i $IF_EXT -o $IF_VM -m state --state INVALID -j $LOGOPT $RLIMIT --log-prefix "FORWARD DROP INVALID "
-$IPTABLES -A FORWARD -i $IF_EXT -o $IF_VM -m state --state INVALID -j DROP
+$IPTABLES -A FORWARD -i $IF_EXT -o $IF_VM -d $INTNET -m state --state INVALID -j $LOGOPT $RLIMIT --log-prefix "FORWARD DROP INVALID "
+$IPTABLES -A FORWARD -i $IF_EXT -o $IF_VM -d $INTNET -m state --state INVALID -j DROP
 
 ## few external input ports VM access rules here
 
 # ssh client access for management of VMs
-$IPTABLES -A FORWARD -i $IF_EXT -o $IF_VM -p tcp -m tcp --dport 22 --syn -m state --state NEW -j ACCEPT
+$IPTABLES -A FORWARD -i $IF_EXT -o $IF_VM -d $INTNET -p tcp -m tcp --dport 22 --syn -m state --state NEW -j ACCEPT
 
 # external access to http server
-$IPTABLES -A FORWARD -i $IF_EXT -o $IF_VM -p tcp -m tcp --dport 80 --syn -m state --state NEW -j ACCEPT
+$IPTABLES -A FORWARD -i $IF_EXT -o $IF_VM -d $INTNET -p tcp -m tcp --dport 80 --syn -m state --state NEW -j ACCEPT
 
 # allow ping
-$IPTABLES -A FORWARD -i $IF_EXT -o $IF_VM -p icmp --icmp-type echo-request $RLIMIT -j ACCEPT
+$IPTABLES -A FORWARD -i $IF_EXT -o $IF_VM -d $INTNET -p icmp --icmp-type echo-request $RLIMIT -j ACCEPT
 
 ## default reject external traffic to VMs
-#$IPTABLES -A FORWARD -i $IF_EXT  -o $IF_VM -j $LOGOPT $RLIMIT --log-prefix "FORWARD ACCEPT EXT2VM "
-#$IPTABLES -A FORWARD -i $IF_EXT  -o $IF_VM -j ACCEPT
-
-$IPTABLES -A FORWARD -i $IF_EXT  -o $IF_VM -j $LOGOPT $RLIMIT --log-prefix "FORWARD REJECT EXT2VM " 
-$IPTABLES -A FORWARD -i $IF_EXT  -o $IF_VM -j REJECT --reject-with icmp-host-prohibited
+$IPTABLES -A FORWARD -i $IF_EXT  -o $IF_VM -d $INTNET -j $LOGOPT $RLIMIT --log-prefix "FORWARD REJECT EXT2VM " 
+$IPTABLES -A FORWARD -i $IF_EXT  -o $IF_VM -d $INTNET -j REJECT --reject-with icmp-host-prohibited
 
 ## ============================================================================
 ##    FW HOST OUTBOUND TRAFFIC (POLICY ACCEPT)
