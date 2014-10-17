@@ -148,8 +148,12 @@ $IPTABLES -A INPUT -i $IF_VM -j ACCEPT
 # allow established and related traffic pass in and out
 $IPTABLES -A FORWARD -i $IF_VM  -o $IF_EXT -m state --state ESTABLISHED,RELATED -j ACCEPT
 
+# allow ftp out
+$IPTABLES -A FORWARD -i $IF_VM  -o $IF_EXT -p tcp -m udp --dport 21 --syn -m state --state NEW -j ACCEPT
+
 # allow VM's DNS traffic out to external net
-$IPTABLES -A FORWARD -i $IF_VM  -o $IF_EXT -p tcp -m tcp --dport 53 --syn -m state --state NEW -j ACCEPT
+$IPTABLES -A FORWARD -i $IF_VM  -o $IF_EXT -p tcp -m tcp --dport 53 -m state --state NEW -j ACCEPT
+$IPTABLES -A FORWARD -i $IF_VM  -o $IF_EXT -p tcp -m udp --dport 53 --syn -m state --state NEW -j ACCEPT
 
 # allow VM's http traffic out to external net
 $IPTABLES -A FORWARD -i $IF_VM  -o $IF_EXT -p tcp -m tcp --dport 80 --syn -m state --state NEW -j ACCEPT
@@ -159,10 +163,11 @@ $IPTABLES -A FORWARD -i $IF_VM  -o $IF_EXT -p tcp -m tcp --dport 443 --syn -m st
 
 
 # default reject other VM traffic to external net
-$IPTABLES -A FORWARD -i $IF_VM  -o $IF_EXT -j $LOGOPT --log-prefix "FORWARD ACCEPT VM2EXT "
-#$IPTABLES -A FORWARD -i $IF_VM  -o $IF_EXT -j $LOGOPT --log-prefix "FORWARD REJECT VM2EXT "
-#$IPTABLES -A FORWARD -i $IF_VM  -o $IF_EXT -j REJECT --reject-with icmp-host-prohibited
-$IPTABLES -A FORWARD -i $IF_VM  -o $IF_EXT -j ACCEPT
+#$IPTABLES -A FORWARD -i $IF_VM  -o $IF_EXT -j $LOGOPT --log-prefix "FORWARD ACCEPT VM2EXT "
+#$IPTABLES -A FORWARD -i $IF_VM  -o $IF_EXT -j ACCEPT
+$IPTABLES -A FORWARD -i $IF_VM  -o $IF_EXT -j $LOGOPT --log-prefix "FORWARD REJECT VM2EXT "
+$IPTABLES -A FORWARD -i $IF_VM  -o $IF_EXT -j REJECT --reject-with icmp-host-prohibited
+
 
 #------------------------------------------------------------------------------
 ##   DANGER *** INBOUND traffic (External net --> Internal VMs) *** DANGER
