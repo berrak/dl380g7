@@ -216,7 +216,7 @@ $IPTABLES -A OUTPUT -p icmp -j ACCEPT
 $IPTABLES -A OUTPUT -p tcp -m tcp --dport 9418 --syn -m state --state NEW -j ACCEPT
 
 # default logs i.e. what else goes out from host
-$IPTABLES -A OUTPUT -j $LOGOPT $RLIMIT --log-prefix "OUTPUT DEFAULT LOGONLY " 
+# $IPTABLES -A OUTPUT -j $LOGOPT $RLIMIT --log-prefix "OUTPUT DEFAULT LOGONLY " 
 
 ###############################################################################
 # To use this, manually run:
