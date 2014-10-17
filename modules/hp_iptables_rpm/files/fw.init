@@ -65,8 +65,8 @@ $IPTABLES -Z
 #------------------------------------------------------------------------------
 # Default policies
 #------------------------------------------------------------------------------
-$IPTABLES -P INPUT DROP
-$IPTABLES -P FORWARD DROP
+$IPTABLES -P INPUT ACCEPT
+$IPTABLES -P FORWARD ACCEPT
 $IPTABLES -P OUTPUT ACCEPT
 $IPTABLES -t nat -P PREROUTING ACCEPT
 $IPTABLES -t nat -P OUTPUT ACCEPT
@@ -85,8 +85,8 @@ $IPTABLES -I OUTPUT 1 -o lo -j ACCEPT
 ## ============================================================================
 
 # masquerade in-outgoing vm traffic
-$IPTABLES -t nat -A PREROUTING -d $PUBVM1 -i eth0 -p tcp -j DNAT --to-destination $INTVM1
-$IPTABLES -t nat -A PREROUTING -d $PUBVM2 -i eth0 -p tcp -j DNAT --to-destination $INTVM2
+$IPTABLES -t nat -A PREROUTING -d $PUBVM1 -p tcp -j DNAT --to-destination $INTVM1
+$IPTABLES -t nat -A PREROUTING -d $PUBVM2 -p tcp -j DNAT --to-destination $INTVM2
 
 $IPTABLES -t nat -A POSTROUTING -s $INTVM1 ! -d $PRIVATENET -j SNAT --to-source $PUBVM1
 $IPTABLES -t nat -A POSTROUTING -s $INTVM2 ! -d $PRIVATENET -j SNAT --to-source $PUBVM2
@@ -102,7 +102,7 @@ $IPTABLES -A INPUT -m state --state INVALID -j DROP
 $IPTABLES -A INPUT -p all -m state --state ESTABLISHED,RELATED -j ACCEPT
 
 ## ============================================================================
-##  *** DANGER *** PUBLIC INBOUND TRAFFIC TO FW *** DANGER *** (POLICY DROP)
+##  *** DANGER *** PUBLIC INBOUND TRAFFIC TO FW *** DANGER *** (POLICY ACCEPT)
 ## ============================================================================
 
 # ssh client access for management of host
@@ -138,7 +138,7 @@ $IPTABLES -A INPUT -i $IF_VM -j ACCEPT
 
 
 ## ============================================================================
-##   VM TRAFFIC (POLICY DROP)
+##   VM TRAFFIC (POLICY ACCEPT)
 ## ============================================================================
 
 #------------------------------------------------------------------------------
