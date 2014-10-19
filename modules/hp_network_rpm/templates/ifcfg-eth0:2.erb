@@ -1,0 +1,11 @@
+##############################################################
+# MANAGED BY PUPPET. DO NOT EDIT. CHANGES WILL BE WIPED OUT. #
+##############################################################
+#
+# /ifcfg-<%= alias_interface %>
+#
+DEVICE=<%= alias_interface %>
+BOOTPROTO=none
+ONBOOT=yes
+IPADDR=<%= host_ip %>
+NETMASK=<%= host_netmask %>
