@@ -10,6 +10,9 @@ class hp_network_rpm::install {
     }
 
     # provides uuidgen
-    package { "util-linux-ng" : ensure => installed }
+    package { "util-linux-ng" :
+               ensure => installed,
+        allow_virtual => true,        
+    }
 
 }

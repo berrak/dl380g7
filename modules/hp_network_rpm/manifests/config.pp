@@ -19,7 +19,7 @@ class hp_network_rpm::config ( $interface='', $ip='', $prefix='',
 	$host_dns1 = $ispdns1
 	$host_dns2 = $ispdns2	
 
-	$host_mac = $::macaddress_interface
+	$host_mac = $::macaddress
 	$host_domain = $::domain
 	
 	file { "/etc/sysconfig/network-scripts/ifcfg-$interface":
