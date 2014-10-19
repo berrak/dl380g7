@@ -1,24 +1,24 @@
 ##############################################################
 # MANAGED BY PUPPET. DO NOT EDIT. CHANGES WILL BE WIPED OUT. #
 ##############################################################
-DEVICE=<%= host-interface %>
+DEVICE=<%= host_interface %>
 TYPE=Ethernet
 UUID=8f83faf4-4ac3-4211-8616-1a87c6244039
 ONBOOT=yes
 NM_CONTROLLED=no
 BOOTPROTO=none
-HWADDR=<%= host-mac %>
-IPADDR=<%= host-ip %>
-PREFIX=<%= host-prefix %>
-BROADCAST=<%= host-broadcast %>
-GATEWAY=<%= host-gateway %>
-DNS1=<%= host-dns1 %>
-DNS2=<%= host-dns2 %>
-DOMAIN=<%= host-domain %>
+HWADDR=<%= host_mac %>
+IPADDR=<%= host_ip %>
+PREFIX=<%= host_prefix %>
+BROADCAST=<%= host_broadcast %>
+GATEWAY=<%= host_gateway %>
+DNS1=<%= host_dns1 %>
+DNS2=<%= host_dns2 %>
+DOMAIN=<%= host_domain %>
 DEFROUTE=yes
 IPV4_FAILURE_FATAL=yes
 IPV6INIT=no
-NAME="System <%= host-interface %>"
+NAME="System <%= host_interface %>"
 PEERDNS=no
 PEERROUTES=yes
 
