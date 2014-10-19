@@ -58,8 +58,8 @@ node 'ol65.home.tld' {
     include hp_logwatch
     include hp_iptables_rpm
     
-    # no extra (libvirt adds own) L2-rules yet (tbd)
-    #include hp_ebtables_rpm    
+    # enable mac filtering but no custom rules yet - libvirt adds own chains
+    include hp_ebtables_rpm    
     
     # disable unnecessary services
     hp_service::disable { 'atd' : }
