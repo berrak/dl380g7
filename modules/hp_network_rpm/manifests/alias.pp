@@ -10,9 +10,10 @@ define hp_network_rpm::alias ( $publ_guest_ip='' ) {
 	
 	$host_ip = $public_guest_ip
     $host_netmask = $::netmask
+	$alias_interface = $name
  
 	file { "/etc/sysconfig/network-scripts/ifcfg-$alias_interface":
-		content =>  template( "hp_network_rpm/ifcfg-$name.erb" ),
+		content =>  template( "hp_network_rpm/ifcfg-$alias_interface.erb" ),
 		  owner => 'root',
 		  group => 'root',
 		 notify => Service['network'],
