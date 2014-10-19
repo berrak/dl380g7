@@ -4,9 +4,13 @@
 # Usage:
 #      hp_network_rpm::alias { 'eth0:1' : publ_guest_ip => '192.168.0.42' }    
 #
-define hp_network_rpm::alias ( $publ_guest_ip='' ) {
+define hp_network_rpm::alias ( $publ_guest_ip ) {
 
     include hp_network_rpm
+	
+	if ( $publ_guest_ip == '' ) {
+		fail("FAIL: Missing given virtual host public IP address")
+	}
 	
 	$host_ip = $public_guest_ip
     $host_netmask = $::netmask
