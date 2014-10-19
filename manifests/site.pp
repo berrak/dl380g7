@@ -19,11 +19,12 @@ node 'ol65.home.tld' {
     include hp_puppetize
     include puppet_utils
     
-    # primary host networking configuration
+    # primary host networking configuration (generate uuid with 'uuidgen')
     class { hp_network_rpm::config :
                 interface => 'eth0',
                 ip => '192.168.0.66',
                 prefix => '24',
+                uuid => '8f83faf4-4ac3-4211-8616-1a87c6244039',
                 gateway => '192.168.0.1',
                 broadcast => '192.168.0.255',
                 ispdns1 => '195.67.199.18',
