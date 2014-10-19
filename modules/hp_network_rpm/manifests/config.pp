@@ -1,7 +1,7 @@
 #
 # Manage network
 #
-class hp_network_rpm::config ( $interface='', $ip='', $prefix='', 
+class hp_network_rpm::config ( $interface='', $ip='', $prefix='', $uuid='',
                 $gateway='', $broadcast='', $ispdns1='', $ispdns2='' ) {
 
 	include hp_network_rpm
@@ -21,6 +21,8 @@ class hp_network_rpm::config ( $interface='', $ip='', $prefix='',
 
 	$host_mac = $::macaddress
 	$host_domain = $::domain
+	
+	$host_uuid_interface = $uuid
 	
 	file { "/etc/sysconfig/network-scripts/ifcfg-$interface":
 		content =>  template( "hp_network_rpm/ifcfg-$interface.erb" ),
