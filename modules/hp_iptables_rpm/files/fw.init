@@ -117,7 +117,7 @@ $IPTABLES -A INPUT -i $IF_EXT -p tcp -m tcp --dport 22 --syn -m state --state NE
 $IPTABLES -A INPUT -i $IF_EXT -p icmp --icmp-type echo-request $RLIMIT -j ACCEPT
 
 # accept (if any) multicasts 
-$IPTABLES -A INPUT -m pkttype --pkt-type multicast -j ACCEPT
+$IPTABLES -A INPUT -i $IF_EXT -m pkttype --pkt-type multicast -j ACCEPT
 
 # default reject external traffic to host 
 $IPTABLES -A INPUT -i $IF_EXT -j $LOGOPT $RLIMIT --log-prefix "INPUT REJECT EXT2INT " 
