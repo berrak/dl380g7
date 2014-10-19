@@ -15,6 +15,9 @@
     # The default value is '$confdir/ssl'.
     ssldir = $vardir/ssl
     
+    # enable to distribute custom facts to clients
+    pluginsync = true
+    
 [master]    
     server = puppet.<%= mydomain %>
     certname = puppet.<%= mydomain %>
