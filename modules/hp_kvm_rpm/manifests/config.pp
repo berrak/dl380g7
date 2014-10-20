@@ -9,7 +9,7 @@ class hp_kvm_rpm::config {
 		 owner => 'root',
 		 group => 'root',
 	   require => Package['libvirt'],
-	    notify => Service['libvirt'],
+	    notify => Service['libvirtd'],
 	}
  
 }

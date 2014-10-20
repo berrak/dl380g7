@@ -3,7 +3,7 @@
 ##
 class hp_kvm_rpm::service {
     	
-	service { "libvirt" :
+	service { "libvirtd" :
 			ensure => running,
 			enable => true,
 		   require => Package["libvirt"],
