@@ -1,5 +1,5 @@
 ##
-## Class to change state of selinux
+## Class to manage SELinux
 ##
 ## Sample usage:
 ##		hp_selinux::state { 'enforcing' : }
@@ -8,6 +8,8 @@
 ##
 define hp_selinux::state {
     
+	include hp_selinux
+	
     if $name == '' {
         fail("FAIL: SELINUX wanted state not given! Aborting...")
     }

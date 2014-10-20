@@ -1,4 +1,11 @@
 ##
-## Class to change state of selinux
+## Class to manage SELinux
 ##
-class hp_selinux { }
+class hp_selinux {
+
+    package { "policycoreutils-python" :
+               ensure => present,
+        allow_virtual => true,
+    }
+
+}
