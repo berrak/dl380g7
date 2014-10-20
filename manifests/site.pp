@@ -32,7 +32,11 @@ node 'ol65.home.tld' {
     }
     # virtual network aliases interfaces for KVM guests
     hp_network_rpm::alias { 'eth0:0' : public_guest_ip => '192.168.0.41' }
-    hp_network_rpm::alias { 'eth0:1' : public_guest_ip => '192.168.0.42' }    
+    hp_network_rpm::alias { 'eth0:1' : public_guest_ip => '192.168.0.42' }
+    
+    # set up KVM and its guests
+    include hp_kvm_rpm
+    
     
     # This is the ntp server for localnet
     class { hp_ntp : role => 'lanserver', peerntpip => '192.168.0.66' }
