@@ -10,8 +10,8 @@ node 'ol65.home.tld' {
     ## BASIC
     # Use dnsmasq (DNS) module for OracleLinux (no need for puppet module: hp_host)
     class { hp_dnsmasq::config :
-                dns1 => '8.8.8.8',
-                dns2 => '8.8.4.4',
+                ispdns1 => '195.67.199.18',
+                ispdns2 => '195.67.199.19',
                 real_hostname => 'ol65',
     }
     # above DNS must resolv before 'hp_pupetize'. Note that 'puppet-server'
@@ -33,9 +33,14 @@ node 'ol65.home.tld' {
     # virtual network aliases interfaces for KVM guests
     hp_network_rpm::alias { 'eth0:0' : public_guest_ip => '192.168.0.41' }
     hp_network_rpm::alias { 'eth0:1' : public_guest_ip => '192.168.0.42' }
+    hp_network_rpm::alias { 'eth0:2' : public_guest_ip => '192.168.0.43' }    
     
     # set up KVM and its guests
     include hp_kvm_rpm
+    #hp_kvm_rpm::add_guest { 'debinix' :
+    #            local_guest_ip  => '192.168.221.43',
+    #            local_guest_mac => '52:54:00:ff:ff:43',                
+    #}
     
     
     # This is the ntp server for localnet

@@ -1,14 +1,14 @@
 ##
 ## This class manage DNS, resolv.conf and the 'hosts' file
 ##
-class hp_dnsmasq::config ( $dns1='', $dns2='', $real_hostname='' ) {
+class hp_dnsmasq::config ( $ispdns1='', $ispdns2='', $real_hostname='' ) {
 
     include hp_dnsmasq
     
     # template variables
     
-    $mydns1 = $dns1
-    $mydns2 = $dns2 
+    $mydns1 = $ispdns1
+    $mydns2 = $ispdns2 
     
     $puppetsrvfqdn = $::fqdn
     $myhostname = $::hostname
