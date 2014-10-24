@@ -19,8 +19,7 @@ if ($num_args != 1) {
     exit 1;
 }
 
-my $domain = $ARGV[0];
-my $xmlfile = $domain . ".xml";
+my $xmlfile = $ARGV[0];
 
 XML::Twig->new(
     
