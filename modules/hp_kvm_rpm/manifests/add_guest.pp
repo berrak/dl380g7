@@ -23,7 +23,9 @@ define hp_kvm_rpm::add_guest ( $local_guest_ip, $local_guest_mac ) {
 		content =>  template( "hp_kvm_rpm/tpldeb.xml.erb" ),
 		  owner => 'root',
 		  group => 'root',
+		   mode => '0600',
 		require => Class["hp_kvm_rpm"],
+		 notify => Exec["Create_new_guest_$name"],
 	} 
 	
 	# create the new guest
