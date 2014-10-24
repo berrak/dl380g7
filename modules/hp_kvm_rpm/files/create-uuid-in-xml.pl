@@ -21,7 +21,7 @@ if ($num_args != 1) {
 }
 
 my $domain = $ARGV[0];
-my $xmlfile = $curr_dir . $domain . ".xml";
+my $xmlfile = $curr_dir . "/" . $domain . ".xml";
 
 XML::Twig->new(
     
@@ -31,4 +31,4 @@ XML::Twig->new(
             $_->set_text( $newuuid )->flush
         },
     },
-)->parsefile_inplace( $xmlfile );
+)->parsefile_inplace( $xmlfile, 'tmp_*' );
