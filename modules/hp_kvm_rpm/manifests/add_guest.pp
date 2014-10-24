@@ -6,7 +6,7 @@
 #                local_guest_mac => '52:54:00:ff:ff:43',                
 #    }
 #        
-define hp_kvm_rpm::alias ( $local_guest_ip, $local_guest_mac ) {
+define hp_kvm_rpm::add_guest ( $local_guest_ip, $local_guest_mac ) {
 
     include hp_kvm_rpm
 	
