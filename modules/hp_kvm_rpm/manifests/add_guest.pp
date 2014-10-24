@@ -27,12 +27,19 @@ define hp_kvm_rpm::add_guest ( $local_guest_ip, $local_guest_mac ) {
 		require => Class["hp_kvm_rpm"],
 		 notify => Exec["Create_new_guest_$name"],
 	} 
-	
-	# create the new guest
+
+	# create the new guest perl script
 	exec { "Create_new_guest_$name" :
 		       path => '/root/bin:/bin:/sbin:/usr/bin:/usr/sbin',
-		    command => "/root/bin/new-virtclone.sh $name",
+		    command => "/root/bin/create-guest.pl $name",
 		refreshonly => 'true',
 	}
+
+	# create the new guest
+	#exec { "Create_new_guest_$name" :
+	#	       path => '/root/bin:/bin:/sbin:/usr/bin:/usr/sbin',
+	#	    command => "/root/bin/new-virtclone.sh $name",
+	#	refreshonly => 'true',
+	#}
 
 }
