@@ -29,4 +29,4 @@ XML::Twig->new(
             $_->set_text( $newuuid )->flush
         },
     },
-)->parsefile_inplace( $xmlfile, 'tmp_*' );
+)->parsefile_inplace( $xmlfile );

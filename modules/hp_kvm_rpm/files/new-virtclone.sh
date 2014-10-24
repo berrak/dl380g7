@@ -15,7 +15,6 @@ if [ $# -ne 1 ] ; then
 fi
 
 # 1. Replace the old uuid in the new guest doamin xml-file  
-cd /tmp
 create-uuid-in-xml.pl /etc/libvirt/qemu/$1.xml
 logger -s "$PROGNAME: Created unique uuid for new virtual domain $1"
 
