@@ -32,7 +32,6 @@ define hp_kvm_rpm::add_guest ( $local_guest_ip, $local_guest_mac ) {
 	exec { "Create_new_guest_$name" :
 		       path => '/root/bin:/bin:/sbin:/usr/bin:/usr/sbin',
 		    command => "/root/bin/new-virtclone.sh $name",
-	        require => File["/etc/libvirt/qemu/$name.xml"],
 		refreshonly => 'true',
 	}
 

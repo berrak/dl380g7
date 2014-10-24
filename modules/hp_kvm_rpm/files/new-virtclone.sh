@@ -9,7 +9,7 @@ set -e
 #              e.g. new-virtclone.sh vmg13
 #
 PROGNAME=$(basename $0)
-if [ $# -ne 1 ] ;
+if [ $# -ne 1 ] ; then
     logger -s "$PROGNAME: Wrong number of arguments $#"
     exit 1
 fi
