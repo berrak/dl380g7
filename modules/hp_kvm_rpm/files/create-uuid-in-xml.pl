@@ -12,7 +12,6 @@ use warnings;
 use XML::Twig;
 
 my $newuuid = `uuidgen`;
-my $curr_dir = `pwd`;
 my $num_args = $#ARGV +1 ;
 
 if ($num_args != 1) {
@@ -21,7 +20,7 @@ if ($num_args != 1) {
 }
 
 my $domain = $ARGV[0];
-my $xmlfile = $curr_dir . "/" . $domain . ".xml";
+my $xmlfile = $domain . ".xml";
 
 XML::Twig->new(
     
