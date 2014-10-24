@@ -18,7 +18,7 @@ create-uuid-in-xml.pl /etc/libvirt/qemu/$1.xml
 logger -s "$PROGNAME: Created unique uuid for new virtual domain $1"
 
 # 2. Undefine domain if existing
-undefine $1
+virsh undefine $1
 
 # 3. Register the new guest xml-file for the new domain
 virsh define /etc/libvirt/qemu/$1.xml
