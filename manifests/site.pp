@@ -62,7 +62,7 @@ node 'ol65.home.tld' {
     
     ## APPLICATIONS
 	# Install REDHAT packages without any special configurations
-    class { hp_install_rpms : rpms => [ "tree", "ethtool", "parted", "lsof", "util-linux-ng" ] }
+    class { hp_install_rpms : rpms => [ "tree", "ethtool", "parted", "lsof" ] }
 
 
     ## SECURITY
