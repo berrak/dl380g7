@@ -20,6 +20,9 @@ if ($num_args != 1) {
 }
 
 my $domain = $ARGV[0];
+my $xmlfile = $domain . ".xml";
+my $xmlpath = "/etc/libvirt/qemu/$xmlfile";
+
 
 # 1. Replace the old uuid in the new guest domain xml-file
 XML::Twig->new(
@@ -30,18 +33,16 @@ XML::Twig->new(
             $_->set_text( $newuuid )->flush
         },
     },
-)->parsefile_inplace($domain, 'tmp');
+)->parsefile_inplace($xmlpath, 'tmp');
 
 # 2. Undefine domain, if existing
 system ("virsh undefine $domain");
 
 # 3. Register the new guest xml-file for the new domain
-my $xmlfile = $domain . ".xml";
-system ("virsh define /etc/libvirt/qemu/$xmlfile");
+system ("virsh define $xmlpath");
 
 # 4. Clone the existing raw image (from tpldeb.img) for the new guest
-my $imagefile = "/virtimages/$domain" . ".img";
-system("virt-clone -o tpldeb -n $domain -f $xmlfile");
+my $imagepath = "/virtimages/$domain" . ".img";
+system("virt-clone -o tpldeb -n $domain -f $imagepath");
 
 # 5. Manipulate cloned image before first use
-
