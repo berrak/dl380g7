@@ -23,8 +23,10 @@ my $domain = $ARGV[0];
 my $xmlfile = $domain . ".xml";
 my $xmlpath = "/etc/libvirt/qemu/$xmlfile";
 
+# 1. Undefine domain, if existing
+system ("virsh undefine $domain");
 
-# 1. Replace the old uuid in the new guest domain xml-file
+# 2. Replace the old uuid in the new guest domain xml-file
 XML::Twig->new(
     
     pretty_print  => 'indented',
@@ -34,9 +36,6 @@ XML::Twig->new(
         },
     },
 )->parsefile_inplace($xmlpath, 'tmp');
-
-# 2. Undefine domain, if existing
-system ("virsh undefine $domain");
 
 # 3. Register the new guest xml-file for the new domain
 system ("virsh define $xmlpath");
