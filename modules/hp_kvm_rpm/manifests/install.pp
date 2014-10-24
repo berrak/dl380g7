@@ -3,7 +3,8 @@
 ##
 class hp_kvm_rpm::install {
 
-    package { ["kvm", "libvirt", "qemu-kvm", "bridge-utils", "libvirt-python", "python-virtinst"] :
+    package { ["kvm", "libvirt", "qemu-kvm", "bridge-utils",
+	           "libvirt-python", "python-virtinst", "libguestfs-tools" ] :
                ensure => present,
         allow_virtual => true,
     }

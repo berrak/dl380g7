@@ -11,5 +11,22 @@ class hp_kvm_rpm::config {
 	   require => Package['libvirt'],
 	    notify => Service['libvirtd'],
 	}
+    
+    # helper perl script to set uuid of new guests
+	file { '/root/bin/create-uuid-in-xml.pl' :
+		source => "puppet:///modules/hp_kvm_rpm/create-uuid-in-xml.pl",
+		 owner => 'root',
+		 group => 'root',
+	      mode => '0755',
+	}
+    
+    # helper shell script to automate new guest creation
+	file { '/root/bin/new-virtclone.sh' :
+		source => "puppet:///modules/hp_kvm_rpm/new-virtclone.sh",
+		 owner => 'root',
+		 group => 'root',
+	      mode => '0755',
+	}
+    
  
 }

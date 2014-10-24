@@ -31,16 +31,20 @@ node 'ol65.home.tld' {
                 ispdns2 => '195.67.199.19',
     }
     # virtual network aliases interfaces for KVM guests
-    hp_network_rpm::alias { 'eth0:0' : public_guest_ip => '192.168.0.41' }
-    hp_network_rpm::alias { 'eth0:1' : public_guest_ip => '192.168.0.42' }
-    hp_network_rpm::alias { 'eth0:2' : public_guest_ip => '192.168.0.43' }    
+    hp_network_rpm::alias { 'eth0:0' : public_guest_ip => '192.168.0.40' }
+    hp_network_rpm::alias { 'eth0:1' : public_guest_ip => '192.168.0.41' }
+    hp_network_rpm::alias { 'eth0:2' : public_guest_ip => '192.168.0.42' }
+    hp_network_rpm::alias { 'eth0:3' : public_guest_ip => '192.168.0.43' }
+    hp_network_rpm::alias { 'eth0:4' : public_guest_ip => '192.168.0.44' }
+    hp_network_rpm::alias { 'eth0:5' : public_guest_ip => '192.168.0.45' }  
     
     # set up KVM and its guests
     include hp_kvm_rpm
-    #hp_kvm_rpm::add_guest { 'debinix' :
-    #            local_guest_ip  => '192.168.221.43',
-    #            local_guest_mac => '52:54:00:ff:ff:43',                
-    #}
+    # -- first guest
+    hp_kvm_rpm::add_guest { 'debinix' :
+                local_guest_ip  => '192.168.221.40',
+                local_guest_mac => '52:54:00:ff:ff:40',                
+    }
     
     
     # This is the ntp server for localnet
@@ -58,7 +62,7 @@ node 'ol65.home.tld' {
     
     ## APPLICATIONS
 	# Install REDHAT packages without any special configurations
-    class { hp_install_rpms : rpms => [ "tree", "ethtool", "parted", "lsof" ] }
+    class { hp_install_rpms : rpms => [ "tree", "ethtool", "parted", "lsof", "util-linux-ng" ] }
 
 
     ## SECURITY
