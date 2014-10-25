@@ -26,7 +26,6 @@ define hp_kvm_rpm::add_guest ( $local_guest_ip, $local_guest_mac, $uuid ) {
 		group => 'root',
 		mode => '0600',
 		require => Class["hp_kvm_rpm"],	
-		notify => Exec["Create_new_guest_$name"],
 	} 
 		
 	# create the new guest script ('/var/lib/libvirt/images/tpldeb.img' must exist) 
@@ -34,7 +33,7 @@ define hp_kvm_rpm::add_guest ( $local_guest_ip, $local_guest_mac, $uuid ) {
 		       path => '/root/bin:/bin:/sbin:/usr/bin:/usr/sbin',
 		    command => "/root/bin/create-guest.pl $name",
 	      subscribe => File["/etc/libvirt/qemu/$name.xml"],
-			 unless => "virsh list --all | grep $name",
+			 unless => "ls /virtimages/ | grep $name",
 	}
 
 }
