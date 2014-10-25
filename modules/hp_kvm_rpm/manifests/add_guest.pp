@@ -18,28 +18,32 @@ define hp_kvm_rpm::add_guest ( $local_guest_ip, $local_guest_mac ) {
 		fail("FAIL: Missing given virtual host local IP address")
 	}
 	
-	# this will update any existing domain definition for the tpldeb-image (must exist) 
+	# remove any possible pre-existing definition
+	exec { "Undefine_guest_$name":
+		   path => '/root/bin:/bin:/sbin:/usr/bin:/usr/sbin',
+		command => "virsh undefine $name",
+		 unless => "ls /virtimages | grep $name",
+	    require => Class["hp_kvm_rpm"],	
+	}
+	
+	
+	# this creates the domain definition
 	file { "/etc/libvirt/qemu/$name.xml":
 		content =>  template( "hp_kvm_rpm/tpldeb.xml.erb" ),
 		  owner => 'root',
 		  group => 'root',
 		   mode => '0600',
-		require => Class["hp_kvm_rpm"],
+		require => Exec["Undefine_guest_$name"],
 		 notify => Exec["Create_new_guest_$name"],
 	} 
+	
 
-	# create the new guest perl script
+	# create the new guest script ('/var/lib/libvirt/images/tpldeb.img' must exist) 
 	exec { "Create_new_guest_$name" :
 		       path => '/root/bin:/bin:/sbin:/usr/bin:/usr/sbin',
 		    command => "/root/bin/create-guest.pl $name",
 		refreshonly => 'true',
+	        require => Exec["/etc/libvirt/qemu/$name.xml"],
 	}
-
-	# create the new guest
-	#exec { "Create_new_guest_$name" :
-	#	       path => '/root/bin:/bin:/sbin:/usr/bin:/usr/sbin',
-	#	    command => "/root/bin/new-virtclone.sh $name",
-	#	refreshonly => 'true',
-	#}
 
 }
