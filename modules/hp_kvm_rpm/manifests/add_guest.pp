@@ -18,22 +18,13 @@ define hp_kvm_rpm::add_guest ( $local_guest_ip, $local_guest_mac ) {
 		fail("FAIL: Missing given virtual host local IP address")
 	}
 	
-	# remove any possible pre-existing definition
-	exec { "Undefine_guest_$name":
-		   path => '/root/bin:/bin:/sbin:/usr/bin:/usr/sbin',
-		command => "virsh undefine $name",
-		 unless => "ls /virtimages | grep $name",
-	    require => Class["hp_kvm_rpm"],	
-	}
-	
-	
 	# this creates the domain definition
 	file { "/etc/libvirt/qemu/$name.xml":
 		content =>  template( "hp_kvm_rpm/tpldeb.xml.erb" ),
 		  owner => 'root',
 		  group => 'root',
 		   mode => '0600',
-		require => Exec["Undefine_guest_$name"],
+	    require => Class["hp_kvm_rpm"],	
 		 notify => Exec["Create_new_guest_$name"],
 	} 
 	
@@ -44,6 +35,7 @@ define hp_kvm_rpm::add_guest ( $local_guest_ip, $local_guest_mac ) {
 		    command => "/root/bin/create-guest.pl $name",
 		refreshonly => 'true',
 	        require => File["/etc/libvirt/qemu/$name.xml"],
+			 unless => "ls /virtimages | grep $name",
 	}
 
 }
