@@ -33,9 +33,8 @@ define hp_kvm_rpm::add_guest ( $local_guest_ip, $local_guest_mac, $uuid ) {
 	exec { "Create_new_guest_$name" :
 		       path => '/root/bin:/bin:/sbin:/usr/bin:/usr/sbin',
 		    command => "/root/bin/create-guest.pl $name",
-		refreshonly => 'true',
-	        require => File["/etc/libvirt/qemu/$name.xml"],
-			 unless => "ls /virtimages | grep $name",
+	      subscribe => File["/etc/libvirt/qemu/$name.xml"],
+			 unless => "ls /virtimages/ | grep $name",
 	}
 
 }
