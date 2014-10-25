@@ -43,7 +43,7 @@ define hp_kvm_rpm::add_guest ( $local_guest_ip, $local_guest_mac ) {
 		       path => '/root/bin:/bin:/sbin:/usr/bin:/usr/sbin',
 		    command => "/root/bin/create-guest.pl $name",
 		refreshonly => 'true',
-	        require => Exec["/etc/libvirt/qemu/$name.xml"],
+	        require => File["/etc/libvirt/qemu/$name.xml"],
 	}
 
 }
