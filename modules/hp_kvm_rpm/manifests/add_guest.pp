@@ -34,7 +34,7 @@ define hp_kvm_rpm::add_guest ( $local_guest_ip, $local_guest_mac, $uuid ) {
 		       path => '/root/bin:/bin:/sbin:/usr/bin:/usr/sbin',
 		    command => "/root/bin/create-guest.pl $name",
 	      subscribe => File["/etc/libvirt/qemu/$name.xml"],
-			 unless => "ls /virtimages/ | grep $name",
+			 unless => "virsh list --all | grep $name",
 	}
 
 }
