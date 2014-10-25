@@ -9,9 +9,7 @@
 ##############################################################
 use strict;
 use warnings;
-use XML::Twig;
 
-my $newuuid = `uuidgen`;
 my $num_args = $#ARGV +1 ;
 
 if ($num_args != 1) {
@@ -22,23 +20,12 @@ if ($num_args != 1) {
 my $domain = $ARGV[0];
 my $xmlfile = $domain . ".xml";
 my $xmlpath = "/etc/libvirt/qemu/$xmlfile";
+my $imagepath = "/virtimages/$domain" . ".img";
 
-# 1. Replace the old uuid in the new guest domain xml-file
-XML::Twig->new(
-    
-    pretty_print  => 'indented',
-    twig_handlers => { 
-        uuid => sub { 
-            $_->set_text( $newuuid )->flush
-        },
-    },
-)->parsefile_inplace($xmlpath, 'tmp');
-
-# 2. Register the new guest xml-file for the new domain
+# 1. Register the new guest xml-file for the new domain
 system ("virsh define $xmlpath");
 
-# 3. Clone the existing debian 7 raw image (from /var/lib/libvirt/images/tpldeb.img)
-my $imagepath = "/virtimages/$domain" . ".img";
+# 2. Clone the existing debian 7 raw image (from /var/lib/libvirt/images/tpldeb.img)
 system("virt-clone -o tpldeb -n $domain -f $imagepath");
 
-# 4. Manipulate cloned image before first use
+# 3. Manipulate the cloned image before first use
