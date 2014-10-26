@@ -18,21 +18,12 @@ define hp_kvm_rpm::add_guest ( $local_guest_ip, $local_guest_mac, $uuid ) {
 	if ( $local_guest_ip == '' ) {
 		fail("FAIL: Missing given virtual host local IP address")
 	}
-	
-	# this creates the domain definition
-	file { "/etc/libvirt/qemu/$name.xml":
-		content => template( "hp_kvm_rpm/tpldeb.xml.erb" ),
-		owner => 'root',
-		group => 'root',
-		mode => '0600',
-		require => Class["hp_kvm_rpm"],	
-	} 
-		
-	# create the new guest script ('/var/lib/libvirt/images/tpldeb.img' must exist) 
+			
+	# create the new guest ('/var/lib/libvirt/images/tpldeb.img' must exist) 
 	exec { "Create_new_guest_$name" :
 		       path => '/root/bin:/bin:/sbin:/usr/bin:/usr/sbin',
 		    command => "/root/bin/create-guest.pl $name",
-	      subscribe => File["/etc/libvirt/qemu/$name.xml"],
+	      require => Class["hp_kvm_rpm"],
 			 unless => "ls /virtimages/ | grep $name",
 	}
 

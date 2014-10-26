@@ -18,18 +18,9 @@ if ($num_args != 1) {
 }
 
 my $domain = $ARGV[0];
-my $xmlfile = $domain . ".xml";
-my $xmlpath = "/etc/libvirt/qemu/$xmlfile";
 my $imagepath = "/virtimages/$domain" . ".img";
-my $is_defined = `virsh list --all | grep $domain`;
 
-# 1. Register the new guest xml-file for the new domain
-
-if (!$is_defined) {
-    system ("virsh define $xmlpath");
-}
-
-# 2. Clone the existing debian 7 raw image (from /var/lib/libvirt/images/tpldeb.img)
+# 1. Clone the existing raw image (from /var/lib/libvirt/images/tpldeb.img)
 system("virt-clone -o tpldeb -n $domain -f $imagepath");
 
-# 3. Manipulate the cloned image before first use
+# 2. Manipulate the cloned image before first use
