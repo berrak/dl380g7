@@ -23,11 +23,11 @@ define hp_kvm_rpm::add_guest ( $local_guest_mac, $local_guest_ip ) {
 	}
 		
 	# script to modify the newly created guest image before first boot	
-	file { "/root/bin/imgcfg-$name.sh":
+	file { "/tmp/imgcfg-$name.sh":
 		content =>  template( "hp_kvm_rpm/imgcfg-$name.sh.erb" ),
 		  owner => 'root',
 		  group => 'root',
-		   mode => '0700',
+		   mode => '0755',
 	    require => Class["hp_kvm_rpm"],
 	} 	
 		
@@ -35,7 +35,7 @@ define hp_kvm_rpm::add_guest ( $local_guest_mac, $local_guest_ip ) {
 	exec { "Create_new_guest_$name" :
 		   path => '/root/bin:/bin:/sbin:/usr/bin:/usr/sbin',
 		command => "/root/bin/create-guest.pl $name $local_guest_mac $local_guest_ip",
-	    require => File["/root/bin/imgcfg-$name.sh"],
+	    require => File["/tmp/imgcfg-$name.sh"],
 		 unless => "ls /virtimages/ | grep $name",
 	}
 
