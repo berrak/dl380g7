@@ -4,6 +4,7 @@
 #
 # This script is used to update a host-specific Debian guest
 # KVM image with the help of 'virt-sysprep' before first boot.
+# NOTE: Script runs on guest (not host) with --firstboot option.
 #
 # 1. Update the Debian networking file
 (
@@ -47,13 +48,13 @@ HOSTS
 # 3. Remove existing ssh-server keys and regenerate them. According to 
 # 'http://www.greenhills.co.uk/2013/03/24/cloning-vms-with-kvm.html' it is
 # not sufficient to use 'virt-sysprep' option for this.
-#rm /etc/ssh/ssh_host_dsa_key /etc/ssh/ssh_host_dsa_key.pub
-#rm /etc/ssh/ssh_host_ecdsa_key /etc/ssh/ssh_host_ecdsa_key.pub
-#rm /etc/ssh/ssh_host_rsa_key /etc/ssh/ssh_host_rsa_key.pub
-#ssh-keygen -h -N '' -t dsa -f /etc/ssh/ssh_host_dsa_key
-#ssh-keygen -h -N '' -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key
-#ssh-keygen -h -N '' -t rsa -f /etc/ssh/ssh_host_rsa_key
-#chmod 0600 /etc/ssh/ssh_host_dsa_key
-#chmod 0600 /etc/ssh/ssh_host_ecdsa_key
-#chmod 0600 /etc/ssh/ssh_host_rsa_key
+rm /etc/ssh/ssh_host_dsa_key /etc/ssh/ssh_host_dsa_key.pub
+rm /etc/ssh/ssh_host_ecdsa_key /etc/ssh/ssh_host_ecdsa_key.pub
+rm /etc/ssh/ssh_host_rsa_key /etc/ssh/ssh_host_rsa_key.pub
+ssh-keygen -h -N '' -t dsa -f /etc/ssh/ssh_host_dsa_key
+ssh-keygen -h -N '' -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key
+ssh-keygen -h -N '' -t rsa -f /etc/ssh/ssh_host_rsa_key
+chmod 0600 /etc/ssh/ssh_host_dsa_key
+chmod 0600 /etc/ssh/ssh_host_ecdsa_key
+chmod 0600 /etc/ssh/ssh_host_rsa_key
 

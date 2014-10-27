@@ -44,14 +44,14 @@ $twig->parsefile_inplace( $xmlpathfile, '.tmp' );
 $twig->flush;
 
 # 3. Manipulate the cloned image before first use with 'virt-sysprep'
-system("virt-sysprep -d $domain --verbose --enable udev-persistent-net,hostname,script --hostname $domain --script `pwd`/tmp/imgcfg-$domain.sh");
+system("virt-sysprep -d $domain --verbose --enable udev-persistent-net,hostname,script --hostname $domain --firstboot /root/imgcfg-$domain.sh");
 
 #
 # ### SUBROUTINES ###
 #
 sub set_mac {
     my ($twig, $mac) = @_;
-    #$mac->set_att( address => $new_mac );
+    $mac->set_att( address => $new_mac );
     $twig->flush;
 }
 
