@@ -40,11 +40,10 @@ node 'ol65.home.tld' {
     
     # set up KVM and its guests
     include hp_kvm_rpm
-    # -- first guest -- generate the uuid with 'uuidgen'
+    # -- first guest
     hp_kvm_rpm::add_guest { 'debinix' :
+                local_guest_mac => '52:54:00:ff:ff:40',    
                 local_guest_ip  => '192.168.221.40',
-                local_guest_mac => '52:54:00:ff:ff:40',
-                uuid => '14466f4f-fd03-43a4-9e7e-34ed1ea606eb',
     }
     
     
