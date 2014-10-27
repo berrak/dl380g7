@@ -27,16 +27,16 @@ define hp_kvm_rpm::add_guest ( $local_guest_mac, $local_guest_ip ) {
 		content =>  template( "hp_kvm_rpm/imgcfg-$name.sh.erb" ),
 		  owner => 'root',
 		  group => 'root',
-		  chmod => '0700',
-	      require => Class["hp_kvm_rpm"],
+		   mode => '0700',
+	    require => Class["hp_kvm_rpm"],
 	} 	
 		
 	# create the new guest (from '/var/lib/libvirt/images/tpldeb.img', must exist) 
 	exec { "Create_new_guest_$name" :
-		       path => '/root/bin:/bin:/sbin:/usr/bin:/usr/sbin',
-		    command => "/root/bin/create-guest.pl $name $local_guest_mac $local_guest_ip",
-	      require => File["/root/bin/imgcfg-$name.sh"],
-			 unless => "ls /virtimages/ | grep $name",
+		   path => '/root/bin:/bin:/sbin:/usr/bin:/usr/sbin',
+		command => "/root/bin/create-guest.pl $name $local_guest_mac $local_guest_ip",
+	    require => File["/root/bin/imgcfg-$name.sh"],
+		 unless => "ls /virtimages/ | grep $name",
 	}
 
 }
