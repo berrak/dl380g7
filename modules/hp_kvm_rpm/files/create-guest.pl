@@ -16,8 +16,15 @@ if ($num_args != 3) {
 print "\nUsage: twigit.pl <domain> <mac-address> <ip-address>\n";
 exit 1;
 }
-
 my $domain = $ARGV[0];
+my $out_image_path = "/virtimages/$domain" . ".img";
+
+# 1. Clone the existing raw image (from /var/lib/libvirt/images/tpldeb.img)
+system("virt-clone -o tpldeb -n $domain -f $out_image_path");
+
+
+# 2. Update the domain definition with ip address and mac address
+
 my $xmlfile = $domain . ".xml";
 my $xmlpathfile = "/etc/libvirt/qemu/" . $xmlfile ;
 
@@ -36,7 +43,13 @@ my $twig = XML::Twig->new(
 $twig->parsefile_inplace( $xmlpathfile, '.tmp' );
 $twig->flush;
 
+# 3. Manipulate the cloned image before first use
 
+# TODO
+
+#
+# ### SUBROUTINES ###
+#
 sub set_mac {
     my ($twig, $mac) = @_;
     $mac->set_att( address => $new_mac );
@@ -49,4 +62,4 @@ sub set_ip {
     $twig->flush;
 }
 
-# 2. Manipulate the cloned image before first use
+
