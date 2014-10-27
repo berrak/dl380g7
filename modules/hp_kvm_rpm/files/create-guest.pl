@@ -23,7 +23,7 @@ my $out_image_path = "/virtimages/$domain" . ".img";
 system("virt-clone -o tpldeb -n $domain -f $out_image_path");
 
 
-# 2. Update the domain definition with ip address and mac address
+# 2. Update the domain configuration with ip address and mac address
 
 my $xmlfile = $domain . ".xml";
 my $xmlpathfile = "/etc/libvirt/qemu/" . $xmlfile ;
@@ -43,9 +43,8 @@ my $twig = XML::Twig->new(
 $twig->parsefile_inplace( $xmlpathfile, '.tmp' );
 $twig->flush;
 
-# 3. Manipulate the cloned image before first use
-
-# TODO
+# 3. Manipulate the cloned image before first use with 'virt-sysprep'
+system("virt-sysprep -d $domain --verbose --enable udev-persistent-net,bash-history,hostname,logfiles,utmp,script --hostname $domain --script /root/bin/imgcfg-$domain.sh");
 
 #
 # ### SUBROUTINES ###

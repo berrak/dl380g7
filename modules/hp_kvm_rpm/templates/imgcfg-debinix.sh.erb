@@ -1,0 +1,59 @@
+#!/bin/bash
+#
+# /root/bin/imgcfg-debinix.sh
+#
+# This script is used to update a host-specific Debian guest
+# KVM image with the help of 'virt-sysprep' before first boot.
+#
+# 1. Update the Debian networking file
+(
+cat <<NETWORKING
+# This file describes the network interfaces available on your system
+# and how to activate them. For more information, see interfaces(5).
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+# The primary network interface
+allow-hotplug eth0
+iface eth0 inet static
+        address <%= local_guest_ip %>
+        netmask 255.255.255.0
+        network 192.168.122.0
+        broadcast 192.168.122.255
+        gateway 192.168.122.1
+        # dns-* options are implemented by the resolvconf package, if installed
+        dns-nameservers 195.67.199.18 195.67.199.19
+        dns-search vm.tld
+
+NETWORKING
+) > "/etc/network/interfaces"
+
+# 2. Update the Debian hosts file
+(
+cat <<HOSTS
+127.0.0.1       localhost
+<%= local_guest_ip %>   <%= name %>.vm.tld <%= name %>
+
+# The following lines are desirable for IPv6 capable hosts
+::1     localhost ip6-localhost ip6-loopback
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+
+HOSTS
+) > "/etc/hosts"
+
+# 3. Remove existing ssh-server keys and regenerate them. According to 
+# 'http://www.greenhills.co.uk/2013/03/24/cloning-vms-with-kvm.html' it is
+# not sufficient to use 'virt-sysprep' option for this.
+rm /etc/ssh/ssh_host_dsa_key /etc/ssh/ssh_host_dsa_key.pub
+rm /etc/ssh/ssh_host_ecdsa_key /etc/ssh/ssh_host_ecdsa_key.pub
+rm /etc/ssh/ssh_host_rsa_key /etc/ssh/ssh_host_rsa_key.pub
+ssh-keygen -h -N '' -t dsa -f /etc/ssh/ssh_host_dsa_key
+ssh-keygen -h -N '' -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key
+ssh-keygen -h -N '' -t rsa -f /etc/ssh/ssh_host_rsa_key
+chmod 0600 /etc/ssh/ssh_host_dsa_key
+chmod 0600 /etc/ssh/ssh_host_ecdsa_key
+chmod 0600 /etc/ssh/ssh_host_rsa_key
+
