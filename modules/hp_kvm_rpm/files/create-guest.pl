@@ -19,6 +19,7 @@ exit 1;
 
 my $domain = $ARGV[0];
 my $xmlfile = $domain . ".xml";
+my $xmlpathfile = "/etc/libvirt/qemu/" . $xmlfile ;
 
 my $new_mac = $ARGV[1];
 my $new_ip = $ARGV[2];
@@ -32,7 +33,7 @@ my $twig = XML::Twig->new(
 );
 
 
-$twig->parsefile_inplace( $xmlfile, '.tmp' );
+$twig->parsefile_inplace( $xmlpathfile, '.tmp' );
 $twig->flush;
 
 
