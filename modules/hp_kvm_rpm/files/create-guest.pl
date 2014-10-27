@@ -51,7 +51,7 @@ system("virt-sysprep -d $domain --verbose --enable udev-persistent-net,bash-hist
 #
 sub set_mac {
     my ($twig, $mac) = @_;
-    $mac->set_att( address => $new_mac );
+    #$mac->set_att( address => $new_mac );
     $twig->flush;
 }
 
