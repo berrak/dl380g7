@@ -44,7 +44,7 @@ $twig->parsefile_inplace( $xmlpathfile, '.tmp' );
 $twig->flush;
 
 # 3. Manipulate the cloned image before first use with 'virt-sysprep'
-system("virt-sysprep --enable udev-persistent-net,hostname,script --hostname $domain --firstboot /root/imgcfg-$domain.sh -a /virtimages/$domain.img");
+system("virt-sysprep -d $domain --enable udev-persistent-net,hostname,script --hostname $domain --firstboot /root/imgcfg-$domain.sh");
 
 #
 # ### SUBROUTINES ###
