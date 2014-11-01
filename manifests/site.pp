@@ -46,10 +46,11 @@ node 'ol65.home.tld' {
                 local_guest_ip  => '192.168.221.40',
     }
     
+    # temporary skip fstab final entry
+    #class { hp_fstab::config : fstabhost => 'ol65' }
     
     # This is the ntp server for localnet
     class { hp_ntp : role => 'lanserver', peerntpip => '192.168.0.66' }
-    class { hp_fstab::config : fstabhost => 'ol65' }
     include hp_smartmontools
     
     ## USER PROFILES
