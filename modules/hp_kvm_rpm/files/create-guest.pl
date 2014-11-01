@@ -17,7 +17,7 @@ print "\nUsage: twigit.pl <domain> <mac-address> <ip-address>\n";
 exit 1;
 }
 my $domain = $ARGV[0];
-my $out_image_path = "/virtimages/$domain" . ".img";
+my $out_image_path = "/var/lib/libvirt/images/$domain" . ".img";
 
 # 1. Clone the existing raw image (from /var/lib/libvirt/images/tpldeb.img)
 system("virt-clone -o tpldeb -n $domain -f $out_image_path");
