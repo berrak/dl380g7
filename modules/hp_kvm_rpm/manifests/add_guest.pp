@@ -26,7 +26,7 @@ define hp_kvm_rpm::add_guest ( $local_guest_mac, $local_guest_ip ) {
 	exec { "Create_new_guest_$name" :
 		   path => '/root/bin:/bin:/sbin:/usr/bin:/usr/sbin',
 		command => "/root/bin/create-guest.pl $name $local_guest_mac $local_guest_ip",
-	    require => File["/root/bin/imgcfg-$name.sh"],
+	    require => Class["hp_kvm_rpm"],
 		 unless => "ls /var/lib/libvirt/images/ | grep $name",
 	}
 
