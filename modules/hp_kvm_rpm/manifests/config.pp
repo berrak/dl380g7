@@ -22,11 +22,10 @@ class hp_kvm_rpm::config {
     
 	# Domain configuration template
 	file { "/etc/libvirt/qemu/tpldeb.xml" :
-		content =>  template( "hp_kvm_rpm/tpldeb.xml.erb" ),    
+    	 source => "puppet:///modules/hp_kvm_rpm/tpldeb.xml",
 		  owner => 'root',
 		  group => 'root',
 		   mode => '0600',
-		require => Class["hp_kvm_rpm"],
 	}	
     
 }
