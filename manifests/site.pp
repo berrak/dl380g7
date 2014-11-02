@@ -30,7 +30,7 @@ node 'ol65.home.tld' {
                 ispdns1 => '195.67.199.18',
                 ispdns2 => '195.67.199.19',
     }
-    # virtual network aliases interfaces for KVM guests
+    # virtual network aliases PUBLIC interfaces for KVM guests
     hp_network_rpm::alias { 'eth0:0' : public_guest_ip => '192.168.0.40' }
     hp_network_rpm::alias { 'eth0:1' : public_guest_ip => '192.168.0.41' }
     hp_network_rpm::alias { 'eth0:2' : public_guest_ip => '192.168.0.42' }
@@ -38,12 +38,17 @@ node 'ol65.home.tld' {
     hp_network_rpm::alias { 'eth0:4' : public_guest_ip => '192.168.0.44' }
     hp_network_rpm::alias { 'eth0:5' : public_guest_ip => '192.168.0.45' }  
     
-    # set up KVM and its guests
+    # set up KVM and its PRIVATE NAT guests
     include hp_kvm_rpm
     # -- first guest domain (always in private subnet 192.168.122.0)
     hp_kvm_rpm::add_guest { 'debinix' :
                 local_guest_mac => '52:54:00:ff:ff:40',    
                 local_guest_ip  => '192.168.122.40',
+    }
+    # -- second guest domain (always in private subnet 192.168.122.0)
+    hp_kvm_rpm::add_guest { 'triata' :
+                local_guest_mac => '52:54:00:ff:ff:41',    
+                local_guest_ip  => '192.168.122.41',
     }
     
     # temporary skip fstab final entry
