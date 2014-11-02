@@ -9,95 +9,94 @@ node 'ol65.home.tld' {
 
     ## BASIC
     # Use dnsmasq (DNS) module for OracleLinux (no need for puppet module: hp_host)
-    class { hp_dnsmasq::config :
-                ispdns1 => '195.67.199.18',
-                ispdns2 => '195.67.199.19',
-                real_hostname => 'ol65',
-    }
+    #class { hp_dnsmasq::config :
+    #            ispdns1 => '195.67.199.18',
+    #            ispdns2 => '195.67.199.19',
+    #            real_hostname => 'ol65',
+    #}
     # above DNS must resolv before 'hp_pupetize'. Note that 'puppet-server'
     # host will be named 'puppet'. Oracle use latest puppet-server 3.7
     include hp_puppetize
     include puppet_utils
     
-    # primary host networking configuration (generate uuid with 'uuidgen')
-    class { hp_network_rpm::config :
-                interface => 'eth0',
-                ip => '192.168.0.66',
-                prefix => '24',
-                uuid => '8f83faf4-4ac3-4211-8616-1a87c6244039',
-                gateway => '192.168.0.1',
-                broadcast => '192.168.0.255',
-                ispdns1 => '195.67.199.18',
-                ispdns2 => '195.67.199.19',
-    }
-    # virtual network aliases PUBLIC interfaces for KVM guests
-    hp_network_rpm::alias { 'eth0:0' : public_guest_ip => '192.168.0.40' }
-    hp_network_rpm::alias { 'eth0:1' : public_guest_ip => '192.168.0.41' }
-    hp_network_rpm::alias { 'eth0:2' : public_guest_ip => '192.168.0.42' }
-    hp_network_rpm::alias { 'eth0:3' : public_guest_ip => '192.168.0.43' }
-    hp_network_rpm::alias { 'eth0:4' : public_guest_ip => '192.168.0.44' }
-    hp_network_rpm::alias { 'eth0:5' : public_guest_ip => '192.168.0.45' }  
-    
-    # set up KVM and its PRIVATE NAT guests
-    include hp_kvm_rpm
-    # -- first guest domain (always in private subnet 192.168.122.0)
-    hp_kvm_rpm::add_guest { 'debinix' :
-                local_guest_mac => '52:54:00:ff:ff:40',    
-                local_guest_ip  => '192.168.122.40',
-    }
-    # -- second guest domain (always in private subnet 192.168.122.0)
-    hp_kvm_rpm::add_guest { 'triata' :
-                local_guest_mac => '52:54:00:ff:ff:41',    
-                local_guest_ip  => '192.168.122.41',
-    }
-    
-    # temporary skip fstab final entry
-    #class { hp_fstab::config : fstabhost => 'ol65' }
-    
-    # This is the ntp server for localnet
-    class { hp_ntp : role => 'lanserver', peerntpip => '192.168.0.66' }
-    include hp_smartmontools
-    
-    ## USER PROFILES
-    
-    include hp_root_home
-    include hp_root_bashrc
-    ## add local users
-    hp_user_bashrc::config { 'bekr' : }
-
-    
-    ## APPLICATIONS
-	# Install REDHAT packages without any special configurations
-    class { hp_install_rpms : rpms => [ "tree", "ethtool", "parted", "lsof" ] }
-
-
-    ## SECURITY
-    hp_selinux::state { 'enforcing' : }
-    hp_sudo::config { 'bekr': }
-    include hp_logwatch
-    include hp_iptables_rpm
-    
-    # enable mac filtering but no custom rules yet - libvirt adds own chains
-    include hp_ebtables_rpm    
-    
-    # disable unnecessary services
-    hp_service::disable { 'atd' : }
-    hp_service::disable { 'autofs' : }
-    hp_service::disable { 'kdump' : }
-    hp_service::disable { 'rhnsd' : }
-    hp_service::disable { 'mdmonitor' : }
-    hp_service::disable { 'lvm2-monitor' : }     
-    hp_service::disable { 'portreserve' : }
-    
-    # remove these, for a server unnecessary REDHAT packages
-    class { hp_remove_rpms : rpms => [ "cups" ] }
-    
-    
-    ## MAINTENANCE
-	include hp_ssh_server
-    hp_ssh_server::sshuser { 'bekr' : }
-    include hp_auto_upgrade
-    include hp_logrotate
+#    # primary host networking configuration (generate uuid with 'uuidgen')
+#    class { hp_network_rpm::config :
+#                interface => 'eth0',
+#                ip => '192.168.0.66',
+#                prefix => '24',
+#                uuid => '8f83faf4-4ac3-4211-8616-1a87c6244039',
+#                gateway => '192.168.0.1',
+#                broadcast => '192.168.0.255',
+#                ispdns1 => '195.67.199.18',
+#                ispdns2 => '195.67.199.19',
+#    }
+#    # virtual network aliases PUBLIC interfaces for KVM guests
+#    hp_network_rpm::alias { 'eth0:0' : public_guest_ip => '192.168.0.40' }
+#    hp_network_rpm::alias { 'eth0:1' : public_guest_ip => '192.168.0.41' }
+#    hp_network_rpm::alias { 'eth0:2' : public_guest_ip => '192.168.0.42' }
+#    hp_network_rpm::alias { 'eth0:3' : public_guest_ip => '192.168.0.43' }
+#    hp_network_rpm::alias { 'eth0:4' : public_guest_ip => '192.168.0.44' }
+#    hp_network_rpm::alias { 'eth0:5' : public_guest_ip => '192.168.0.45' }  
+#    
+#    # set up KVM and its PRIVATE NAT guests
+#    include hp_kvm_rpm
+#    # -- first guest domain (always in private subnet 192.168.122.0)
+#    hp_kvm_rpm::add_guest { 'debinix' :
+#                local_guest_mac => '52:54:00:ff:ff:40',    
+#                local_guest_ip  => '192.168.122.40',
+#    }
+#    # -- second guest domain (always in private subnet 192.168.122.0)
+#    hp_kvm_rpm::add_guest { 'triata' :
+#                local_guest_mac => '52:54:00:ff:ff:41',    
+#                local_guest_ip  => '192.168.122.41',
+#    }
+#    
+#    # temporary skip fstab final entry
+#    #class { hp_fstab::config : fstabhost => 'ol65' }
+#    
+#    # This is the ntp server for localnet
+#    class { hp_ntp : role => 'lanserver', peerntpip => '192.168.0.66' }
+#    include hp_smartmontools
+#    
+#    ## USER PROFILES
+#    
+#    include hp_root_home
+#    include hp_root_bashrc
+#    ## add local users
+#    hp_user_bashrc::config { 'bekr' : }
+#
+#    
+#    ## APPLICATIONS
+#	# Install REDHAT packages without any special configurations
+#    class { hp_install_rpms : rpms => [ "tree", "ethtool", "parted", "lsof" ] }
+#
+#
+#    ## SECURITY
+#    hp_selinux::state { 'enforcing' : }
+#    hp_sudo::config { 'bekr': }
+#    include hp_logwatch
+#    include hp_iptables_rpm
+#    
+#    # enable mac filtering but no custom rules yet - libvirt adds own chains
+#    include hp_ebtables_rpm    
+#    
+#    # disable unnecessary services
+#    hp_service::disable { 'atd' : }
+#    hp_service::disable { 'autofs' : }
+#    hp_service::disable { 'kdump' : }
+#    hp_service::disable { 'rhnsd' : }
+#    hp_service::disable { 'mdmonitor' : }  
+#    hp_service::disable { 'portreserve' : }
+#    
+#    # remove these, for a server unnecessary REDHAT packages
+#    class { hp_remove_rpms : rpms => [ "cups" ] }
+#    
+#    
+#    ## MAINTENANCE
+#	include hp_ssh_server
+#    hp_ssh_server::sshuser { 'bekr' : }
+#    include hp_auto_upgrade
+#    include hp_logrotate
 
 }
 
