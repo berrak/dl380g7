@@ -43,8 +43,8 @@ $twig->parsefile_inplace( $xmlpathfile, '.tmp' );
 $twig->flush;
 
 # 3. Set assigned ip address to new guest with 'virt-edit'
-system("virt-edit -d $domain /etc/network/interfaces -e 's/192.168.122.2/$new_ip/'");
-system("virt-edit -d $domain /etc/hosts -e 's/address 192.168.122.2/address $new_ip/'");
+system("virt-edit -d $domain /etc/network/interfaces -e 's/address 192.168.122.2/address $new_ip/'");
+system("virt-edit -d $domain /etc/hosts -e 's/192.168.122.2/$new_ip/'");
 system("virt-edit -d $domain /etc/hosts -e 's/template/$domain/g'");
 
 # 4. Clean image to sane default before first use with 'virt-sysprep'
