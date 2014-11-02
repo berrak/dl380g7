@@ -22,10 +22,10 @@ my $new_mac = $ARGV[1];
 my $new_ip = $ARGV[2];
 
 # 1. Clone the existing raw image (from /var/lib/libvirt/images/tpldeb.img)
-system("virt-clone -o tpl_$domain -n $domain --mac $new_mac -f $out_image_path");
+system("virt-clone -o $domain -n $domain --mac $new_mac -f $out_image_path");
 
 # 2. Update the domain configuration with ip address and mac address
-my $xmlfile = "tpl_" . $domain . ".xml";
+my $xmlfile = $domain . ".xml";
 my $xmlpathfile = "/etc/libvirt/qemu/" . $xmlfile ;
 
 my $twig = XML::Twig->new(
