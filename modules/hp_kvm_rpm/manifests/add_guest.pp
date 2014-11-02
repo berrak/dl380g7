@@ -23,7 +23,7 @@ define hp_kvm_rpm::add_guest ( $local_guest_mac, $local_guest_ip ) {
 	}
 			
 	# Modify domain configuration template before cloning
-	file { '/etc/libvirt/qemu/tpl_$domain.xml' :
+	file { '/etc/libvirt/qemu/tpl_$name.xml' :
 		content =>  template( "hp_kvm_rpm/tpldeb.xml.$name.erb" ),    
 		  owner => 'root',
 		  group => 'root',
@@ -35,7 +35,7 @@ define hp_kvm_rpm::add_guest ( $local_guest_mac, $local_guest_ip ) {
 	exec { "Create_new_guest_$name" :
 		   path => '/root/bin:/bin:/sbin:/usr/bin:/usr/sbin',
 		command => "/root/bin/create-guest.pl $name $local_guest_mac $local_guest_ip",
-	    require => File["/etc/libvirt/qemu/tpldeb.xml"],
+	    require => File["/etc/libvirt/qemu/tpl_$name.xml"],
 		 unless => "ls /var/lib/libvirt/images/ | grep $name",
 	}
 
