@@ -18,17 +18,15 @@ exit 1;
 }
 my $domain = $ARGV[0];
 my $out_image_path = "/var/lib/libvirt/images/$domain" . ".img";
+my $new_mac = $ARGV[1];
+my $new_ip = $ARGV[2];
 
 # 1. Clone the existing raw image (from /var/lib/libvirt/images/tpldeb.img)
-system("virt-clone -o tpldeb -n $domain -f $out_image_path");
-
+system("virt-clone -o tpldeb -n $domain --mac $new_mac -f $out_image_path");
 
 # 2. Update the domain configuration with ip address and mac address
 my $xmlfile = $domain . ".xml";
 my $xmlpathfile = "/etc/libvirt/qemu/" . $xmlfile ;
-
-my $new_mac = $ARGV[1];
-my $new_ip = $ARGV[2];
 
 my $twig = XML::Twig->new(
             twig_handlers => {
