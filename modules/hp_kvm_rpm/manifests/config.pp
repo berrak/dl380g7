@@ -20,4 +20,13 @@ class hp_kvm_rpm::config {
 	      mode => '0700',
 	}
     
+	# Domain configuration template
+	file { "/etc/libvirt/qemu/tpldeb.xml" :
+		content =>  template( "hp_kvm_rpm/tpldeb.xml.erb" ),    
+		  owner => 'root',
+		  group => 'root',
+		   mode => '0600',
+		require => Class["hp_kvm_rpm"],
+	}	
+    
 }

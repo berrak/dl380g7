@@ -32,9 +32,7 @@
       <mac address='<%= local_guest_mac %>'/>
       <source bridge='virbr0'/>
       <model type='virtio'/>
-      <filterref filter='clean-traffic'>
-        <parameter name='IP' value='<%= local_guest_ip %>'/>
-      </filterref>
+      <filterref filter='clean-traffic'/>
       <address type='pci' domain='0x0000' bus='0x00' slot='0x03' function='0x0'/>
     </interface>
     <serial type='pty'>
