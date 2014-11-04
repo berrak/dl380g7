@@ -51,52 +51,52 @@ node 'ol65.home.tld' {
 #                local_guest_ip  => '192.168.122.41',
 #    }
 #    
-#    # temporary skip fstab final entry
-#    #class { hp_fstab::config : fstabhost => 'ol65' }
-#    
-#    # This is the ntp server for localnet
-#    class { hp_ntp : role => 'lanserver', peerntpip => '192.168.0.66' }
-#    include hp_smartmontools
-#    
-#    ## USER PROFILES
-#    
-#    include hp_root_home
-#    include hp_root_bashrc
-#    ## add local users
-#    hp_user_bashrc::config { 'bekr' : }
-#
-#    
-#    ## APPLICATIONS
-#	# Install REDHAT packages without any special configurations
-#    class { hp_install_rpms : rpms => [ "tree", "ethtool", "parted", "lsof" ] }
-#
-#
-#    ## SECURITY
-#    hp_selinux::state { 'enforcing' : }
-#    hp_sudo::config { 'bekr': }
-#    include hp_logwatch
-#    include hp_iptables_rpm
-#    
-#    # enable mac filtering but no custom rules yet - libvirt adds own chains
-#    include hp_ebtables_rpm    
-#    
-#    # disable unnecessary services
-#    hp_service::disable { 'atd' : }
-#    hp_service::disable { 'autofs' : }
-#    hp_service::disable { 'kdump' : }
-#    hp_service::disable { 'rhnsd' : }
-#    hp_service::disable { 'mdmonitor' : }  
-#    hp_service::disable { 'portreserve' : }
-#    
-#    # remove these, for a server unnecessary REDHAT packages
-#    class { hp_remove_rpms : rpms => [ "cups" ] }
-#    
-#    
-#    ## MAINTENANCE
-#	include hp_ssh_server
-#    hp_ssh_server::sshuser { 'bekr' : }
-#    include hp_auto_upgrade
-#    include hp_logrotate
+    # temporary skip fstab final entry
+    #class { hp_fstab::config : fstabhost => 'ol65' }
+    
+    # This is the ntp server for localnet
+    class { hp_ntp : role => 'lanserver', peerntpip => '192.168.0.66' }
+    include hp_smartmontools
+    
+    ## USER PROFILES
+    
+    include hp_root_home
+    include hp_root_bashrc
+    # add local users
+    hp_user_bashrc::config { 'bekr' : }
+
+    
+    ## APPLICATIONS
+	# Install REDHAT packages without any special configurations
+    class { hp_install_rpms : rpms => [ "tree", "ethtool", "parted", "lsof" ] }
+
+
+    ## SECURITY
+    hp_selinux::state { 'enforcing' : }
+    hp_sudo::config { 'bekr': }
+    include hp_logwatch
+    include hp_iptables_rpm
+    
+    # enable mac filtering but no custom rules yet - libvirt adds own chains
+    include hp_ebtables_rpm    
+    
+    # disable unnecessary services
+    hp_service::disable { 'atd' : }
+    hp_service::disable { 'autofs' : }
+    hp_service::disable { 'kdump' : }
+    hp_service::disable { 'rhnsd' : }
+    hp_service::disable { 'mdmonitor' : }  
+    hp_service::disable { 'portreserve' : }
+    
+    # remove these, for a server unnecessary REDHAT packages
+    class { hp_remove_rpms : rpms => [ "cups" ] }
+    
+    
+    ## MAINTENANCE
+	include hp_ssh_server
+    hp_ssh_server::sshuser { 'bekr' : }
+    include hp_auto_upgrade
+    include hp_logrotate
 
 }
 
