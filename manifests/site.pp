@@ -9,28 +9,28 @@ node 'ol65.home.tld' {
 
     ## BASIC
     # Use dnsmasq (DNS) module for OracleLinux (no need for puppet module: hp_host)
-    #class { hp_dnsmasq::config :
-    #            ispdns1 => '195.67.199.18',
-    #            ispdns2 => '195.67.199.19',
-    #            real_hostname => 'ol65',
-    #}
+    class { hp_dnsmasq::config :
+                ispdns1 => '195.67.199.18',
+                ispdns2 => '195.67.199.19',
+                real_hostname => 'ol65',
+    }
     # above DNS must resolv before 'hp_pupetize'. Note that 'puppet-server'
     # host will be named 'puppet'. Oracle use latest puppet-server 3.7
     include hp_puppetize
     include puppet_utils
     
-#    # primary host networking configuration (generate uuid with 'uuidgen')
-#    class { hp_network_rpm::config :
-#                interface => 'eth0',
-#                ip => '192.168.0.66',
-#                prefix => '24',
-#                uuid => '8f83faf4-4ac3-4211-8616-1a87c6244039',
-#                gateway => '192.168.0.1',
-#                broadcast => '192.168.0.255',
-#                ispdns1 => '195.67.199.18',
-#                ispdns2 => '195.67.199.19',
-#    }
-#    # virtual network aliases PUBLIC interfaces for KVM guests
+    # primary host networking configuration (generate uuid with 'uuidgen')
+    class { hp_network_rpm::config :
+                interface => 'eth0',
+                ip => '192.168.0.66',
+                prefix => '24',
+                uuid => '8f83faf4-4ac3-4211-8616-1a87c6244039',
+                gateway => '192.168.0.1',
+                broadcast => '192.168.0.255',
+                ispdns1 => '195.67.199.18',
+                ispdns2 => '195.67.199.19',
+    }
+     # virtual network aliases PUBLIC interfaces for KVM guests
 #    hp_network_rpm::alias { 'eth0:0' : public_guest_ip => '192.168.0.40' }
 #    hp_network_rpm::alias { 'eth0:1' : public_guest_ip => '192.168.0.41' }
 #    hp_network_rpm::alias { 'eth0:2' : public_guest_ip => '192.168.0.42' }
