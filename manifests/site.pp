@@ -40,13 +40,14 @@ node 'ol65.home.tld' {
     
     # set up KVM and its PRIVATE NAT guests
     include hp_kvm_rpm
-#    # -- first guest domain (always in private subnet 192.168.122.0)
-#    hp_kvm_rpm::add_guest { 'debinix' :
-#                local_guest_mac => '52:54:00:ff:ff:40',    
-#                local_guest_ip  => '192.168.122.40',
-#    }
+    # -- first guest domain (always in private subnet 192.168.122.0)
+    hp_kvm_rpm::add_guest { 'debinix_org' :
+                local_guest_mac => '52:54:00:ff:ff:40',    
+                local_guest_ip  => '192.168.122.40',
+    }
+    
 #    # -- second guest domain (always in private subnet 192.168.122.0)
-#    hp_kvm_rpm::add_guest { 'triata' :
+#    hp_kvm_rpm::add_guest { 'triatagroup_se' :
 #                local_guest_mac => '52:54:00:ff:ff:41',    
 #                local_guest_ip  => '192.168.122.41',
 #    }
