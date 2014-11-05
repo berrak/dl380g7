@@ -42,20 +42,27 @@ my $new_ip = $ARGV[2];
 
 system("virt-clone -o $original_domain_name -n $new_domain --mac $new_mac -f $out_image_path");
 
-# 2. Update the domain configuration with ip address and mac address
+# 2a. Update the domain configuration with mac address
 my $xmlpathfile = "/etc/libvirt/qemu/" . $new_domain . ".xml" ;
 
-my $twig = XML::Twig->new(
+my $twig1 = XML::Twig->new(
             twig_handlers => {
                 q{/domain/devices/interface/mac[@address]} => \&set_mac,
+            },
+            pretty_print => 'indented',
+);
+$twig1->parsefile_inplace( $xmlpathfile, '.tmp' );
+$twig1->flush;
+
+# 2b. Update the domain configuration with ip address
+my $twig2 = XML::Twig->new(
+            twig_handlers => {
                 q{/domain/devices/interface/filterref/parameter[@value]} => \&set_ip,
             },
             pretty_print => 'indented',
 );
-
-
-$twig->parsefile_inplace( $xmlpathfile, '.tmp' );
-$twig->flush;
+$twig2->parsefile_inplace( $xmlpathfile, '.tmp' );
+$twig2->flush;
 
 # 3. Set assigned ip address to new guest with 'virt-edit'
 system("virt-edit -d $new_domain /etc/network/interfaces -e 's/address 192.168.122.2/address $new_ip/'");
