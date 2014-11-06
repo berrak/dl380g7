@@ -1,8 +1,8 @@
 #!/usr/bin/perl
 #
-# /root/bin/create-guest.pl <new_domain> <local_guest_mac> <local_guest_ip>
+# /root/bin/create-guest.pl <new_domain> <local_guest_mac> <local_guest_ip> <new_host_name>
 #
-# Usage: create-guest.pl debinix-org
+# Usage: create-guest.pl debinix_org '52:54:00:FF.FF.40' '192.168.122.40' deborg  
 # Note: Original domain 'wheezy' must exist, other wise script terminates
 #       Mac and IP addresses are private behind NAT (not public)
 #
@@ -45,8 +45,8 @@ if ( ! -f $original_domain_path ) {
 
 # Pre-check, check passedc arguments
 my $num_args = $#ARGV +1 ;
-if ($num_args != 3) {
-print "\nUsage: create-guest.pl <new_domain> <local_mac_address> <local_ip_address>\n";
+if ($num_args != 4) {
+print "\nUsage: create-guest.pl <new_domain> <local_mac_address> <local_ip_address> <new_host_name>\n";
 exit 1;
 }
 
@@ -55,6 +55,7 @@ my $new_domain = $ARGV[0];
 my $out_image_path = "/var/lib/libvirt/images/$new_domain" . ".img";
 my $new_mac = $ARGV[1];
 my $new_ip = $ARGV[2];
+my $new_host_name = $ARGV[3];
 
 system("virt-clone -o $original_domain_name -n $new_domain --mac $new_mac -f $out_image_path");
 
@@ -72,10 +73,10 @@ $twig->parsefile_inplace( $xmlpathfile, '.tmp' );
 $twig->flush;
 
 # 3. Clean image to sane default before first use with 'virt-sysprep'
-#system("virt-sysprep -d $new_domain --enable udev-persistent-net,hostname,logfiles,bash-history --hostname $new_domain");
-system("virt-sysprep -d $new_domain --enable udev-persistent-net,logfiles,bash-history");
+#    Note cannot expect to set hostname (accepts only a-z) equal to new-domain name! 
+system("virt-sysprep -d $new_domain --enable udev-persistent-net,hostname,logfiles,bash-history --hostname $new_host_name");
 
-# 4. Set assigned ip address to new guest with 'virt-edit'
+# 4. Set assigned ip address and domain name to new guest with 'virt-edit'
 system("virt-edit -d $new_domain /etc/network/interfaces -e 's/address 192.168.122.2/address $new_ip/'");
 system("virt-edit -d $new_domain /etc/hosts -e 's/192.168.122.2/$new_ip/'");
 system("virt-edit -d $new_domain /etc/hosts -e 's/$original_domain_name/$new_domain/g'");

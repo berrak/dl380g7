@@ -43,16 +43,19 @@ node 'ol65.home.tld' {
     
     ## Post-install: add local ip to to filterref with 'virsh edit <domain>' 
     # -- first guest domain (always in private subnet 192.168.122.0)
+    # -- Note: hostname must use only 'a-z' (no - or _ in hostname)
     hp_kvm_rpm::add_guest { 'debinix_org' :
                 local_guest_mac => '52:54:00:ff:ff:40',    
                 local_guest_ip  => '192.168.122.40',
+                local_hostname  => 'deborg',
     }
     
     # -- second guest domain (always in private subnet 192.168.122.0)
-    #hp_kvm_rpm::add_guest { 'triatagroup_se' :
-    #            local_guest_mac => '52:54:00:ff:ff:41',    
-    #            local_guest_ip  => '192.168.122.41',
-    #}
+    hp_kvm_rpm::add_guest { 'triatagroup_se' :
+                local_guest_mac => '52:54:00:ff:ff:41',    
+                local_guest_ip  => '192.168.122.41',
+                local_hostname  => 'trise',
+    }
     
     # temporary skip fstab final entry
     #class { hp_fstab::config : fstabhost => 'ol65' }
