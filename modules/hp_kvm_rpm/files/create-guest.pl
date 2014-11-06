@@ -71,13 +71,14 @@ my $twig = XML::Twig->new(
 $twig->parsefile_inplace( $xmlpathfile, '.tmp' );
 $twig->flush;
 
-# 3. Set assigned ip address to new guest with 'virt-edit'
+# 3. Clean image to sane default before first use with 'virt-sysprep'
+#system("virt-sysprep -d $new_domain --enable udev-persistent-net,hostname,logfiles,bash-history --hostname $new_domain");
+system("virt-sysprep -d $new_domain --enable udev-persistent-net,logfiles,bash-history");
+
+# 4. Set assigned ip address to new guest with 'virt-edit'
 system("virt-edit -d $new_domain /etc/network/interfaces -e 's/address 192.168.122.2/address $new_ip/'");
 system("virt-edit -d $new_domain /etc/hosts -e 's/192.168.122.2/$new_ip/'");
 system("virt-edit -d $new_domain /etc/hosts -e 's/$original_domain_name/$new_domain/g'");
-
-# 4. Clean image to sane default before first use with 'virt-sysprep'
-system("virt-sysprep -d $new_domain --enable udev-persistent-net,hostname,logfiles,bash-history --hostname $new_domain");
 
 #
 # ### SUBROUTINES FOR XML ###

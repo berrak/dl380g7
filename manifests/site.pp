@@ -49,10 +49,10 @@ node 'ol65.home.tld' {
     }
     
     # -- second guest domain (always in private subnet 192.168.122.0)
-    hp_kvm_rpm::add_guest { 'triatagroup_se' :
-                local_guest_mac => '52:54:00:ff:ff:41',    
-                local_guest_ip  => '192.168.122.41',
-    }
+    #hp_kvm_rpm::add_guest { 'triatagroup_se' :
+    #            local_guest_mac => '52:54:00:ff:ff:41',    
+    #            local_guest_ip  => '192.168.122.41',
+    #}
     
     # temporary skip fstab final entry
     #class { hp_fstab::config : fstabhost => 'ol65' }
