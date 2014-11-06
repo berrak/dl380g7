@@ -79,7 +79,7 @@ system("virt-sysprep -d $new_domain --enable udev-persistent-net,hostname,logfil
 # 4. Set assigned ip address and domain name to new guest with 'virt-edit'
 system("virt-edit -d $new_domain /etc/network/interfaces -e 's/address 192.168.122.2/address $new_ip/'");
 system("virt-edit -d $new_domain /etc/hosts -e 's/192.168.122.2/$new_ip/'");
-system("virt-edit -d $new_domain /etc/hosts -e 's/$original_domain_name/$new_domain/g'");
+system("virt-edit -d $new_domain /etc/hosts -e 's/$original_domain_name/$new_host_name/g'");
 
 #
 # ### SUBROUTINES FOR XML ###
