@@ -6,7 +6,23 @@
 # Note: Original domain 'wheezy' must exist, other wise script terminates
 #       Mac and IP addresses are private behind NAT (not public)
 #
-# Prepare a new guest image (Debian type)
+# Purpose: Prepare a new guest image (Debian type)
+# Post-install: Edit configuration filterref with correct ip address.
+#               i.e. 'virsh edit <new_domain>' and add '<local_guest_ip>'
+#               in <interface> filterref-section like so:
+#
+#    <interface type='bridge'>
+#      <mac address='52:54:00:00:00:00'/>
+#       <source bridge='virbr0'/>
+#       <model type='virtio'/>
+#       <filterref filter='clean-traffic'>
+#           <parameter name='IP' value='<local_guest_ip>'/>
+#       </filterref>
+#    <address type='pci' domain='0x0000' bus='0x00' slot='0x03' function='0x0'/>
+#    </interface>
+#
+# Not easily scriptable...:-(
+#
 #
 ##############################################################
 # DO NOT EDIT. MANAGES BY PUPPET. CHANGES WILL BE WIPED OUT. #
@@ -42,27 +58,18 @@ my $new_ip = $ARGV[2];
 
 system("virt-clone -o $original_domain_name -n $new_domain --mac $new_mac -f $out_image_path");
 
-# 2a. Update the domain configuration with mac address
+# 2. Update the domain configuration with mac and ip address
 my $xmlpathfile = "/etc/libvirt/qemu/" . $new_domain . ".xml" ;
 
-my $twig1 = XML::Twig->new(
+my $twig = XML::Twig->new(
             twig_handlers => {
                 q{/domain/devices/interface/mac[@address]} => \&set_mac,
+                q{/domain/devices/interface/filterref/parameter[@value]} => \&set_ip,    
             },
             pretty_print => 'indented',
 );
-$twig1->parsefile_inplace( $xmlpathfile, '.tmp' );
-$twig1->flush;
-
-# 2b. Update the domain configuration with ip address
-my $twig2 = XML::Twig->new(
-            twig_handlers => {
-                q{/domain/devices/interface/filterref/parameter[@value]} => \&set_ip,
-            },
-            pretty_print => 'indented',
-);
-$twig2->parsefile_inplace( $xmlpathfile, '.tmp' );
-$twig2->flush;
+$twig->parsefile_inplace( $xmlpathfile, '.tmp' );
+$twig->flush;
 
 # 3. Set assigned ip address to new guest with 'virt-edit'
 system("virt-edit -d $new_domain /etc/network/interfaces -e 's/address 192.168.122.2/address $new_ip/'");

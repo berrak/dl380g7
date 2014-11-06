@@ -40,6 +40,8 @@ node 'ol65.home.tld' {
     
     # set up KVM and its PRIVATE NAT guests
     include hp_kvm_rpm
+    
+    ## Post-install: add local ip to to filterref with 'virsh edit <domain>' 
     # -- first guest domain (always in private subnet 192.168.122.0)
     hp_kvm_rpm::add_guest { 'debinix_org' :
                 local_guest_mac => '52:54:00:ff:ff:40',    
