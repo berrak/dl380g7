@@ -108,6 +108,16 @@ node 'ol65.home.tld' {
 
 ########################################################################
 
+## Virtual guest, Debian 7 (wheezy)
+node 'deborg.vm.tld' {
+
+    # Automatic security upgrades with cron script
+	include hp_auto_upgrade
+
+}
+
+########################################################################
+
 ## Development server, Debian 7 (wheezy)
 node 'node-hphome.home.tld' {
 
