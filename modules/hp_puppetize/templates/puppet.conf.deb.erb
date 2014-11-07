@@ -4,9 +4,11 @@
 [main]
 logdir=/var/log/puppet
 vardir=/var/lib/puppet
+ssldir=/var/lib/puppet/ssl
 rundir=/var/run/puppet
+factpath=$vardir/lib/facter
 
-ssldir=/etc/puppet/ssl
-server = <%= puppetsrvfqdn %>
+server = puppet.home.tld
 [agent]
-certname = node-<%= puppetsrvfqdn %>
+certname = <%= myhostname %>.<%= mydomain %>
+

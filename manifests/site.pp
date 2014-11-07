@@ -111,6 +111,17 @@ node 'ol65.home.tld' {
 ## Virtual guest, Debian 7 (wheezy)
 node 'deborg.vm.tld' {
 
+	## BASIC
+	
+	# Puppet helper routines
+    include puppet_utils
+	# Manage puppet itself
+    include hp_puppetize
+
+
+
+
+
     # Automatic security upgrades with cron script
 	include hp_auto_upgrade
 
