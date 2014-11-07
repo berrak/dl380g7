@@ -76,11 +76,10 @@ class hp_puppetize::install {
 				allow_virtual => true,
 			}		
 	
+		} else {
+			fail("FAIL: Unknown $ostype distribution. Aborting...")
 		}
 		
-    } else {
-				
-		fail("FAIL: Unknown $ostype distribution. Aborting...")
 	}
 
 }
