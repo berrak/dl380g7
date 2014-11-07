@@ -118,7 +118,8 @@ node 'deborg.vm.tld' {
 	# Manage puppet itself
     include hp_puppetize
 
-
+	# Configure APT
+    include hp_apt_config
 
 	## USER PROFILES ##
 	
