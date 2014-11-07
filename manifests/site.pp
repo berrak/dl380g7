@@ -120,10 +120,25 @@ node 'deborg.vm.tld' {
 
 
 
+	## USER PROFILES ##
+	
+	# Set up root's home directories and bash customization
+    include hp_root_home
+    include hp_root_bashrc
 
+	## APPLICATIONS ##
+    
+    
+    # APACHE2 (prefork)
+    include hp_apache2 
+    
+	## SECURITY
 
     # Automatic security upgrades with cron script
 	include hp_auto_upgrade
+    
+    
+    ## MAINTENANCE
 
 }
 
