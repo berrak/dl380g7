@@ -8,7 +8,7 @@ class hp_apache2::install {
     # Requires mod_headers to be enabled (see security)
     exec { "mod_header_install" :
            path => '/bin:/sbin:/usr/bin:/usr/sbin',
-        command => 'a2enmod mod_headers',
+        command => 'a2enmod headers',
         creates => '/etc/apache2/mods-enabled/headers.load',
         require => Package ["apache2-mpm-prefork"],
     }
