@@ -180,26 +180,26 @@ $IPTABLES -A FORWARD -i $IF_VM  -o $IF_EXT -j REJECT --reject-with icmp-host-pro
 #------------------------------------------------------------------------------
 
 # allow established and related traffic pass in
-$IPTABLES -A FORWARD -i $IF_EXT -o $IF_VM -d $INTNET -m state --state ESTABLISHED,RELATED -j ACCEPT
+$IPTABLES -A FORWARD -i $IF_EXT -o $IF_VM -m state --state ESTABLISHED,RELATED -j ACCEPT
 
 ## prevent invalid input packages
-$IPTABLES -A FORWARD -i $IF_EXT -o $IF_VM -d $INTNET -m state --state INVALID -j $LOGOPT $RLIMIT --log-prefix "FORWARD DROP INVALID "
-$IPTABLES -A FORWARD -i $IF_EXT -o $IF_VM -d $INTNET -m state --state INVALID -j DROP
+$IPTABLES -A FORWARD -i $IF_EXT -o $IF_VM -m state --state INVALID -j $LOGOPT $RLIMIT --log-prefix "FORWARD DROP INVALID "
+$IPTABLES -A FORWARD -i $IF_EXT -o $IF_VM -m state --state INVALID -j DROP
 
 ## few external input ports VM access rules here
 
 # ssh client access for management of VMs
-$IPTABLES -A FORWARD -i $IF_EXT -o $IF_VM -d $INTNET -p tcp -m tcp --dport 22 --syn -m state --state NEW -j ACCEPT
+$IPTABLES -A FORWARD -i $IF_EXT -o $IF_VM -p tcp -m tcp --dport 22 --syn -m state --state NEW -j ACCEPT
 
 # external access to http server
-$IPTABLES -A FORWARD -i $IF_EXT -o $IF_VM -d $INTNET -p tcp -m tcp --dport 80 --syn -m state --state NEW -j ACCEPT
+$IPTABLES -A FORWARD -i $IF_EXT -o $IF_VM -p tcp -m tcp --dport 80 --syn -m state --state NEW -j ACCEPT
 
 # allow ping
-$IPTABLES -A FORWARD -i $IF_EXT -o $IF_VM -d $INTNET -p icmp --icmp-type echo-request $RLIMIT -j ACCEPT
+$IPTABLES -A FORWARD -i $IF_EXT -o $IF_VM -p icmp --icmp-type echo-request $RLIMIT -j ACCEPT
 
 ## default reject external traffic to VMs
-$IPTABLES -A FORWARD -i $IF_EXT  -o $IF_VM -d $INTNET -j $LOGOPT $RLIMIT --log-prefix "FORWARD REJECT EXT2VM " 
-$IPTABLES -A FORWARD -i $IF_EXT  -o $IF_VM -d $INTNET -j REJECT --reject-with icmp-host-prohibited
+$IPTABLES -A FORWARD -i $IF_EXT  -o $IF_VM -j $LOGOPT $RLIMIT --log-prefix "FORWARD REJECT EXT2VM " 
+$IPTABLES -A FORWARD -i $IF_EXT  -o $IF_VM -j REJECT --reject-with icmp-host-prohibited
 
 ## ============================================================================
 ##    FW HOST OUTBOUND TRAFFIC (POLICY ACCEPT)
