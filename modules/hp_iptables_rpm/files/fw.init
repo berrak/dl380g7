@@ -107,6 +107,25 @@ $IPTABLES -A INPUT -m state --state INVALID -j DROP
 # allow all established and related traffic in
 $IPTABLES -A INPUT -p all -m state --state ESTABLISHED,RELATED -j ACCEPT
 
+#------------------------------------------------------------------------------
+# INBOUND traffic from VMs to FW HOST
+#------------------------------------------------------------------------------
+$IPTABLES -A INPUT -i $IF_VM -p tcp -m tcp --dport 53 --syn -m state --state NEW -j ACCEPT
+$IPTABLES -A INPUT -i $IF_VM -p udp -m udp --dport 53 -m state --state NEW -j ACCEPT
+
+# allow inbound NTP communication
+$IPTABLES -A INPUT -i $IF_VM -p udp -m udp --dport 123 -m state --state NEW -j ACCEPT
+
+# allow all puppet client and server communication
+$IPTABLES -A INPUT -i $IF_VM -p tcp -m tcp --dport 8139:8140 --syn -m state --state NEW -j ACCEPT
+
+# allow ping
+$IPTABLES -A INPUT -i $IF_VM -p icmp -j ACCEPT
+
+# default accept other traffic from VM to internal host
+$IPTABLES -A INPUT -i $IF_VM -j $LOGOPT --log-prefix "INPUT ACCEPT VM2INT "
+$IPTABLES -A INPUT -i $IF_VM -j ACCEPT
+
 ## ============================================================================
 ##  *** DANGER *** PUBLIC INBOUND TRAFFIC TO FW *** DANGER *** (POLICY ACCEPT)
 ## ============================================================================
@@ -123,28 +142,6 @@ $IPTABLES -A INPUT -i $IF_EXT -m pkttype --pkt-type multicast -j ACCEPT
 # default reject external traffic to host 
 $IPTABLES -A INPUT -i $IF_EXT -j $LOGOPT $RLIMIT --log-prefix "INPUT REJECT EXT2INT " 
 $IPTABLES -A INPUT -i $IF_EXT -j REJECT --reject-with icmp-host-prohibited
-
-#------------------------------------------------------------------------------
-# INBOUND traffic from VMs to FW HOST
-#------------------------------------------------------------------------------
-$IPTABLES -A INPUT -i $IF_VM -p tcp -m tcp --dport 53 --syn -m state --state NEW -j ACCEPT
-$IPTABLES -A INPUT -i $IF_VM -p udp -m udp --dport 53 -m state --state NEW -j ACCEPT
-
-# allow inbound NTP communication
-$IPTABLES -A INPUT -i $IF_VM -p udp -m udp --dport 123 -m state --state NEW -j ACCEPT
-
-# allow all puppet client and server communication
-$IPTABLES -A INPUT -i $IF_VM -p tcp -m tcp --dport 8139:8140 --syn -m state --state NEW -j ACCEPT
-
-# allow ping
-$IPTABLES -A INPUT -i $IF_VM -p icmp -j ACCEPT
-
-# default reject other traffic from VM to internal host
-$IPTABLES -A INPUT -i $IF_VM -j $LOGOPT --log-prefix "INPUT ACCEPT VM2INT "
-#$IPTABLES -A INPUT -i $IF_VM -j $LOGOPT --log-prefix "INPUT REJECT VM2INT "
-#$IPTABLES -A INPUT -i $IF_VM -j REJECT --reject-with icmp-host-prohibited
-$IPTABLES -A INPUT -i $IF_VM -j ACCEPT
-
 
 ## ============================================================================
 ##   VM TRAFFIC (POLICY ACCEPT)
@@ -198,8 +195,8 @@ $IPTABLES -A FORWARD -i $IF_EXT -o $IF_VM -p tcp -m tcp --dport 80 --syn -m stat
 $IPTABLES -A FORWARD -i $IF_EXT -o $IF_VM -p icmp --icmp-type echo-request $RLIMIT -j ACCEPT
 
 ## default reject external traffic to VMs
-$IPTABLES -A FORWARD -i $IF_EXT  -o $IF_VM -j $LOGOPT $RLIMIT --log-prefix "FORWARD REJECT EXT2VM " 
-$IPTABLES -A FORWARD -i $IF_EXT  -o $IF_VM -j REJECT --reject-with icmp-host-prohibited
+$IPTABLES -A FORWARD -i $IF_EXT -o $IF_VM -j $LOGOPT $RLIMIT --log-prefix "FORWARD REJECT EXT2VM " 
+$IPTABLES -A FORWARD -i $IF_EXT -o $IF_VM -j REJECT --reject-with icmp-host-prohibited
 
 ## ============================================================================
 ##    FW HOST OUTBOUND TRAFFIC (POLICY ACCEPT)
