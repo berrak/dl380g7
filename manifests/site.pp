@@ -8,12 +8,14 @@ $extlookup_datadir = "/etc/puppet/files"
 node 'ol65.home.tld' {
 
     ## BASIC
-    # Use dnsmasq (DNS) module for OracleLinux (no need for puppet module: hp_host)
-    class { hp_dnsmasq::config :
+    
+    Use Bind to privide DNS for OracleLinux (no need for puppet module: hp_host)
+    class { hp_bind_rpm::config :
                 ispdns1 => '195.67.199.18',
                 ispdns2 => '195.67.199.19',
                 real_hostname => 'ol65',
     }
+    
     # above DNS must resolv before 'hp_pupetize'. Note that 'puppet-server'
     # host will be named 'puppet'. Oracle use latest puppet-server 3.7
     include hp_puppetize
