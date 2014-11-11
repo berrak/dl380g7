@@ -31,13 +31,13 @@ class hp_bind_rpm::config ( $ispdns1='', $ispdns2='', $real_hostname='' ) {
                mode => '0644',
         }
     
-        #file { '/etc/named.conf' :
-        #    content =>  template( "hp_bind_rpm/named.conf.erb" ),    
-        #      owner => 'root',
-        #      group => 'root',
-        #       mode => '0644',
-        #     notify => Service["named"],
-        #}        
+        file { '/etc/named.conf' :
+            content =>  template( "hp_bind_rpm/named.conf.erb" ),    
+              owner => 'root',
+              group => 'named',
+               mode => '0640',
+             notify => Service["named"],
+        }        
         
         
     }
