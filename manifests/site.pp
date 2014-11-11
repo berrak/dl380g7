@@ -129,6 +129,9 @@ node 'deborg.vm.tld' {
 
 	## APPLICATIONS ##
     
+	# DEBIAN packages without any special configurations
+    class { hp_install_debs : debs => [ "tree", "sipcalc", "gddrescue", "lshw",
+	       "bind9-host", "lynis", "pydf" , "dnsutils" , "ethtool", "parted", "lsof", "curl" ] }
     
     # APACHE2 (prefork)
     include hp_apache2
