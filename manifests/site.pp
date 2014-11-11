@@ -9,7 +9,7 @@ node 'ol65.home.tld' {
 
     ## BASIC
     
-    Use Bind to privide DNS for OracleLinux (no need for puppet module: hp_host)
+    # Use Bind to provide DNS for OracleLinux (no need for puppet module: hp_host)
     class { hp_bind_rpm::config :
                 ispdns1 => '195.67.199.18',
                 ispdns2 => '195.67.199.19',
