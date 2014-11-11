@@ -1,5 +1,5 @@
 $TTL 1D
-@   IN  SOA <%= myhostname %>.<%= mydomain %>.  hostmaster.<%= myhostname %>.<%= mydomain %>.   (
+@IN  SOA <%= myhostname %>.<%= mydomain %>.  hostmaster.<%= myhostname %>.<%= mydomain %>.   (
                     <%=utime_serial %>       ; Serial
                     8H             ; Refresh
                     2H             ; Retry
@@ -9,27 +9,30 @@ $TTL 1D
 ;
 ; -- one or more nameservers
 ;
-@	IN	NS	<%= myhostname %>.<%= mydomain %>.
+@IN		NS	<%= myhostname %>.<%= mydomain %>.
+@IN		A	<%= myipaddress %>
 ;
 ; -- mail exchanger
 ;
-@	IN	MX	10	<%= myhostname %>.<%= mydomain %>.
+@IN		MX	10	<%= myhostname %>.<%= mydomain %>.
 ;
 ; -- primary A records
 ;
 <%= myhostname %>					IN	A		<%= myipaddress %>
 <%= myhostname %>.<%= mydomain %>.	IN	A		<%= myipaddress %>
-localhost							IN	A		<%= myipaddress %>
-<%= mydomain %>.					IN	A		<%= myipaddress %>
-;
-; -- alias servers
-;
-mail								IN	CNAME	<%= mydomain %>.
-www									IN	CNAME	<%= mydomain %>.
+localhost							IN	A		127.0.0.1
 ;
 ; -- other important servers in local domain
 ;
 carbon.<%= mydomain %>.				IN	A		192.168.0.24
 deborg.<%= mydomain %>.				IN	A		192.168.0.40
 trise.<%= mydomain %>.				IN	A		192.168.0.41
+;
+; -- alias servers
+;
+mail								IN	CNAME	<%= myhostname %>
+www									IN	CNAME	<%= myhostname %>
+carbon								IN  CNAME	carbon.<%= mydomain %>.
+deborg								IN	CNAME	deborg.<%= mydomain %>.
+trise								IN	CNAME	trise.<%= mydomain %>.
 

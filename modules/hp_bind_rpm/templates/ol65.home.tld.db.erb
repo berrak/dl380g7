@@ -1,5 +1,5 @@
 $TTL 1D
-@   IN  SOA <%= myhostname %>.<%= mydomain %>.  hostmaster.<%= myhostname %>.<%= mydomain %>.   (
+@IN  SOA <%= myhostname %>.<%= mydomain %>.  hostmaster.<%= myhostname %>.<%= mydomain %>.   (
                     <%=utime_serial %>       ; Serial
                     8H             ; Refresh
                     2H             ; Retry
@@ -9,7 +9,7 @@ $TTL 1D
 ;
 ; -- one or more nameservers
 ;
-@	IN	NS	<%= myhostname %>.<%= mydomain %>.
+@IN	NS	<%= myhostname %>.<%= mydomain %>.
 ;
 ; -- primary A record
 ;
