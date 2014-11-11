@@ -1,0 +1,28 @@
+$TTL 1D
+@   IN  SOA <%= myhostname %>.<%= mydomain %>.  hostmaster.<%= myhostname %>.<%= mydomain %>.   (
+                    <%=utime_serial %>       ; Serial
+                    8H             ; Refresh
+                    2H             ; Retry
+                    4W             ; Expire
+                    1D             ; Minimum
+)
+;
+; -- one or more nameservers
+;
+@	IN	NS	<%= myhostname %>.<%= mydomain %>.
+;
+; -- primary A record
+;
+66		IN		PTR		<%= myhostname %>.<%= mydomain %>.
+;
+; -- alias servers
+;
+66		IN		PTR		mail.<%= mydomain %>.
+66		IN		PTR		www.<%= mydomain %>.
+;
+; -- other important servers in local domain
+;
+24		IN		PTR		carbon.<%= mydomain %>.
+40		IN		PTR		deborg.<%= mydomain %>.
+41		IN		PTR		trise.<%= mydomain %>.
+

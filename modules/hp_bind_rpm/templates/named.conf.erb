@@ -51,4 +51,18 @@ zone "." IN {
 };
 
 include "/etc/named.rfc1912.zones";
+zone "192.168.0.in-addr.arpa" IN {
+type master;
+file "/var/named/<%= myhostname %>.<%= mydomain %>.db";
+allow-update {none;};
+}
+zone "<%= mydomain %>" IN {
+type master;
+file "/var/named/<%= mydomain %>.db";
+allow-update {none;};
+}
+
+
+
+
 include "/etc/named.root.key";

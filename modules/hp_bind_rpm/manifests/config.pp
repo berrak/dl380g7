@@ -14,6 +14,7 @@ class hp_bind_rpm::config ( $ispdns1='', $ispdns2='', $real_hostname='' ) {
     $myhostname = $::hostname
     $hostip = $::ipaddress
     $mydomain = $::domain
+    $myipaddress = $::ipaddress
 
     if $myhostname == $real_hostname {
 
@@ -37,8 +38,27 @@ class hp_bind_rpm::config ( $ispdns1='', $ispdns2='', $real_hostname='' ) {
               group => 'named',
                mode => '0640',
              notify => Service["named"],
-        }        
+        }
         
+        $utime_serial = inline_template("<%= Time.now.to_i %>")        
+        
+        # create forward zone file
+        file { "/var/named/$mydomain.db" :
+            content =>  template( "hp_bind_rpm/$mydomain.db.erb" ),    
+              owner => 'root',
+              group => 'named',
+               mode => '0640',
+             notify => Service["named"],
+        }
+        
+        # create reverse zone file
+        file { "/var/named/$myhostname.$mydomain.db" :
+            content =>  template( "hp_bind_rpm/$myhostname.$mydomain.db.erb" ),    
+              owner => 'root',
+              group => 'named',
+               mode => '0640',
+             notify => Service["named"],
+        }     
         
     }
     else {
