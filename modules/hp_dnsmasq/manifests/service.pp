@@ -6,10 +6,10 @@ class hp_dnsmasq::service {
 	include hp_dnsmasq
 	
 	service { "dnsmasq" :
-			ensure => running,
+			ensure => stopped,
 		 hasstatus => true,
 		hasrestart => true,
-			enable => true,
+			enable => false,
 		   require => Package["dnsmasq"],
 	}
 	
