@@ -133,6 +133,9 @@ $IPTABLES -A INPUT -i $IF_VM -j ACCEPT
 # ssh client access for management of host
 $IPTABLES -A INPUT -i $IF_EXT -p tcp -m tcp --dport 22 --syn -m state --state NEW -j ACCEPT
 
+# allow http access tp proxy
+$IPTABLES -A INPUT -i $IF_EXT -p tcp -m tcp --dport 80 --syn -m state --state NEW -j ACCEPT
+
 # allow ping
 $IPTABLES -A INPUT -i $IF_EXT -p icmp --icmp-type echo-request $RLIMIT -j ACCEPT
 
