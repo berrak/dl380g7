@@ -142,7 +142,7 @@ node 'deborg.vm.tld' {
     include hp_apache2
     
 	## Define a new VM's Apache2 site- port 8080 because transparent proxy in host
-    hp_apache2::vhost { 'deborg.home.tld' :
+    hp_apache2::vhost { 'deborg.vm.tld' :
             priority => '001',
           devgroupid => 'root',
           execscript => 'none',
