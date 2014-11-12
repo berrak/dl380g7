@@ -986,7 +986,7 @@ ProxyVia On
 #
 # Use name-based virtual hosting.
 #
-NameVirtualHost *:80
+#NameVirtualHost *:80
 #
 # NOTE: NameVirtualHost cannot be used without a port specifier 
 # (e.g. :80) if mod_ssl is being used, due to the nature of the
@@ -994,7 +994,7 @@ NameVirtualHost *:80
 #
 #
 
-<VirtualHost *:80>
+<VirtualHost 192.168.0.40:8080>
 
     ServerAdmin root@ol65.home.tld
     DocumentRoot /var/www/html
@@ -1009,5 +1009,18 @@ NameVirtualHost *:80
     
 </VirtualHost>
 
+<VirtualHost 192.168.0.41:8080>
 
+    ServerAdmin root@ol65.home.tld
+    DocumentRoot /var/www/html
+    ServerName trise.home.tld
+    ServerAlias trise
+    ErrorLog logs/trise.local-error_log
+    CustomLog logs/trise.local-access_log common
+    
+    ProxyRequests Off
+    ProxyPass / http://192.168.122.41/
+    ProxyPassReverse / http://192.168.122.41/
+    
+</VirtualHost>
 

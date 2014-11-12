@@ -141,11 +141,12 @@ node 'deborg.vm.tld' {
     # APACHE2 (prefork)
     include hp_apache2
     
-	## Define a new Apache2 virtual host (docroot directory writable by group 'root')
+	## Define a new VM's Apache2 site- port 8080 because transparent proxy in host
     hp_apache2::vhost { 'deborg.home.tld' :
             priority => '001',
           devgroupid => 'root',
           execscript => 'none',
+                port => '8080',
     }    
     
 	## SECURITY

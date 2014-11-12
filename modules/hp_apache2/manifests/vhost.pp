@@ -6,10 +6,11 @@
 #     hp_apache2::vhost { 'hudson.vbox.tld' :
 #        priority => '001',
 #        devgroupid => 'bekr',
-#        execscript = 'php',
+#        execscript => 'php',
+#        port => '80',
 #     } 
 #
-define hp_apache2::vhost ( $priority='', $devgroupid='', $urlalias='', $aliastgtpath='', $execscript='') {
+define hp_apache2::vhost ( $priority='', $devgroupid='', $urlalias='', $aliastgtpath='', $execscript='', $port='') {
 
     
     # Add a new virtual host fqdn to /etc/hosts for name resolution. This
@@ -29,6 +30,9 @@ define hp_apache2::vhost ( $priority='', $devgroupid='', $urlalias='', $aliastgt
         fail("FAIL: Missing required execscript parameter ($execscript).")
     }    
     
+    if $port == '' {
+        fail("FAIL: Missing required port number (e.g. 80 or 8080).")
+    }    	
     
     if $priority == '000' {
         fail("FAIL: Priority ($priority) can not be 000 - reserved for default site.")
