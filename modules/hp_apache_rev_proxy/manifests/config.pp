@@ -3,14 +3,13 @@
 #
 class hp_apache_rev_proxy::config {
 
-
+    # apache2 main configuration file
+    file { "/etc/httpd/conf/httpd.conf" :
+        content =>  template( "hp_apache_rev_proxy/httpd.conf.erb" ),    
+          owner => 'root',
+          group => 'root',
+           mode => '0644',
+         notify => Service["httpd"],
+    }
     
-    #file { '/etc/apache2/conf.d/security':
-    #     source => "puppet:///modules/hp_apache_rev_proxy/security",    
-    #      owner => 'root',
-    #      group => 'root',
-    #    require => Class["hp_apache_rev_proxy::install"],
-    #    notify => Service["apache2"],
-    #}
- 
 }

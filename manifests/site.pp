@@ -142,7 +142,7 @@ node 'deborg.vm.tld' {
     include hp_apache2
     
 	## Define a new Apache2 virtual host (docroot directory writable by group 'root')
-    hp_apache2::vhost { 'deborg.vm.tld' :
+    hp_apache2::vhost { 'deborg.home.tld' :
             priority => '001',
           devgroupid => 'root',
           execscript => 'none',
