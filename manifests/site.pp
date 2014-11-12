@@ -79,8 +79,7 @@ node 'ol65.home.tld' {
     class { hp_install_rpms : rpms => [ "tree", "ethtool", "parted", "lsof", "curl" ] }
     
     # Reverse proxy for VM's http-servers
-    include hp_apache_reverse_proxy
-
+    include hp_apache_rev_proxy
 
     ## SECURITY
     hp_selinux::state { 'enforcing' : }
