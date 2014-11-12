@@ -141,7 +141,7 @@ node 'deborg.vm.tld' {
     # APACHE2 (prefork) - always default to listen on port 80 and 8080 (proxy)
     include hp_apache2
     
-	## Define a new VM's Apache2 site- port 8080 because transparent proxy in host
+	## Define a new VM's Apache2 site - port 8080 because transparent proxy in host
     hp_apache2::vhost { 'deborg.vm.tld' :
             priority => '001',
           devgroupid => 'root',
