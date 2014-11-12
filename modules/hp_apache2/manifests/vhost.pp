@@ -286,6 +286,8 @@ define hp_apache2::vhost ( $priority='', $devgroupid='', $urlalias='', $aliastgt
 		
 		none: {
     
+	        $myipaddress = $::ipaddress
+	
             file { "/etc/apache2/sites-available/${name}":
                 content =>  template('hp_apache2/vhost.erb'),
                 owner => 'root',
