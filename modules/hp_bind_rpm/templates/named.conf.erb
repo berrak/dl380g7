@@ -8,9 +8,8 @@
 //
 // See /usr/share/doc/bind*/sample/ for example named configuration files.
 //
-
 options {
-	listen-on port 53 { 127.0.0.1; };
+	listen-on port 53 { 127.0.0.1; <%= myipaddress %>;};
         listen-on-v6 port 53 { ::1; };
         directory	"/var/named";
         dump-file	"/var/named/data/cache_dump.db";
@@ -18,7 +17,7 @@ options {
         memstatistics-file "/var/named/data/named_mem_stats.txt";
         
 		allow-query     { any; };
-		allow-transfer { "none"; };
+		allow-transfer { <%= myipaddress %>; };
 		
 		forwarders { <%= mydns1 %>; <%= mydns2 %>; };
 		forward first;
