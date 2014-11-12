@@ -53,7 +53,9 @@ $IncludeConfig /etc/rsyslog.d/*.conf
 ###############
 $template PerHostSyslog,"<%= logcheckfilepath %>/%HOSTNAME%/syslog.log"
 $template PerHostAuth,"<%= logcheckfilepath %>/%HOSTNAME%/auth.log"
-$template PerHostIptables,"<%= logcheckfilepath %>/%HOSTNAME%/iptables.log"
+
+# not configured logcheck yet
+#$template PerHostIptables,"<%= logcheckfilepath %>/%HOSTNAME%/iptables.log"
 
 ###############
 #### RULES ####
@@ -81,13 +83,16 @@ if $fromhost-ip != '127.0.0.1' then -?PerHostSyslog
 
 auth,authpriv.*		                    /var/log/auth.log
 
-# we set iptables to log to priority 'emerg'
-kern.emerg                              /var/log/iptables.log
+# set iptables to log to different files
+:msg,startwith,"INPUT" /var/log/iptables.in
+:msg,startwith,"OUTPUT" /var/log/iptables.out
+:msg,startwith,"FORWARD" /var/log/iptables.fwd
+& ~
 
 # Other local standard facilities
 ######################################
 daemon.*			                    -/var/log/daemon.log
-kern.!=emerg		                    -/var/log/kern.log
+kern.*		                            -/var/log/kern.log
 cron.*				                    -/var/log/cron.log
 user.*				                    -/var/log/user.log
 mail.*				                    -/var/log/mail.log

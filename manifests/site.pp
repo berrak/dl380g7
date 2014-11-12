@@ -105,6 +105,7 @@ node 'ol65.home.tld' {
     hp_ssh_server::sshuser { 'bekr' : }
     include hp_auto_upgrade
     include hp_logrotate
+    include hp_rsyslog
 
 }
 
