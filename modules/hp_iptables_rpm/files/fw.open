@@ -32,8 +32,8 @@ IF_EXT="eth0"
 IF_VM="virbr0"
 
 INTNET="192.168.122.0/255.255.255.0"
-INTVM1="192.168.122.41"
-INTVM2="192.168.122.42"
+INTVM1="192.168.122.40"
+INTVM2="192.168.122.41"
 
 #------------------------------------------------------------------------------
 # ISP data
@@ -90,16 +90,19 @@ $IPTABLES -I OUTPUT 1 -o lo -j ACCEPT
 ##   PRE/POST ROUTING NAT
 ## ============================================================================
 
-# transparent proxying to vm-http-servers
+# transparent external traffic to http-servers
 $IPTABLES -t nat -A PREROUTING -i $IF_EXT -p tcp --dport 80 -j REDIRECT --to-ports 8080
 
+# masquerade external out-going vm traffic
+$IPTABLES -t nat -A POSTROUTING -o $IF_EXT -j MASQUERADE
+
 # masquerade in-going vm traffic
-$IPTABLES -t nat -A PREROUTING -d $PUBVM1 -p tcp -j DNAT --to-destination $INTVM1
-$IPTABLES -t nat -A PREROUTING -d $PUBVM2 -p tcp -j DNAT --to-destination $INTVM2
+#$IPTABLES -t nat -A PREROUTING -d $PUBVM1 -p tcp -j DNAT --to-destination $INTVM1
+#$IPTABLES -t nat -A PREROUTING -d $PUBVM2 -p tcp -j DNAT --to-destination $INTVM2
 
 # masquerade out-going vm traffic
-$IPTABLES -t nat -A POSTROUTING -s $INTVM1 ! -d $INTNET -j SNAT --to-source $PUBVM1
-$IPTABLES -t nat -A POSTROUTING -s $INTVM2 ! -d $INTNET -j SNAT --to-source $PUBVM2
+#$IPTABLES -t nat -A POSTROUTING -s $INTVM1 ! -d $INTNET -j SNAT --to-source $PUBVM1
+#$IPTABLES -t nat -A POSTROUTING -s $INTVM2 ! -d $INTNET -j SNAT --to-source $PUBVM2
 
 #==============================================================================
 # INBOUND TO FW HOST
