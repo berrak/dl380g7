@@ -85,7 +85,9 @@ auth,authpriv.*		                    /var/log/auth.log
 
 # set iptables to log to different files
 :msg,startwith,"INPUT" /var/log/iptables.in
+& ~
 :msg,startwith,"OUTPUT" /var/log/iptables.out
+& ~
 :msg,startwith,"FORWARD" /var/log/iptables.fwd
 & ~
 
