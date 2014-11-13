@@ -146,7 +146,7 @@ node 'deborg.vm.tld' {
             priority => '001',
           devgroupid => 'root',
           execscript => 'none',
-                port => '80',
+                port => '8080',
     }    
     
 	## SECURITY

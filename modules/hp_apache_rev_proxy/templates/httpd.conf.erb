@@ -133,7 +133,7 @@ MaxRequestsPerChild  0
 # prevent Apache from glomming onto all bound IP addresses (0.0.0.0)
 #
 #Listen 12.34.56.78:80
-Listen 80
+Listen 8080
 
 #
 # Dynamic Shared Object (DSO) Support
@@ -273,7 +273,7 @@ ServerAdmin root@localhost
 # You will have to access it by its address anyway, and this will make 
 # redirections work in a sensible way.
 #
-ServerName 192.168.0.66:80
+ServerName 192.168.0.66:8080
 
 #
 # UseCanonicalName: Determines how Apache constructs self-referencing 
@@ -994,7 +994,7 @@ ProxyVia On
 #
 #
 
-<VirtualHost 192.168.0.40:80>
+<VirtualHost 192.168.0.40:8080>
 
     ServerAdmin root@ol65.home.tld
     DocumentRoot /var/www/html
@@ -1004,12 +1004,12 @@ ProxyVia On
     CustomLog logs/deborg.local-access_log common
     
     ProxyRequests Off
-    ProxyPass / http://192.168.122.40/
-    ProxyPassReverse / http://192.168.122.40/
+    ProxyPass / http://192.168.122.40:8080/
+    ProxyPassReverse / http://192.168.122.40:8080/
     
 </VirtualHost>
 
-<VirtualHost 192.168.0.41:80>
+<VirtualHost 192.168.0.41:8080>
 
     ServerAdmin root@ol65.home.tld
     DocumentRoot /var/www/html
@@ -1019,8 +1019,8 @@ ProxyVia On
     CustomLog logs/trise.local-access_log common
     
     ProxyRequests Off
-    ProxyPass / http://192.168.122.41/
-    ProxyPassReverse / http://192.168.122.41/
+    ProxyPass / http://192.168.122.41:8080/
+    ProxyPassReverse / http://192.168.122.41:8080/
     
 </VirtualHost>
 
