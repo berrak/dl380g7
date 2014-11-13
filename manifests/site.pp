@@ -78,7 +78,7 @@ node 'ol65.home.tld' {
 	# Install REDHAT packages without any special configurations
     class { hp_install_rpms : rpms => [ "tree", "ethtool", "parted", "lsof", "curl" ] }
     
-    # Reverse proxy for VM's http-servers
+    # Reverse proxy (rpm only) for VM's http-servers
     include hp_apache_rev_proxy
 
     ## SECURITY
@@ -138,15 +138,15 @@ node 'deborg.vm.tld' {
     class { hp_install_debs : debs => [ "tree", "sipcalc", "gddrescue", "lshw",
 	       "bind9-host", "lynis", "pydf" , "dnsutils" , "ethtool", "parted", "lsof", "curl" ] }
     
-    # APACHE2 (prefork) - always default to listen on port 80 and 8080 (proxy)
+    # APACHE2 (prefork)
     include hp_apache2
     
-	## Define a new VM's Apache2 site - port 8080 because transparent proxy in host
+	## Define a new VM's Apache2 site - transparent proxy in host
     hp_apache2::vhost { 'deborg.vm.tld' :
             priority => '001',
           devgroupid => 'root',
           execscript => 'none',
-                port => '8080',
+                port => '80',
     }    
     
 	## SECURITY
