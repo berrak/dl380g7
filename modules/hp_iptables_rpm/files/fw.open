@@ -126,10 +126,10 @@ $IPTABLES -A FORWARD -i $IF_VM  -o $IF_EXT -j $LOGOPT --log-prefix "FORWARD VM2E
 # OUTBOUND FROM FW HOST
 #==============================================================================
 # logonly outbound traffic from FW host to internal VMs
-$IPTABLES -A OUTPUT -i $IF_VM -j $LOGOPT $RLIMIT --log-prefix "OUTPUT FW2VM " 
+$IPTABLES -A OUTPUT -o $IF_VM -j $LOGOPT $RLIMIT --log-prefix "OUTPUT FW2VM " 
 
 # logonly outbound traffic from FW host to external net
-$IPTABLES -A OUTPUT -i $IF_EXT -j $LOGOPT $RLIMIT --log-prefix "OUTPUT FW2EXT " 
+$IPTABLES -A OUTPUT -o $IF_EXT -j $LOGOPT $RLIMIT --log-prefix "OUTPUT FW2EXT " 
 
 ###############################################################################
 # To use this, manually run:
