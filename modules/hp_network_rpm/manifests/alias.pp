@@ -20,6 +20,7 @@ define hp_network_rpm::alias ( $public_guest_ip ) {
 		  owner => 'root',
 		  group => 'root',
 		 notify => Service['network'],
+		require => Class["hp_network_rpm"],
 	} 
 
 }
