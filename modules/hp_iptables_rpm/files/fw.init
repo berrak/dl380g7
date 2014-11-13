@@ -90,10 +90,7 @@ $IPTABLES -I OUTPUT 1 -o lo -j ACCEPT
 ##   PRE/POST ROUTING NAT
 ## ============================================================================
 
-# transparent proxying to vm-http-servers
-$IPTABLES -t nat -A PREROUTING -i $IF_EXT -p tcp --dport 80 -j REDIRECT --to-ports 8080
-
-# masquerade in-going vm traffic
+# translate external traffic to http-servers
 $IPTABLES -t nat -A PREROUTING -d $PUBVM1 -p tcp -j DNAT --to-destination $INTVM1
 $IPTABLES -t nat -A PREROUTING -d $PUBVM2 -p tcp -j DNAT --to-destination $INTVM2
 

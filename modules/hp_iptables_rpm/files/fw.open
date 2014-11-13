@@ -90,7 +90,7 @@ $IPTABLES -I OUTPUT 1 -o lo -j ACCEPT
 ##   PRE/POST ROUTING NAT
 ## ============================================================================
 
-# proxy external traffic to http-servers
+# translate external traffic to http-servers
 $IPTABLES -t nat -A PREROUTING -d $PUBVM1 -p tcp -j DNAT --to-destination $INTVM1
 $IPTABLES -t nat -A PREROUTING -d $PUBVM2 -p tcp -j DNAT --to-destination $INTVM2
 

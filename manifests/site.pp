@@ -78,9 +78,7 @@ node 'ol65.home.tld' {
 	# Install REDHAT packages without any special configurations
     class { hp_install_rpms : rpms => [ "tree", "ethtool", "parted", "lsof", "curl" ] }
     
-    # Reverse proxy (rpm only) for VM's http-servers
-    include hp_apache_rev_proxy
-
+    
     ## SECURITY
     hp_selinux::state { 'enforcing' : }
     hp_sudo::config { 'bekr': }
