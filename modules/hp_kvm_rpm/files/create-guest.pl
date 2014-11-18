@@ -45,8 +45,8 @@ if ( ! -f $original_domain_path ) {
 
 # Pre-check, check passedc arguments
 my $num_args = $#ARGV +1 ;
-if ($num_args != 4) {
-print "\nUsage: create-guest.pl <new_domain> <local_mac_address> <local_ip_address> <new_host_name>\n";
+if ($num_args != 5) {
+print "\nUsage: create-guest.pl <new_domain> <local_mac_address> <local_ip_address> <new_host_name> <new_bridge>\n";
 exit 1;
 }
 
@@ -56,6 +56,7 @@ my $out_image_path = "/var/lib/libvirt/images/$new_domain" . ".img";
 my $new_mac = $ARGV[1];
 my $new_ip = $ARGV[2];
 my $new_host_name = $ARGV[3];
+my $new_bridge = $ARGV[4];
 
 system("virt-clone -o $original_domain_name -n $new_domain --mac $new_mac -f $out_image_path");
 
@@ -65,6 +66,7 @@ my $xmlpathfile = "/etc/libvirt/qemu/" . $new_domain . ".xml" ;
 my $twig = XML::Twig->new(
             twig_handlers => {
                 q{/domain/devices/interface/mac[@address]} => \&set_mac,
+                q{/domain/devices/interface/source[@bridge]} => \&set_source,                
                 q{/domain/devices/interface/filterref/parameter[@value]} => \&set_ip,    
             },
             pretty_print => 'indented',
@@ -87,6 +89,12 @@ system("virt-edit -d $new_domain /etc/hosts -e 's/$original_domain_name/$new_hos
 sub set_mac {
     my ($twig, $mac) = @_;
     $mac->set_att( address => $new_mac );
+    $twig->flush;
+}
+
+sub set_source {
+    my ($twig, $bridge) = @_;
+    $bridge->set_att( bridge => $new_bridge );
     $twig->flush;
 }
 

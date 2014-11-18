@@ -1,0 +1,11 @@
+<network>
+  <name><%= local_hostname %></name>
+  <forward mode='nat'/>
+  <bridge name='<%= $nat_bridge_name %>' stp='on' delay='0' />
+  <mac address='<%= local_guest_mac %>'/>
+  <ip address='<%= local_guest_gw %>' netmask='255.255.255.0'>
+    <dhcp>
+      <range start='<%= local_guest_ip %>' end='<%= local_guest_ip %>' />
+    </dhcp>
+  </ip>
+</network>
