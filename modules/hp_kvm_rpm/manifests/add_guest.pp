@@ -38,7 +38,7 @@ define hp_kvm_rpm::add_guest ( $local_guest_mac, $local_guest_gw, $local_guest_i
 	}	
 	
 	# add new network for this guest and start it
-	file { "/etc/libvirt/qemu/networks/$name":
+	file { "/etc/libvirt/qemu/networks/$name.xml":
 		content =>  template( "hp_kvm_rpm/$name.erb" ),
 		  owner => 'root',
 		  group => 'root',
@@ -47,7 +47,7 @@ define hp_kvm_rpm::add_guest ( $local_guest_mac, $local_guest_gw, $local_guest_i
 	} 
 	exec { "Create_new_network_$name" :
 		       path => '/root/bin:/bin:/sbin:/usr/bin:/usr/sbin',
-		    command => "virsh net-define /etc/libvirt/qemu/networks/$name && virsh net-start $name && virsh net-autostart $name",
+		    command => "virsh net-define /etc/libvirt/qemu/networks/$name.xml && virsh net-start $name && virsh net-autostart $name",
 		refreshonly => 'true',
 	}
 	
