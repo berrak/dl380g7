@@ -1,5 +1,5 @@
 <network>
-  <name><%= local_hostname %></name>
+  <name><%= name %></name>
   <forward mode='nat'/>
   <bridge name='<%= $nat_bridge_name %>' stp='on' delay='0' />
   <mac address='<%= local_guest_mac %>'/>
