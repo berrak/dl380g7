@@ -1,0 +1,52 @@
+##############################################################
+# MANAGED BY PUPPET. DO NOT EDIT. CHANGES WILL BE WIPED OUT. #
+##############################################################
+#
+# /etc/libvirt/qemu/README.re-run-virtualguest
+#
+# Preparations to rerun puppet to re-create virtual guest which have,
+# the same name. A few files needs to be wiped off disk/memory.
+#
+# Undefine guest (but not the original configuration e.g. 'wheezy.xml')
+# This will erase the file (e.g. debinix.org.xml) in current directory and
+# in memory. Make sure guest is shutdown first (virsh shutdown debinix.org)
+#
+# Thus:
+#    0. virsh list --all
+#    1. virsh shutdown <guestname>, e.g. 'virsh shutdown debenix.org'    
+#    2. virsh undefine <guestname>, e.g. 'virsh undefine debenix.org'
+#    
+# In case last commands does not work try:
+#    3. virsh undefine --managed-save <guestname>
+#    4. virsh managedsave-remove <guestname>
+#    5  rm <guestnamefile.xml>
+#
+# Stop and remove the defined network (files in /etc/libvirt/qemu/network).
+#    0. virsh net-list
+#    1. virsh net-destroy <network>
+#    2. virsh net-undefine <network>
+# In case last command does not work try:
+#    3.  rm network/<guestnetwork.xml>  
+#    
+# Remove the image of the guest we want to re-create
+# (but not the original image e.g. 'wheezy.img').
+#    0. cd /var/lib/libvirt/images
+#    1. rm <imagefile.img>
+#    
+# Run puppet: 'puppet.exec'
+#
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

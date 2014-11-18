@@ -20,4 +20,11 @@ class hp_kvm_rpm::config {
 	      mode => '0700',
 	}
     
+    # README to remember required steps when re-creating a guest with identical name
+	file { '/etc/libvirt/qemu/README.re-run-virtualguest' :
+		source => "puppet:///modules/hp_kvm_rpm/README.re-run-virtualguest",
+		 owner => 'root',
+		 group => 'root',
+	}
+    
 }
