@@ -57,7 +57,7 @@ define hp_kvm_rpm::add_guest ( $local_guest_mac, $local_guest_gw, $local_guest_i
 		   path => '/root/bin:/bin:/sbin:/usr/bin:/usr/sbin',
 		command => "/root/bin/create-guest.pl $name $local_guest_mac $local_guest_ip $local_hostname $nat_bridge_name",
 		 unless => "ls /var/lib/libvirt/images/ | grep $name",
-		require => File["/etc/libvirt/qemu/networks/$name"],
+		require => File["/etc/libvirt/qemu/networks/$name.xml"],
 	}
 
 }
