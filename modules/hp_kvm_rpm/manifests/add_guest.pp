@@ -52,7 +52,7 @@ define hp_kvm_rpm::add_guest ( $local_guest_mac, $local_guest_gw, $local_guest_i
 	}
 	
 					
-	# create the new guest (from '/var/lib/libvirt/images/tpldeb.img', must exist) 
+	# create the new guest (from '/var/lib/libvirt/images/wheezy.img', must exist) 
 	exec { "Create_new_guest_$name" :
 		   path => '/root/bin:/bin:/sbin:/usr/bin:/usr/sbin',
 		command => "/root/bin/create-guest.pl $name $local_guest_mac $local_guest_ip $local_hostname $nat_bridge_name",

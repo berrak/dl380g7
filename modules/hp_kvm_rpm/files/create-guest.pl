@@ -1,8 +1,8 @@
 #!/usr/bin/perl
 #
-# /root/bin/create-guest.pl <new_domain> <local_guest_mac> <local_guest_ip> <new_host_name>
+# /root/bin/create-guest.pl <new_domain> <local_guest_mac> <local_guest_ip> <new_host_name> <new_bridge>
 #
-# Usage: create-guest.pl debinix_org '52:54:00:FF.FF.40' '192.168.122.40' deborg  
+# Usage: create-guest.pl debinix_org '52:54:00:FF.FF.40' '192.168.122.40' deborg virbr3 
 # Note: Original domain 'wheezy' must exist, other wise script terminates
 #       Mac and IP addresses are private behind NAT (not public)
 #
@@ -13,7 +13,7 @@
 #
 #    <interface type='bridge'>
 #      <mac address='52:54:00:00:00:00'/>
-#       <source bridge='virbr0'/>
+#       <source bridge='<%= $nat_bridge_name %>'/>
 #       <model type='virtio'/>
 #       <filterref filter='clean-traffic'>
 #           <parameter name='IP' value='<local_guest_ip>'/>
