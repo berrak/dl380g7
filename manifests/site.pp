@@ -9,12 +9,20 @@ node 'ol65.home.tld' {
 
     ## BASIC
     
-    # Use Bind to provide DNS for OracleLinux (no need for puppet module: hp_host)
+    # Disable Bind to provide DNS for OracleLinux (no need for puppet module: hp_host)
     class { hp_bind_rpm::config :
                 ispdns1 => '195.67.199.18',
                 ispdns2 => '195.67.199.19',
                 real_hostname => 'ol65',
     }
+    
+    # Enable dnsmasq for DNS
+    class { hp_dnsmasq::config :
+                ispdns1 => '195.67.199.18',
+                ispdns2 => '195.67.199.19',
+                real_hostname => 'ol65',
+    }
+    
     
     # above DNS must resolv before 'hp_pupetize'. Note that 'puppet-server'
     # host will be named 'puppet'. Oracle use latest puppet-server 3.7
