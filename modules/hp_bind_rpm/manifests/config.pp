@@ -18,12 +18,12 @@ class hp_bind_rpm::config ( $ispdns1='', $ispdns2='', $real_hostname='' ) {
 
     if $myhostname == $real_hostname {
 
-        file { '/etc/hosts' :
-            content =>  template( "hp_bind_rpm/${real_hostname}_hosts.erb" ),    
-              owner => 'root',
-              group => 'root',
-               mode => '0644',
-        }
+        #file { '/etc/hosts' :
+        #    content =>  template( "hp_bind_rpm/${real_hostname}_hosts.erb" ),    
+        #      owner => 'root',
+        #      group => 'root',
+        #       mode => '0644',
+        #}
         
         file { '/etc/resolv.conf' :
             content =>  template( "hp_bind_rpm/resolv.conf.erb" ),    
