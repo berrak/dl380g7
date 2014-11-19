@@ -116,32 +116,58 @@ $IPTABLES -t nat -A POSTROUTING -s $INTNET2 ! -d $INTNET2 -j SNAT --to-source $P
 $IPTABLES -A INPUT -i $IF_VM1 -j $LOGOPT --log-prefix "INPUT VM2INT "
 $IPTABLES -A INPUT -i $IF_VM2 -j $LOGOPT --log-prefix "INPUT VM2INT "
 
+# allow all established and related traffic in
+$IPTABLES -A INPUT -p all -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+# accept dhcp and dns
+$IPTABLES -A INPUT -i $IF_VM1 -p udp --dport 53 -m state --state NEW -j ACCEPT
+$IPTABLES -A INPUT -i $IF_VM2 -p udp --dport 53 -m state --state NEW -j ACCEPT
+$IPTABLES -A INPUT -i $IF_VM1 -p tcp --dport 53 -m state --state NEW -j ACCEPT
+$IPTABLES -A INPUT -i $IF_VM2 -p tcp --dport 53 -m state --state NEW -j ACCEPT
+
 # logonly inbound traffic from external net to internal FW host 
-$IPTABLES -A INPUT -i $IF_EXT -j $LOGOPT $RLIMIT --log-prefix "INPUT EXT2INT " 
+$IPTABLES -A INPUT -i $IF_EXT -j $LOGOPT $RLIMIT --log-prefix "INPUT EXT2INT "
+$IPTABLES -A INPUT -i $IF_EXT -p tcp --dport 22 -m state --state NEW -j ACCEPT
 
 #==============================================================================
 # INBOUND TO VM
 #==============================================================================
+$IPTABLES -A FORWARD -i $IF_EXT -o $IF_VM1 -m state --state ESTABLISHED,RELATED -j ACCEPT
+$IPTABLES -A FORWARD -i $IF_EXT -o $IF_VM2 -m state --state ESTABLISHED,RELATED -j ACCEPT
+
 ## logonly external inbound traffic to internal VMs
 $IPTABLES -A FORWARD -i $IF_EXT -o $IF_VM1 -j $LOGOPT $RLIMIT --log-prefix "FORWARD EXT2VM "
-$IPTABLES -A FORWARD -i $IF_EXT -o $IF_VM2 -j $LOGOPT $RLIMIT --log-prefix "FORWARD EXT2VM " 
+$IPTABLES -A FORWARD -i $IF_EXT -o $IF_VM2 -j $LOGOPT $RLIMIT --log-prefix "FORWARD EXT2VM "
+$IPTABLES -A FORWARD -i $IF_EXT -o $IF_VM1 -p tcp --dport 22 -m state --state NEW -j ACCEPT
+$IPTABLES -A FORWARD -i $IF_EXT -o $IF_VM2 -p tcp --dport 22 -m state --state NEW -j ACCEPT
 
 #==============================================================================
 # OUTBOUND FROM VM
 #==============================================================================
+$IPTABLES -A FORWARD -i $IF_VM1  -o $IF_EXT -m state --state ESTABLISHED,RELATED -j ACCEPT
+$IPTABLES -A FORWARD -i $IF_VM2  -o $IF_EXT -m state --state ESTABLISHED,RELATED -j ACCEPT
+
 # logonly outbound VMs traffic to external net
 $IPTABLES -A FORWARD -i $IF_VM1  -o $IF_EXT -j $LOGOPT --log-prefix "FORWARD VM2EXT "
 $IPTABLES -A FORWARD -i $IF_VM2  -o $IF_EXT -j $LOGOPT --log-prefix "FORWARD VM2EXT "
+$IPTABLES -A FORWARD -i $IF_VM1  -o $IF_EXT -p tcp --dport 53 -m state --state NEW -j ACCEPT
+$IPTABLES -A FORWARD -i $IF_VM2  -o $IF_EXT -p tcp --dport 53 -m state --state NEW -j ACCEPT
 
 #==============================================================================
 # OUTBOUND FROM FW HOST
 #==============================================================================
+# allow all established and related traffic out
+$IPTABLES -A OUTPUT -p all -m state --state ESTABLISHED,RELATED -j ACCEPT
+
 # logonly outbound traffic from FW host to internal VMs
 $IPTABLES -A OUTPUT -o $IF_VM1 -j $LOGOPT $RLIMIT --log-prefix "OUTPUT FW2VM "
 $IPTABLES -A OUTPUT -o $IF_VM2 -j $LOGOPT $RLIMIT --log-prefix "OUTPUT FW2VM "
+$IPTABLES -A OUTPUT -o $IF_VM1 -p tcp --dport 53 -m state --state NEW -j ACCEPT
+$IPTABLES -A OUTPUT -o $IF_VM2 -p tcp --dport 53 -m state --state NEW -j ACCEPT
 
 # logonly outbound traffic from FW host to external net
-$IPTABLES -A OUTPUT -o $IF_EXT -j $LOGOPT $RLIMIT --log-prefix "OUTPUT FW2EXT " 
+$IPTABLES -A OUTPUT -o $IF_EXT -j $LOGOPT $RLIMIT --log-prefix "OUTPUT FW2EXT "
+$IPTABLES -A OUTPUT -o $IF_EXT -p tcp --dport 53 -m state --state NEW -j ACCEPT
 
 ###############################################################################
 # To use this, manually run:
