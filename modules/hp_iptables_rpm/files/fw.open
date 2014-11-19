@@ -100,8 +100,11 @@ $IPTABLES -t nat -A PREROUTING -d $PUBVM1 -p tcp -j DNAT --to-destination $INTVM
 $IPTABLES -t nat -A PREROUTING -d $PUBVM2 -p tcp -j DNAT --to-destination $INTVM2
 
 # masquerade out-going vm traffic
-$IPTABLES -t nat -A POSTROUTING -s $INTVM1 ! -d $INTNET1 -j SNAT --to-source $PUBVM1
-$IPTABLES -t nat -A POSTROUTING -s $INTVM2 ! -d $INTNET2 -j SNAT --to-source $PUBVM2
+#$IPTABLES -t nat -A POSTROUTING -s $INTNET1 ! -d $INTNET1 -j SNAT --to-source $PUBVM1
+#$IPTABLES -t nat -A POSTROUTING -s $INTNET2 ! -d $INTNET2 -j SNAT --to-source $PUBVM2
+$IPTABLES -t nat -A POSTROUTING -s $INTNET1 ! -d $INTNET1 -j MASQUERADE
+$IPTABLES -t nat -A POSTROUTING -s $INTNET2 ! -d $INTNET2 -j MASQUERADE
+
 
 #==============================================================================
 # INBOUND TO FW HOST
