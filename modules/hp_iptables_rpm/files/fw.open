@@ -29,11 +29,16 @@ MODPROBE=/sbin/modprobe
 SERVICE=/sbin/service
 
 IF_EXT="eth0"
-IF_VM="virbr0"
 
-INTNET="192.168.122.0/255.255.255.0"
-INTVM1="192.168.122.40"
-INTVM2="192.168.122.41"
+# interface for each VM
+IF_VM1="virbr1"
+IF_VM2="virbr2"
+
+# used only for DNAT/SNAT rules
+INTNET1="192.168.41.0/255.255.255.0"
+INTNET2="192.168.42.0/255.255.255.0"
+INTVM1="192.168.41.2"
+INTVM2="192.168.42.2"
 
 #------------------------------------------------------------------------------
 # ISP data
@@ -41,8 +46,8 @@ INTVM2="192.168.122.41"
 GATEWAY="192-168.0.1"
 SERVER="192.168.0.66"
 # Virtual guests
-PUBVM1="192.168.0.40"
-PUBVM2="192.168.0.41"
+PUBVM1="192.168.0.41"
+PUBVM2="192.168.0.42"
 #------------------------------------------------------------------------------
 
 ## rsyslog: Configured to match log prefix 'FORWARD', 'INPUT' and 
@@ -95,14 +100,15 @@ $IPTABLES -t nat -A PREROUTING -d $PUBVM1 -p tcp -j DNAT --to-destination $INTVM
 $IPTABLES -t nat -A PREROUTING -d $PUBVM2 -p tcp -j DNAT --to-destination $INTVM2
 
 # masquerade out-going vm traffic
-$IPTABLES -t nat -A POSTROUTING -s $INTVM1 ! -d $INTNET -j SNAT --to-source $PUBVM1
-$IPTABLES -t nat -A POSTROUTING -s $INTVM2 ! -d $INTNET -j SNAT --to-source $PUBVM2
+$IPTABLES -t nat -A POSTROUTING -s $INTVM1 ! -d $INTNET1 -j SNAT --to-source $PUBVM1
+$IPTABLES -t nat -A POSTROUTING -s $INTVM2 ! -d $INTNET2 -j SNAT --to-source $PUBVM2
 
 #==============================================================================
 # INBOUND TO FW HOST
 #==============================================================================
 # logonly outbound traffic from VMs to internal FW host
-$IPTABLES -A INPUT -i $IF_VM -j $LOGOPT --log-prefix "INPUT VM2INT "
+$IPTABLES -A INPUT -i $IF_VM1 -j $LOGOPT --log-prefix "INPUT VM2INT "
+$IPTABLES -A INPUT -i $IF_VM2 -j $LOGOPT --log-prefix "INPUT VM2INT "
 
 # logonly inbound traffic from external net to internal FW host 
 $IPTABLES -A INPUT -i $IF_EXT -j $LOGOPT $RLIMIT --log-prefix "INPUT EXT2INT " 
@@ -111,19 +117,22 @@ $IPTABLES -A INPUT -i $IF_EXT -j $LOGOPT $RLIMIT --log-prefix "INPUT EXT2INT "
 # INBOUND TO VM
 #==============================================================================
 ## logonly external inbound traffic to internal VMs
-$IPTABLES -A FORWARD -i $IF_EXT -o $IF_VM -j $LOGOPT $RLIMIT --log-prefix "FORWARD EXT2VM " 
+$IPTABLES -A FORWARD -i $IF_EXT -o $IF_VM1 -j $LOGOPT $RLIMIT --log-prefix "FORWARD EXT2VM "
+$IPTABLES -A FORWARD -i $IF_EXT -o $IF_VM2 -j $LOGOPT $RLIMIT --log-prefix "FORWARD EXT2VM " 
 
 #==============================================================================
 # OUTBOUND FROM VM
 #==============================================================================
 # logonly outbound VMs traffic to external net
-$IPTABLES -A FORWARD -i $IF_VM  -o $IF_EXT -j $LOGOPT --log-prefix "FORWARD VM2EXT "
+$IPTABLES -A FORWARD -i $IF_VM1  -o $IF_EXT -j $LOGOPT --log-prefix "FORWARD VM2EXT "
+$IPTABLES -A FORWARD -i $IF_VM2  -o $IF_EXT -j $LOGOPT --log-prefix "FORWARD VM2EXT "
 
 #==============================================================================
 # OUTBOUND FROM FW HOST
 #==============================================================================
 # logonly outbound traffic from FW host to internal VMs
-$IPTABLES -A OUTPUT -o $IF_VM -j $LOGOPT $RLIMIT --log-prefix "OUTPUT FW2VM " 
+$IPTABLES -A OUTPUT -o $IF_VM1 -j $LOGOPT $RLIMIT --log-prefix "OUTPUT FW2VM "
+$IPTABLES -A OUTPUT -o $IF_VM2 -j $LOGOPT $RLIMIT --log-prefix "OUTPUT FW2VM "
 
 # logonly outbound traffic from FW host to external net
 $IPTABLES -A OUTPUT -o $IF_EXT -j $LOGOPT $RLIMIT --log-prefix "OUTPUT FW2EXT " 
