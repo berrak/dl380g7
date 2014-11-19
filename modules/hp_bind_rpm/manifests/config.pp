@@ -25,12 +25,12 @@ class hp_bind_rpm::config ( $ispdns1='', $ispdns2='', $real_hostname='' ) {
         #       mode => '0644',
         #}
         
-        file { '/etc/resolv.conf' :
-            content =>  template( "hp_bind_rpm/resolv.conf.erb" ),    
-              owner => 'root',
-              group => 'root',
-               mode => '0644',
-        }
+        #file { '/etc/resolv.conf' :
+        #    content =>  template( "hp_bind_rpm/resolv.conf.erb" ),    
+        #      owner => 'root',
+        #      group => 'root',
+        #       mode => '0644',
+        #}
     
         file { '/etc/named.conf' :
             content =>  template( "hp_bind_rpm/named.conf.erb" ),    
