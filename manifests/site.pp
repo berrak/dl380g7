@@ -10,11 +10,11 @@ node 'ol65.home.tld' {
     ## BASIC
     
     # Disable Bind to provide DNS for OracleLinux (no need for puppet module: hp_host)
-    class { hp_bind_rpm::config :
-                ispdns1 => '195.67.199.18',
-                ispdns2 => '195.67.199.19',
-                real_hostname => 'ol65',
-    }
+    #class { hp_bind_rpm::config :
+    #            ispdns1 => '195.67.199.18',
+    #            ispdns2 => '195.67.199.19',
+    #            real_hostname => 'ol65',
+    #}
     
     # Enable dnsmasq for DNS
     class { hp_dnsmasq::config :
@@ -41,12 +41,12 @@ node 'ol65.home.tld' {
                 ispdns2 => '195.67.199.19',
     }
     # virtual network aliases PUBLIC interfaces for KVM guests
-    hp_network_rpm::alias { 'eth0:0' : public_guest_ip => '192.168.0.41' }
-    hp_network_rpm::alias { 'eth0:1' : public_guest_ip => '192.168.0.42' }
-    hp_network_rpm::alias { 'eth0:2' : public_guest_ip => '192.168.0.43' }
-    hp_network_rpm::alias { 'eth0:3' : public_guest_ip => '192.168.0.44' }
-    hp_network_rpm::alias { 'eth0:4' : public_guest_ip => '192.168.0.45' }
-    hp_network_rpm::alias { 'eth0:5' : public_guest_ip => '192.168.0.46' }  
+    hp_network_rpm::alias { 'eth0:0' : public_guest_ip => '192.168.0.40' }
+    hp_network_rpm::alias { 'eth0:1' : public_guest_ip => '192.168.0.41' }
+    hp_network_rpm::alias { 'eth0:2' : public_guest_ip => '192.168.0.42' }
+    hp_network_rpm::alias { 'eth0:3' : public_guest_ip => '192.168.0.43' }
+    hp_network_rpm::alias { 'eth0:4' : public_guest_ip => '192.168.0.44' }
+    hp_network_rpm::alias { 'eth0:5' : public_guest_ip => '192.168.0.45' }  
     
     # set up KVM and its PRIVATE NAT guests
     include hp_kvm_rpm
@@ -54,17 +54,17 @@ node 'ol65.home.tld' {
     ## Post-install: add local ip to to filterref with 'virsh edit <domain>' 
     # -- first guest domain (always in private subnet 192.168.41.0/24)
     # -- Note: hostname must use only 'a-z' or '.' (no - or _ in hostname)
-    #hp_kvm_rpm::add_guest { 'debinix_org' :
-    #            local_guest_mac => '52:54:00:ff:ff:01',
-    #            local_guest_gw  => '192.168.41.1',                
-    #            local_guest_ip  => '192.168.41.2',
-    #            local_hostname  => 'deborg',
-    #            nat_bridge_name => 'virbr1',
-    #}
+    hp_kvm_rpm::add_guest { 'debinix.org' :
+                local_guest_mac => '52:54:00:ff:ff:41',
+                local_guest_gw  => '192.168.41.1',                
+                local_guest_ip  => '192.168.41.2',
+                local_hostname  => 'deborg',
+                nat_bridge_name => 'virbr1',
+    }
     
     # -- second guest domain (always in private subnet 192.168.42.0/24)
     hp_kvm_rpm::add_guest { 'triatagroup.se' :
-                local_guest_mac => '52:54:00:ff:ff:02',
+                local_guest_mac => '52:54:00:ff:ff:42',
                 local_guest_gw  => '192.168.42.1',
                 local_guest_ip  => '192.168.42.2',
                 local_hostname  => 'trise',

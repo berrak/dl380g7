@@ -31,21 +31,25 @@ SERVICE=/sbin/service
 IF_EXT="eth0"
 
 # interface for each VM
+IF_VM0="virbr0"
 IF_VM1="virbr1"
 IF_VM2="virbr2"
 
 # used only for DNAT/SNAT rules
+INTNET0="192.168.122.0/255.255.255.0"
 INTNET1="192.168.41.0/255.255.255.0"
 INTNET2="192.168.42.0/255.255.255.0"
+INTVM0="192.168.122.2"
 INTVM1="192.168.41.2"
 INTVM2="192.168.42.2"
 
 #------------------------------------------------------------------------------
-# ISP data
+# ISP data - public data
 #------------------------------------------------------------------------------
 GATEWAY="192-168.0.1"
 SERVER="192.168.0.66"
 # Virtual guests
+PUBVM1="192.168.0.40"
 PUBVM1="192.168.0.41"
 PUBVM2="192.168.0.42"
 #------------------------------------------------------------------------------
@@ -83,9 +87,6 @@ $IPTABLES -t nat -P PREROUTING ACCEPT
 $IPTABLES -t nat -P OUTPUT ACCEPT
 $IPTABLES -t nat -P POSTROUTING ACCEPT
 
-# Ensure packet forwarding is enabled
-echo 1 > /proc/sys/net/ipv4/ip_forward
-
 ## ============================================================================
 ##   LOOPBACK TRAFFIC
 ## ============================================================================
@@ -99,12 +100,15 @@ $IPTABLES -I OUTPUT 1 -o lo -j ACCEPT
 ## ============================================================================
 
 # translate external traffic to http-servers
+$IPTABLES -t nat -A PREROUTING -d $PUBVM0 -p tcp -j DNAT --to-destination $INTVM0
 $IPTABLES -t nat -A PREROUTING -d $PUBVM1 -p tcp -j DNAT --to-destination $INTVM1
 $IPTABLES -t nat -A PREROUTING -d $PUBVM2 -p tcp -j DNAT --to-destination $INTVM2
 
 # masquerade out-going vm traffic
+$IPTABLES -t nat -A POSTROUTING -s $INTNET0 ! -d $INTNET0 -j SNAT --to-source $PUBVM0
 $IPTABLES -t nat -A POSTROUTING -s $INTNET1 ! -d $INTNET1 -j SNAT --to-source $PUBVM1
 $IPTABLES -t nat -A POSTROUTING -s $INTNET2 ! -d $INTNET2 -j SNAT --to-source $PUBVM2
+#$IPTABLES -t nat -A POSTROUTING -s $INTNET0 ! -d $INTNET0 -j MASQUERADE
 #$IPTABLES -t nat -A POSTROUTING -s $INTNET1 ! -d $INTNET1 -j MASQUERADE
 #$IPTABLES -t nat -A POSTROUTING -s $INTNET2 ! -d $INTNET2 -j MASQUERADE
 
@@ -113,45 +117,41 @@ $IPTABLES -t nat -A POSTROUTING -s $INTNET2 ! -d $INTNET2 -j SNAT --to-source $P
 # INBOUND TO FW HOST
 #==============================================================================
 # logonly outbound traffic from VMs to internal FW host
-$IPTABLES -A INPUT -i $IF_VM1 -j $LOGOPT --log-prefix "INPUT VM2INT "
-$IPTABLES -A INPUT -i $IF_VM2 -j $LOGOPT --log-prefix "INPUT VM2INT "
+$IPTABLES -A INPUT -i $IF_VM0 -j $LOGOPT --log-prefix "INPUT 0VM2INT "
+$IPTABLES -A INPUT -i $IF_VM1 -j $LOGOPT --log-prefix "INPUT 1VM2INT "
+$IPTABLES -A INPUT -i $IF_VM2 -j $LOGOPT --log-prefix "INPUT 2VM2INT "
 
 # allow all established and related traffic in
 $IPTABLES -A INPUT -p all -m state --state ESTABLISHED,RELATED -j ACCEPT
 
-# accept dhcp and dns
-$IPTABLES -A INPUT -i $IF_VM1 -p udp --dport 53 -m state --state NEW -j ACCEPT
-$IPTABLES -A INPUT -i $IF_VM2 -p udp --dport 53 -m state --state NEW -j ACCEPT
-$IPTABLES -A INPUT -i $IF_VM1 -p tcp --dport 53 -m state --state NEW -j ACCEPT
-$IPTABLES -A INPUT -i $IF_VM2 -p tcp --dport 53 -m state --state NEW -j ACCEPT
-
 # logonly inbound traffic from external net to internal FW host 
 $IPTABLES -A INPUT -i $IF_EXT -j $LOGOPT $RLIMIT --log-prefix "INPUT EXT2INT "
-$IPTABLES -A INPUT -i $IF_EXT -p tcp --dport 22 -m state --state NEW -j ACCEPT
 
 #==============================================================================
 # INBOUND TO VM
 #==============================================================================
 $IPTABLES -A FORWARD -i $IF_EXT -o $IF_VM1 -m state --state ESTABLISHED,RELATED -j ACCEPT
+$IPTABLES -A FORWARD -i $IF_EXT -o $IF_VM1 -m state --state ESTABLISHED,RELATED -j ACCEPT
 $IPTABLES -A FORWARD -i $IF_EXT -o $IF_VM2 -m state --state ESTABLISHED,RELATED -j ACCEPT
 
 ## logonly external inbound traffic to internal VMs
-$IPTABLES -A FORWARD -i $IF_EXT -o $IF_VM1 -j $LOGOPT $RLIMIT --log-prefix "FORWARD EXT2VM "
-$IPTABLES -A FORWARD -i $IF_EXT -o $IF_VM2 -j $LOGOPT $RLIMIT --log-prefix "FORWARD EXT2VM "
-$IPTABLES -A FORWARD -i $IF_EXT -o $IF_VM1 -p tcp --dport 22 -m state --state NEW -j ACCEPT
-$IPTABLES -A FORWARD -i $IF_EXT -o $IF_VM2 -p tcp --dport 22 -m state --state NEW -j ACCEPT
+$IPTABLES -A FORWARD -i $IF_EXT -o $IF_VM0 -j $LOGOPT $RLIMIT --log-prefix "FORWARD EXT2VM0 "
+$IPTABLES -A FORWARD -i $IF_EXT -o $IF_VM1 -j $LOGOPT $RLIMIT --log-prefix "FORWARD EXT2VM1 "
+$IPTABLES -A FORWARD -i $IF_EXT -o $IF_VM2 -j $LOGOPT $RLIMIT --log-prefix "FORWARD EXT2VM2 "
+
 
 #==============================================================================
 # OUTBOUND FROM VM
 #==============================================================================
+$IPTABLES -A FORWARD -i $IF_VM0  -o $IF_EXT -m state --state ESTABLISHED,RELATED -j ACCEPT
 $IPTABLES -A FORWARD -i $IF_VM1  -o $IF_EXT -m state --state ESTABLISHED,RELATED -j ACCEPT
 $IPTABLES -A FORWARD -i $IF_VM2  -o $IF_EXT -m state --state ESTABLISHED,RELATED -j ACCEPT
 
 # logonly outbound VMs traffic to external net
-$IPTABLES -A FORWARD -i $IF_VM1  -o $IF_EXT -j $LOGOPT --log-prefix "FORWARD VM2EXT "
-$IPTABLES -A FORWARD -i $IF_VM2  -o $IF_EXT -j $LOGOPT --log-prefix "FORWARD VM2EXT "
-$IPTABLES -A FORWARD -i $IF_VM1  -o $IF_EXT -p tcp --dport 53 -m state --state NEW -j ACCEPT
-$IPTABLES -A FORWARD -i $IF_VM2  -o $IF_EXT -p tcp --dport 53 -m state --state NEW -j ACCEPT
+$IPTABLES -A FORWARD -i $IF_VM0  -o $IF_EXT -j $LOGOPT --log-prefix "FORWARD 0VM2EXT "
+$IPTABLES -A FORWARD -i $IF_VM1  -o $IF_EXT -j $LOGOPT --log-prefix "FORWARD 1VM2EXT "
+$IPTABLES -A FORWARD -i $IF_VM2  -o $IF_EXT -j $LOGOPT --log-prefix "FORWARD 2VM2EXT "
+
 
 #==============================================================================
 # OUTBOUND FROM FW HOST
@@ -160,14 +160,12 @@ $IPTABLES -A FORWARD -i $IF_VM2  -o $IF_EXT -p tcp --dport 53 -m state --state N
 $IPTABLES -A OUTPUT -p all -m state --state ESTABLISHED,RELATED -j ACCEPT
 
 # logonly outbound traffic from FW host to internal VMs
-$IPTABLES -A OUTPUT -o $IF_VM1 -j $LOGOPT $RLIMIT --log-prefix "OUTPUT FW2VM "
-$IPTABLES -A OUTPUT -o $IF_VM2 -j $LOGOPT $RLIMIT --log-prefix "OUTPUT FW2VM "
-$IPTABLES -A OUTPUT -o $IF_VM1 -p tcp --dport 53 -m state --state NEW -j ACCEPT
-$IPTABLES -A OUTPUT -o $IF_VM2 -p tcp --dport 53 -m state --state NEW -j ACCEPT
+$IPTABLES -A OUTPUT -o $IF_VM0 -j $LOGOPT $RLIMIT --log-prefix "OUTPUT FW2VM0 "
+$IPTABLES -A OUTPUT -o $IF_VM1 -j $LOGOPT $RLIMIT --log-prefix "OUTPUT FW2VM1 "
+$IPTABLES -A OUTPUT -o $IF_VM2 -j $LOGOPT $RLIMIT --log-prefix "OUTPUT FW2VM2 "
 
 # logonly outbound traffic from FW host to external net
 $IPTABLES -A OUTPUT -o $IF_EXT -j $LOGOPT $RLIMIT --log-prefix "OUTPUT FW2EXT "
-$IPTABLES -A OUTPUT -o $IF_EXT -p tcp --dport 53 -m state --state NEW -j ACCEPT
 
 ###############################################################################
 # To use this, manually run:

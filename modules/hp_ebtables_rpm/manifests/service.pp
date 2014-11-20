@@ -6,8 +6,8 @@ class hp_ebtables_rpm::service {
 	include hp_ebtables_rpm::install
 
     service { 'ebtables':
-        enable => false,
-        ensure => stopped,
+        enable => true,
+        ensure => running,
         require => Package['ebtables'],
     }
     
