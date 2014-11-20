@@ -50,7 +50,7 @@ INTVM2="192.168.42.2"
 GATEWAY="192-168.0.1"
 SERVER="192.168.0.66"
 # Virtual guests
-PUBVM1="192.168.0.40"
+PUBVM0="192.168.0.40"
 PUBVM1="192.168.0.41"
 PUBVM2="192.168.0.42"
 #------------------------------------------------------------------------------
@@ -100,7 +100,7 @@ $IPTABLES -I OUTPUT 1 -o lo -j ACCEPT
 ##   PRE/POST ROUTING NAT
 ## ============================================================================
 
-# translate all public traffic 
+# redirect (dnat) all public traffic to internal VMs
 $IPTABLES -t nat -A PREROUTING -d $PUBVM0 -j DNAT --to-destination $INTVM0
 $IPTABLES -t nat -A PREROUTING -d $PUBVM1 -j DNAT --to-destination $INTVM1
 $IPTABLES -t nat -A PREROUTING -d $PUBVM2 -j DNAT --to-destination $INTVM2
