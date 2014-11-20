@@ -6,7 +6,7 @@ class hp_hosts::config ( $puppetserver_hostname = '' ) {
     # template variables
     $puppetsrvfqdn = $::fqdn
     $myhostname = $::hostname
-    $myip_eth0 = $::ipaddress_eth0
+    $myip_eth0 = $::ipaddress
     $mydomain = $::domain
 
     if $myhostname == $puppetserver_hostname {
