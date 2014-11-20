@@ -52,12 +52,12 @@ node 'ol65.home.tld' {
     include hp_kvm_rpm
     
     # setup 'wheezy' image to clone and test from (use 'default' network)
-    hp_kvm_rpm::add_guest { 'default.tld' :
-                local_guest_mac => '52:54:00:ff:ff:00',
-                local_guest_gw  => '192.168.122.1',                
-                local_guest_ip  => '192.168.122.122',
-                local_hostname  => 'default',
-                nat_bridge_name => 'virbr0',
+    #hp_kvm_rpm::add_guest { 'default.tld' :
+    #            local_guest_mac => '52:54:00:ff:ff:00',
+    #            local_guest_gw  => '192.168.122.1',                
+    #            local_guest_ip  => '192.168.122.122',
+    #            local_hostname  => 'default',
+    #            nat_bridge_name => 'virbr0',
     }    
     
     ## Post-install: add local ip to to filterref with 'virsh edit <domain>' 
