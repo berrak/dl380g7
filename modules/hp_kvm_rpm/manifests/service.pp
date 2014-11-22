@@ -14,6 +14,7 @@ class hp_kvm_rpm::service {
 		       path => '/root/bin:/bin:/sbin:/usr/bin:/usr/sbin',
 		    command => "virsh net-start default && virsh net-autostart default",
 		  subscribe => Service["libvirtd"],
+		     unless => 'virsh net-list | grep default',
 	}	
 	
 }
