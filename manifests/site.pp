@@ -48,7 +48,7 @@ node 'ol65.home.tld' {
     hp_network_rpm::alias { 'eth0:4' : public_guest_ip => '192.168.0.44' }
     hp_network_rpm::alias { 'eth0:5' : public_guest_ip => '192.168.0.45' }  
     
-    # set up KVM and its PRIVATE NAT guests
+    # set up KVM
     include hp_kvm_rpm
     
     # clone new nat guest from 'wheezy' image (use 'default' network)
@@ -56,7 +56,7 @@ node 'ol65.home.tld' {
                 local_guest_gw  => '192.168.122.1',                
                 local_guest_ip  => '192.168.122.122',
                 local_hostname  => 'default',
-                nat_bridge_name => 'virbr0',
+                bridge_name => 'virbr0',
     }    
     
     ## Post-install: add local ip to to filterref with 'virsh edit <domain>' 
@@ -66,7 +66,7 @@ node 'ol65.home.tld' {
     #            local_guest_gw  => '192.168.41.1',                
     #            local_guest_ip  => '192.168.41.41',
     #            local_hostname  => 'deborg',
-    #            nat_bridge_name => 'virbr1',
+    #            bridge_name => 'virbr1',
     #}
     
     # -- second guest domain (always in private subnet 192.168.42.0/24)
@@ -74,7 +74,7 @@ node 'ol65.home.tld' {
     #            local_guest_gw  => '192.168.42.1',
     #            local_guest_ip  => '192.168.42.42',
     #            local_hostname  => 'trise',
-    #            nat_bridge_name => 'virbr2',
+    #            bridge_name => 'virbr2',
     #}
     
     # temporary skip fstab final entry
