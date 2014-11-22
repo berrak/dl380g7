@@ -44,6 +44,7 @@ define hp_kvm_rpm::add_guest ( $local_guest_gw, $local_guest_ip, $local_hostname
 		    command => "virsh net-define /etc/libvirt/qemu/networks/$name.xml && virsh net-start $name && virsh net-autostart $name",
 		refreshonly => 'true',
 		  subscribe => File["/etc/libvirt/qemu/networks/$name.xml"],
+		  	 unless => "virsh net-list | grep $name",
 	}
 	
 					
