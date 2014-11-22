@@ -1,7 +1,7 @@
 <network>
   <name><%= name %></name>
-  <domain name='<%= name %>'/>
-  <forward mode='nat'/>
+  <domain name='<%= name %>'/>  
+  <forward mode='route'/>
   <bridge name='<%= bridge_name %>' stp='on' delay='0' />
   <ip address='<%= local_guest_gw %>' netmask='255.255.255.0'>
     <dhcp>
