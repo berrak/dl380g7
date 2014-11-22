@@ -1,10 +1,10 @@
 #!/usr/bin/perl
 #
-# /root/bin/create-guest.pl <new_domain> <local_guest_mac> <local_guest_ip> <new_host_name> <new_bridge>
+# /root/bin/create-guest.pl <new_domain> <local_guest_ip> <new_host_name> <new_bridge>
 #
-# Usage: create-guest.pl debinix_org '52:54:00:FF.FF.40' '192.168.122.40' deborg virbr3 
+# Usage: create-guest.pl debinix_org '192.168.122.40' deborg virbr3 
 # Note: Original domain 'wheezy' must exist, other wise script terminates
-#       Mac and IP addresses are private behind NAT (not public)
+#       IP addresses are private behind NAT (not public)
 #
 # Purpose: Prepare a new guest image (Debian type)
 # Post-install: Edit configuration filterref with correct ip address.
@@ -12,7 +12,6 @@
 #               in <interface> filterref-section like so:
 #
 #    <interface type='bridge'>
-#      <mac address='52:54:00:00:00:00'/>
 #       <source bridge='<%= $nat_bridge_name %>'/>
 #       <model type='virtio'/>
 #       <filterref filter='clean-traffic'>
@@ -45,27 +44,25 @@ if ( ! -f $original_domain_path ) {
 
 # Pre-check, check passedc arguments
 my $num_args = $#ARGV +1 ;
-if ($num_args != 5) {
-print "\nUsage: create-guest.pl <new_domain> <local_mac_address> <local_ip_address> <new_host_name> <new_bridge>\n";
+if ($num_args != 4) {
+print "\nUsage: create-guest.pl <new_domain> <local_ip_address> <new_host_name> <new_bridge>\n";
 exit 1;
 }
 
 # 1. Clone the existing original image (e.g. from /var/lib/libvirt/images/wheezy.img)
 my $new_domain = $ARGV[0];
 my $out_image_path = "/var/lib/libvirt/images/$new_domain" . ".img";
-my $new_mac = $ARGV[1];
-my $new_ip = $ARGV[2];
-my $new_host_name = $ARGV[3];
-my $new_bridge = $ARGV[4];
+my $new_ip = $ARGV[1];
+my $new_host_name = $ARGV[2];
+my $new_bridge = $ARGV[3];
 
-system("virt-clone -o $original_domain_name -n $new_domain --mac $new_mac -f $out_image_path");
+system("virt-clone -o $original_domain_name -n $new_domain -f $out_image_path");
 
 # 2. Update the domain configuration with mac and ip address
 my $xmlpathfile = "/etc/libvirt/qemu/" . $new_domain . ".xml" ;
 
 my $twig = XML::Twig->new(
             twig_handlers => {
-                q{/domain/devices/interface/mac[@address]} => \&set_mac,
                 q{/domain/devices/interface/source[@bridge]} => \&set_source,                
                 q{/domain/devices/interface/filterref/parameter[@value]} => \&set_ip,    
             },
@@ -86,11 +83,6 @@ system("virt-edit -d $new_domain /etc/hosts -e 's/$original_domain_name/$new_hos
 #
 # ### SUBROUTINES FOR XML ###
 #
-sub set_mac {
-    my ($twig, $mac) = @_;
-    $mac->set_att( address => $new_mac );
-    $twig->flush;
-}
 
 sub set_source {
     my ($twig, $bridge) = @_;

@@ -51,34 +51,31 @@ node 'ol65.home.tld' {
     # set up KVM and its PRIVATE NAT guests
     include hp_kvm_rpm
     
-    # setup 'wheezy' image to clone and test from (use 'default' network)
-    #hp_kvm_rpm::add_guest { 'default.tld' :
-    #            local_guest_mac => '52:54:00:ff:ff:00',
-    #            local_guest_gw  => '192.168.122.1',                
-    #            local_guest_ip  => '192.168.122.122',
-    #            local_hostname  => 'default',
-    #            nat_bridge_name => 'virbr0',
+    # clone new nat guest from 'wheezy' image (use 'default' network)
+    hp_kvm_rpm::add_guest { 'default.tld' :
+                local_guest_gw  => '192.168.122.1',                
+                local_guest_ip  => '192.168.122.122',
+                local_hostname  => 'default',
+                nat_bridge_name => 'virbr0',
     }    
     
     ## Post-install: add local ip to to filterref with 'virsh edit <domain>' 
     # -- first guest domain (always in private subnet 192.168.41.0/24)
     # -- Note: hostname must use only 'a-z' or '.' (no - or _ in hostname)
-    hp_kvm_rpm::add_guest { 'debinix.org' :
-                local_guest_mac => '52:54:00:ff:ff:41',
-                local_guest_gw  => '192.168.41.1',                
-                local_guest_ip  => '192.168.41.41',
-                local_hostname  => 'deborg',
-                nat_bridge_name => 'virbr1',
-    }
+    #hp_kvm_rpm::add_guest { 'debinix.org' :
+    #            local_guest_gw  => '192.168.41.1',                
+    #            local_guest_ip  => '192.168.41.41',
+    #            local_hostname  => 'deborg',
+    #            nat_bridge_name => 'virbr1',
+    #}
     
     # -- second guest domain (always in private subnet 192.168.42.0/24)
-    hp_kvm_rpm::add_guest { 'triatagroup.se' :
-                local_guest_mac => '52:54:00:ff:ff:42',
-                local_guest_gw  => '192.168.42.1',
-                local_guest_ip  => '192.168.42.42',
-                local_hostname  => 'trise',
-                nat_bridge_name => 'virbr2',
-    }
+    #hp_kvm_rpm::add_guest { 'triatagroup.se' :
+    #            local_guest_gw  => '192.168.42.1',
+    #            local_guest_ip  => '192.168.42.42',
+    #            local_hostname  => 'trise',
+    #            nat_bridge_name => 'virbr2',
+    #}
     
     # temporary skip fstab final entry
     #class { hp_fstab::config : fstabhost => 'ol65' }
