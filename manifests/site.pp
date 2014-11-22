@@ -52,7 +52,7 @@ node 'ol65.home.tld' {
     include hp_kvm_rpm
     
     # clone new nat guest from 'wheezy' image (use 'default' network)
-    hp_kvm_rpm::add_guest { 'default.tld' :
+    hp_kvm_rpm::add_guest { 'default' :
                 local_guest_gw  => '192.168.122.1',                
                 local_guest_ip  => '192.168.122.122',
                 local_hostname  => 'default',
