@@ -2,9 +2,9 @@
 # Manage network (add alias interface for virtual guest)
 #
 # Usage:
-#      hp_network_rpm::alias { 'eth0:1' : public_guest_ip => '192.168.0.42' }    
+#      hp_network_rpm::alias { 'eth0:1' : public_guest_ip => '192.168.0.42', $onboot => 'yes' }    
 #
-define hp_network_rpm::alias ( $public_guest_ip ) {
+define hp_network_rpm::alias ( $public_guest_ip, $onboot ) {
 
     include hp_network_rpm
 	
@@ -14,6 +14,7 @@ define hp_network_rpm::alias ( $public_guest_ip ) {
 	
     $host_netmask = $::netmask
 	$alias_interface = $name
+	$onboot_if = $onboot
  
 	file { "/etc/sysconfig/network-scripts/ifcfg-$alias_interface":
 		content =>  template( "hp_network_rpm/ifcfg-$alias_interface.erb" ),

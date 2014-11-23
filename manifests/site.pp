@@ -52,12 +52,12 @@ node 'ol65.home.tld' {
     }  
     
     # virtual network aliases PUBLIC interfaces for KVM guests
-    hp_network_rpm::alias { 'eth0:0' : public_guest_ip => '192.168.0.122' }   
-    hp_network_rpm::alias { 'eth0:1' : public_guest_ip => '192.168.0.41' }
-    hp_network_rpm::alias { 'eth0:2' : public_guest_ip => '192.168.0.42' }
-    hp_network_rpm::alias { 'eth0:3' : public_guest_ip => '192.168.0.43' }
-    hp_network_rpm::alias { 'eth0:4' : public_guest_ip => '192.168.0.44' }
-    hp_network_rpm::alias { 'eth0:5' : public_guest_ip => '192.168.0.45' }
+    hp_network_rpm::alias { 'eth0:0' : public_guest_ip => '192.168.0.122', onboot => 'no' }   
+    hp_network_rpm::alias { 'eth0:1' : public_guest_ip => '192.168.0.41', onboot => 'no'  }
+    hp_network_rpm::alias { 'eth0:2' : public_guest_ip => '192.168.0.42', onboot => 'no'  }
+    hp_network_rpm::alias { 'eth0:3' : public_guest_ip => '192.168.0.43', onboot => 'no'  }
+    hp_network_rpm::alias { 'eth0:4' : public_guest_ip => '192.168.0.44', onboot => 'no'  }
+    hp_network_rpm::alias { 'eth0:5' : public_guest_ip => '192.168.0.45', onboot => 'no'  }
   
     
     # set up KVM and two networks for guests

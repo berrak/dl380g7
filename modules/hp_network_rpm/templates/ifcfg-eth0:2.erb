@@ -6,6 +6,6 @@
 #
 DEVICE=<%= alias_interface %>
 BOOTPROTO=none
-ONBOOT=yes
+ONBOOT= <%= onboot_if %>
 IPADDR=<%= public_guest_ip %>
 NETMASK=<%= host_netmask %>
