@@ -29,7 +29,6 @@ define hp_network_rpm::config ( $ip, $prefix, $uuid,
 	$host_dns1 = $ispdns1
 	$host_dns2 = $ispdns2	
 
-	$host_mac = "$::macaddress_$name"
 	$host_domain = $::domain
 	
 	$host_uuid_interface = $uuid
