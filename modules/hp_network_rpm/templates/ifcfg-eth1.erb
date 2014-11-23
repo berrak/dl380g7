@@ -1,0 +1,24 @@
+##############################################################
+# MANAGED BY PUPPET. DO NOT EDIT. CHANGES WILL BE WIPED OUT. #
+##############################################################
+DEVICE=<%= host_interface %>
+TYPE=Ethernet
+UUID=<%= host_uuid_interface %>
+ONBOOT=yes
+NM_CONTROLLED=no
+BOOTPROTO=none
+HWADDR=<%= host_mac %>
+IPADDR=<%= host_ip %>
+PREFIX=<%= host_prefix %>
+BROADCAST=<%= host_broadcast %>
+GATEWAY=<%= host_gateway %>
+DNS1=<%= host_dns1 %>
+DNS2=<%= host_dns2 %>
+DOMAIN=<%= host_domain %>
+DEFROUTE=yes
+IPV4_FAILURE_FATAL=yes
+IPV6INIT=no
+NAME="System <%= host_interface %>"
+PEERDNS=no
+PEERROUTES=yes
+

@@ -1,8 +1,18 @@
 #
 # Manage network
 #
-class hp_network_rpm::config ( $interface='', $ip='', $prefix='', $uuid='',
-                $gateway='', $broadcast='', $ispdns1='', $ispdns2='' ) {
+# Usage: hp_network_rpm::config { 'eth0'  :
+#            ip => '192.168.0.66',
+#            prefix => '24',
+#            uuid => '8f83faf4-4ac3-4211-8616-1a87c6244039',
+#            gateway => '192.168.0.1',
+#            broadcast => '192.168.0.255',
+#            ispdns1 => '195.67.199.18',
+#            ispdns2 => '195.67.199.19',
+#        }
+#
+define hp_network_rpm::config ( $ip, $prefix, $uuid,
+                $gateway, $broadcast, $ispdns1, $ispdns2 ) {
 
 	include hp_network_rpm
 	
@@ -10,7 +20,7 @@ class hp_network_rpm::config ( $interface='', $ip='', $prefix='', $uuid='',
 		fail("FAIL: Missing given host IP address")
 	}
 	
-	$host_interface = $interface
+	$host_interface = $name
 
 	$host_ip = $ip
     $host_prefix = $prefix
@@ -24,8 +34,8 @@ class hp_network_rpm::config ( $interface='', $ip='', $prefix='', $uuid='',
 	
 	$host_uuid_interface = $uuid
 	
-	file { "/etc/sysconfig/network-scripts/ifcfg-$interface":
-		content =>  template( "hp_network_rpm/ifcfg-$interface.erb" ),
+	file { "/etc/sysconfig/network-scripts/ifcfg-$name":
+		content =>  template( "hp_network_rpm/ifcfg-$name.erb" ),
 		  owner => 'root',
 		  group => 'root',
 		 notify => Service['network'],

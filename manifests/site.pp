@@ -30,8 +30,7 @@ node 'ol65.home.tld' {
     include puppet_utils
     
     # primary host networking configuration (generate uuid with 'uuidgen')
-    class { hp_network_rpm::config :
-                interface => 'eth0',
+    hp_network_rpm::config { 'eth0'  :
                 ip => '192.168.0.66',
                 prefix => '24',
                 uuid => '8f83faf4-4ac3-4211-8616-1a87c6244039',
@@ -40,34 +39,54 @@ node 'ol65.home.tld' {
                 ispdns1 => '195.67.199.18',
                 ispdns2 => '195.67.199.19',
     }
+    
+    # secondary host networking configuration (generate uuid with 'uuidgen')
+    hp_network_rpm::config { 'eth1'  :
+                ip => '192.168.0.40',
+                prefix => '24',
+                uuid => 'e880e2e9-7754-4a7c-a197-acecf36f575b',
+                gateway => '192.168.0.1',
+                broadcast => '192.168.0.255',
+                ispdns1 => '195.67.199.18',
+                ispdns2 => '195.67.199.19',
+    }  
+    
     # virtual network aliases PUBLIC interfaces for KVM guests
-    hp_network_rpm::alias { 'eth0:0' : public_guest_ip => '192.168.0.122' }
+    hp_network_rpm::alias { 'eth0:0' : public_guest_ip => '192.168.0.122' }   
     hp_network_rpm::alias { 'eth0:1' : public_guest_ip => '192.168.0.41' }
     hp_network_rpm::alias { 'eth0:2' : public_guest_ip => '192.168.0.42' }
     hp_network_rpm::alias { 'eth0:3' : public_guest_ip => '192.168.0.43' }
     hp_network_rpm::alias { 'eth0:4' : public_guest_ip => '192.168.0.44' }
-    hp_network_rpm::alias { 'eth0:5' : public_guest_ip => '192.168.0.45' }  
+    hp_network_rpm::alias { 'eth0:5' : public_guest_ip => '192.168.0.45' }
+  
     
-    # set up KVM
-    include hp_kvm_rpm
+    # set up KVM and two networks for guests
+    #class { hp_kvm_rpm::config :
+    #            natnet_name => 'default',
+    #            natnet_active => 'false',
+    #            nat_host_if => 'eth0',
+    #            routenet_name => 'routed',
+    #            routenet_active => 'true,
+    #            route_host_if => 'eth1',
+    #}
     
     # clone new nat guest from 'wheezy' image (use 'default' network)
-    hp_kvm_rpm::add_guest { 'default' :
-                local_guest_gw  => '192.168.122.1',                
-                local_guest_ip  => '192.168.122.122',
-                local_hostname  => 'default',
-                bridge_name => 'virbr0',
-    }    
+    #hp_kvm_rpm::add_guest { 'default' :
+    #            local_guest_gw  => '192.168.122.1',                
+    #            local_guest_ip  => '192.168.122.122',
+    #            local_hostname  => 'default',
+    #            bridge_name => 'virbr0',
+    #}    
     
     ## Post-install: add local ip to to filterref with 'virsh edit <domain>' 
     # -- first guest domain (always in public subnet 192.168.0.0/24)
     # -- Note: hostname must use only 'a-z' or '.' (no - or _ in hostname)
-    hp_kvm_rpm::add_guest { 'debinixorg' :
-                local_guest_gw  => '192.168.0.254',                
-                local_guest_ip  => '192.168.0.41',
-                local_hostname  => 'deborg',
-                bridge_name => 'virbr1',
-    }
+    #hp_kvm_rpm::add_guest { 'debinixorg' :
+    #            local_guest_gw  => '192.168.0.254',                
+    #            local_guest_ip  => '192.168.0.41',
+    #            local_hostname  => 'deborg',
+    #            bridge_name => 'virbr1',
+    #}
     
     # -- second guest domain (always in public subnet 192.168.0.0/24)
     #hp_kvm_rpm::add_guest { 'triatagroupse' :
