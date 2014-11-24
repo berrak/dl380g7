@@ -30,24 +30,7 @@ define hp_kvm_rpm::add_guest ( $local_guest_gw, $local_guest_ip, $local_hostname
 	
 	if ( $bridge_name == '' ) {
 		fail("FAIL: Missing given bridge name")
-	}	
-	
-	# add new network for this guest and start it
-	file { "/etc/libvirt/qemu/networks/$name.xml":
-		content =>  template( "hp_kvm_rpm/$name.erb" ),
-		  owner => 'root',
-		  group => 'root',
-		   mode => '0600',
-	} 
-	exec { "Create_new_network_$name" :
-		       path => '/root/bin:/bin:/sbin:/usr/bin:/usr/sbin',
-		    command => "virsh net-define /etc/libvirt/qemu/networks/$name.xml && virsh net-start $name && virsh net-autostart $name",
-		refreshonly => 'true',
-		  subscribe => File["/etc/libvirt/qemu/networks/$name.xml"],
-		    require => File["/etc/libvirt/qemu/networks/$name.xml"],
-		  	 unless => "virsh net-list | grep $name",
-	}
-	
+	}		
 					
 	# create the new guest (from '/var/lib/libvirt/images/wheezy.img', must exist) 
 	exec { "Create_new_guest_$name" :

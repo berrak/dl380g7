@@ -60,15 +60,15 @@ node 'ol65.home.tld' {
     hp_network_rpm::alias { 'eth0:5' : public_guest_ip => '192.168.0.45', onboot => 'no'  }
   
     
-    # set up KVM and two networks for guests
-    #class { hp_kvm_rpm::config :
-    #            natnet_name => 'default',
-    #            natnet_active => 'false',
-    #            nat_host_if => 'eth0',
-    #            routenet_name => 'routed',
-    #            routenet_active => 'true,
-    #            route_host_if => 'eth1',
-    #}
+    # set up KVM and two networks (NAT at subnet 122 and one routed subnet 40) for VM guests
+    class { hp_kvm_rpm::config :
+                natnet_default_active => 'false',
+                routednet_name => 'routed40',
+                routednet_active => 'true',
+                routed_br_name => 'virbr1',
+                routed_host_if => 'eth1',
+                routed_uuid => '02bfac05-336c-4a2a-b533-1f4a472bcdfc',
+    }
     
     # clone new nat guest from 'wheezy' image (use 'default' network)
     #hp_kvm_rpm::add_guest { 'default' :
