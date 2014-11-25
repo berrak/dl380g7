@@ -43,6 +43,7 @@ class hp_kvm_rpm::config ( $natnet_default_active='',
 	}	   
     
     if ( $natnet_default_active == 'true' ) {
+        # when enabled, run this unless default is already started  
         exec { "Enable_default_network" :
                    path => '/root/bin:/bin:/sbin:/usr/bin:/usr/sbin',
                 command => "virsh net-start default && virsh net-autostart default",
@@ -52,7 +53,7 @@ class hp_kvm_rpm::config ( $natnet_default_active='',
     }
     
 	# create new ROUTED subnet 40 network
-    if ( $routenet_active == 'true' ) {
+    if ( $routednet_active == 'true' ) {
         
         file { "/etc/libvirt/qemu/networks/$routednet_name.xml":
             content =>  template( "hp_kvm_rpm/$routednet_name.erb" ),
