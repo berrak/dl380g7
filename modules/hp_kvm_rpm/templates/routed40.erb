@@ -3,9 +3,9 @@
   <uuid><%= routed_uuid %></uuid>  
   <forward mode='route'/>
   <bridge name='<%= routed_br_name %>' dev='<%= routed_host_if %>' />
-  <ip address='192.168.123.1' netmask='255.255.255.0'>
+  <ip address='192.168.40.1' netmask='255.255.255.0'>
     <dhcp>
-      <range start='192.168.123.2' end='192.168.123.254' />
+      <range start='192.168.40.2' end='192.168.40.254' />
     </dhcp>
   </ip>
 </network>
