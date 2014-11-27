@@ -34,7 +34,7 @@ class hp_iptables_rpm::config  {
 	   require => Package['iptables'],
 	}
 	
-	# iptables file to clear all rules and set policy accept (manual activation)
+	# iptables file to open 'almost all rules' and set policy accept (manual activation)
 	file { '/root/bin/fw.open' :
 		 source => "puppet:///modules/hp_iptables_rpm/fw.open",
 		  owner => 'root',
@@ -42,6 +42,12 @@ class hp_iptables_rpm::config  {
 		   mode => '0700',
 	}
         
-
+	# iptables file to clear all rules and set policy accept (manual activation)
+	file { '/root/bin/fw.clear' :
+		 source => "puppet:///modules/hp_iptables_rpm/fw.clear",
+		  owner => 'root',
+		  group => 'root',
+		   mode => '0700',
+	}
 
 }
