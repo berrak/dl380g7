@@ -14,7 +14,7 @@ define hp_kvm_rpm::add_guest ( $local_guest_gw, $local_guest_ip, $local_hostname
 
     include hp_kvm_rpm
 	
-	$guest_name = $guest_name 
+	$guest_name = $name 
 	
     if ! ( $::lsbdistid == 'OracleServer' ) {
         fail("FAIL: Aborting. This module (iptables) is only for OracleLinux based distributions!")
