@@ -14,6 +14,8 @@ define hp_kvm_rpm::add_guest ( $local_guest_gw, $local_guest_ip, $local_hostname
 
     include hp_kvm_rpm
 	
+	$guest_name = $guest_name 
+	
     if ! ( $::lsbdistid == 'OracleServer' ) {
         fail("FAIL: Aborting. This module (iptables) is only for OracleLinux based distributions!")
     }
@@ -43,19 +45,19 @@ define hp_kvm_rpm::add_guest ( $local_guest_gw, $local_guest_ip, $local_hostname
 	}	
 	
 	# create the guest configuration
-	file { "/etc/libvirt/qemu/networks/$name.xml":
-		content =>  template( "hp_kvm_rpm/$name.xml.erb" ),
+	file { "/etc/libvirt/qemu/networks/$guest_name.xml":
+		content =>  template( "hp_kvm_rpm/$guest_name.xml.erb" ),
 		  owner => 'root',
 		  group => 'root',
 		   mode => '0600',
 	}	
 		
 	# create the new guest (from '/var/lib/libvirt/images/wheezy.img', must exist) 
-	exec { "Create_new_guest_$name" :
+	exec { "Create_new_guest_$guest_name" :
 		   path => '/root/bin:/bin:/sbin:/usr/bin:/usr/sbin',
-		command => "/root/bin/create-guest.pl $name $local_guest_ip $local_hostname $bridge_name",
-		 unless => "ls /var/lib/libvirt/images/ | grep $name",
-		require => File["/etc/libvirt/qemu/$name.xml"],
+		command => "/root/bin/create-guest.pl $guest_name $local_guest_ip $local_hostname $bridge_name",
+		 unless => "ls /var/lib/libvirt/images/ | grep $guest_name",
+		require => File["/etc/libvirt/qemu/$guest_name.xml"],
 	}
 
 }
