@@ -10,7 +10,7 @@
 #                     guest_uuid => '4a6e421b-d4aa-46d5-b484-c81b9e812f60',
 #    }
 #        
-define hp_kvm_rpm::add_guest ( $local_guest_gw, $local_guest_ip, $local_hostname, $bridge_name, $routed_network ) {
+define hp_kvm_rpm::add_guest ( $local_guest_gw, $local_guest_ip, $local_hostname, $bridge_name, $routed_network, $guest_uuid ) {
 
     include hp_kvm_rpm
 	
