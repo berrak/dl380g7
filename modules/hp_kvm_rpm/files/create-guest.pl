@@ -1,8 +1,8 @@
 #!/usr/bin/perl
 #
-# /root/bin/create-guest.pl <new_domain> <local_guest_ip> <new_host_name> <new_bridge>
+# /root/bin/create-guest.pl <new_domain> <local_guest_ip>  <local_guest_gw> <local_guest_bcst> <local_guest_netw> <new_host_name> <new_bridge>
 #
-# Usage: create-guest.pl debinix_org '192.168.122.40' deborg virbr3 
+# Usage: create-guest.pl debinix_org '192.168.40.40' '192.168.40.1' '192.168.40.255' 192.168.40.255' deborg virbr3 
 # Note: Original domain 'wheezy' must exist, other wise script terminates
 #       IP addresses are private behind NAT (not public)
 #
@@ -44,7 +44,7 @@ if ( ! -f $original_domain_path ) {
 
 # Pre-check, check passedc arguments
 my $num_args = $#ARGV +1 ;
-if ($num_args != 4) {
+if ($num_args != 7) {
 print "\nUsage: create-guest.pl <new_domain> <local_ip_address> <new_host_name> <new_bridge>\n";
 exit 1;
 }
@@ -52,9 +52,14 @@ exit 1;
 # 1. Clone the existing original image (e.g. from /var/lib/libvirt/images/wheezy.img)
 my $new_domain = $ARGV[0];
 my $out_image_path = "/var/lib/libvirt/images/$new_domain" . ".img";
+
 my $new_ip = $ARGV[1];
-my $new_host_name = $ARGV[2];
-my $new_bridge = $ARGV[3];
+my $new_gw = $ARGV[2];
+my $new_bcst = $ARGV[3];
+my $new_net = $ARGV[4]; 
+
+my $new_host_name = $ARGV[5];
+my $new_bridge = $ARGV[6];
 
 system("virt-clone -o $original_domain_name -n $new_domain -f $out_image_path");
 
@@ -77,6 +82,10 @@ system("virt-sysprep -d $new_domain --enable udev-persistent-net,hostname,logfil
 
 # 4. Set assigned ip address and domain name to new guest with 'virt-edit'
 system("virt-edit -d $new_domain /etc/network/interfaces -e 's/address 192.168.122.2/address $new_ip/'");
+system("virt-edit -d $new_domain /etc/network/interfaces -e 's/gateway 192.168.122.1/gateway $new_gw/'");
+system("virt-edit -d $new_domain /etc/network/interfaces -e 's/broadcast 192.168.122.255/broadcast $new_bcst/'");
+system("virt-edit -d $new_domain /etc/network/interfaces -e 's/network 192.168.122.0/network $new_net/'");
+
 system("virt-edit -d $new_domain /etc/hosts -e 's/192.168.122.2/$new_ip/'");
 system("virt-edit -d $new_domain /etc/hosts -e 's/$original_domain_name/$new_host_name/g'");
 

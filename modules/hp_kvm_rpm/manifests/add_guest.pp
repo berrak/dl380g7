@@ -2,15 +2,17 @@
 # This define new a KVM guest on hypervisor OracleLinux 6.5
 #
 # Usage: hp_kvm_rpm::add_guest { 'debinixorg' :
-#                 local_guest_gw => '192.168.40.1',
-#                local_guest_ip  => '192.168.40.2',
-#                local_hostname  => 'deborg',
-#                    bridge_name => 'bridge1',
-#                 routed_network => '',
-#                     guest_uuid => '4a6e421b-d4aa-46d5-b484-c81b9e812f60',
+#                  local_guest_gw => '192.168.40.1',
+#                 local_guest_ip  => '192.168.40.2',
+#                local_guest_bcst => '192.168.40.255',
+#                local_guest_netw => '192.168.40.0',
+#                 local_hostname  => 'deborg',
+#                     bridge_name => 'bridge1',
+#                  routed_network => '',
+#                      guest_uuid => '4a6e421b-d4aa-46d5-b484-c81b9e812f60',
 #    }
 #        
-define hp_kvm_rpm::add_guest ( $local_guest_gw, $local_guest_ip, $local_hostname, $bridge_name, $routed_network, $guest_uuid ) {
+define hp_kvm_rpm::add_guest ( $local_guest_ip, $local_guest_gw, $local_guest_bcst, $local_guest_netw, $local_hostname, $bridge_name, $routed_network, $guest_uuid ) {
 
     include hp_kvm_rpm
 	
@@ -20,14 +22,22 @@ define hp_kvm_rpm::add_guest ( $local_guest_gw, $local_guest_ip, $local_hostname
         fail("FAIL: Aborting. This module (iptables) is only for OracleLinux based distributions!")
     }
 	
+	if ( $local_guest_ip == '' ) {
+		fail("FAIL: Missing given virtual host local IP address!")
+	}
+
 	if ( $local_guest_gw == '' ) {
 		fail("FAIL: Missing given virtual host gateway IP address!")
 	}
 	
-	if ( $local_guest_ip == '' ) {
-		fail("FAIL: Missing given virtual host local IP address!")
-	}
+	if ( $local_guest_bcst == '' ) {
+		fail("FAIL: Missing given virtual host local broadcast IP address!")
+	}	
 		
+	if ( $local_guest_netw == '' ) {
+		fail("FAIL: Missing given virtual host network IP address!")
+	}
+	
 	if ( $local_hostname == '' ) {
 		fail("FAIL: Missing given virtual host name!")
 	}
@@ -55,7 +65,7 @@ define hp_kvm_rpm::add_guest ( $local_guest_gw, $local_guest_ip, $local_hostname
 	# create the new guest (from '/var/lib/libvirt/images/wheezy.img', must exist) 
 	exec { "Create_new_guest_$guest_name" :
 		   path => '/root/bin:/bin:/sbin:/usr/bin:/usr/sbin',
-		command => "/root/bin/create-guest.pl $guest_name $local_guest_ip $local_hostname $bridge_name",
+		command => "/root/bin/create-guest.pl $guest_name $local_guest_ip $local_guest_gw $local_guest_bcst $local_guest_netw $local_hostname $bridge_name",
 		 unless => "ls /var/lib/libvirt/images/ | grep $guest_name",
 		require => File["/etc/libvirt/qemu/$guest_name.xml"],
 	}

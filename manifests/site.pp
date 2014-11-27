@@ -73,8 +73,10 @@ node 'ol65.home.tld' {
     # -- first guest (subnet 192.168.40.0/24) - routed network
     # -- Note: hostname must use only 'a-z' or '.' (no - or _ in hostname)
     hp_kvm_rpm::add_guest { 'debinixorg' :
-                local_guest_gw  => '192.168.40.1',                
                 local_guest_ip  => '192.168.40.40',
+                local_guest_gw  => '192.168.40.1',                  
+                local_guest_bcst => '192.168.40.255',
+                local_guest_netw => '192.168.40.0',
                 local_hostname  => 'deborg',
                     bridge_name => 'virbr1',
                 routed_network  => 'routed40',
