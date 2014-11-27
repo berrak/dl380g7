@@ -45,7 +45,7 @@ define hp_kvm_rpm::add_guest ( $local_guest_gw, $local_guest_ip, $local_hostname
 	}	
 	
 	# create the guest configuration
-	file { "/etc/libvirt/qemu/networks/$guest_name.xml":
+	file { "/etc/libvirt/qemu/$guest_name.xml":
 		content =>  template( "hp_kvm_rpm/$guest_name.xml.erb" ),
 		  owner => 'root',
 		  group => 'root',
