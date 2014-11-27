@@ -59,17 +59,17 @@ my $new_bridge = $ARGV[3];
 system("virt-clone -o $original_domain_name -n $new_domain -f $out_image_path");
 
 # 2. Update the domain configuration with mac and ip address
-my $xmlpathfile = "/etc/libvirt/qemu/" . $new_domain . ".xml" ;
-
-my $twig = XML::Twig->new(
-            twig_handlers => {
-                q{/domain/devices/interface/source[@bridge]} => \&set_source,                
-                q{/domain/devices/interface/filterref/parameter[@value]} => \&set_ip,    
-            },
-            pretty_print => 'indented',
-);
-$twig->parsefile_inplace( $xmlpathfile, '.tmp' );
-$twig->flush;
+#my $xmlpathfile = "/etc/libvirt/qemu/" . $new_domain . ".xml" ;
+#
+#my $twig = XML::Twig->new(
+#            twig_handlers => {
+#                q{/domain/devices/interface/source[@bridge]} => \&set_source,                
+#                q{/domain/devices/interface/filterref/parameter[@value]} => \&set_ip,    
+#            },
+#            pretty_print => 'indented',
+#);
+#$twig->parsefile_inplace( $xmlpathfile, '.tmp' );
+#$twig->flush;
 
 # 3. Clean image to sane default before first use with 'virt-sysprep'
 #    Note cannot expect to set hostname (accepts only a-z) equal to new-domain name! 
@@ -84,16 +84,16 @@ system("virt-edit -d $new_domain /etc/hosts -e 's/$original_domain_name/$new_hos
 # ### SUBROUTINES FOR XML ###
 #
 
-sub set_source {
-    my ($twig, $bridge) = @_;
-    $bridge->set_att( bridge => $new_bridge );
-    $twig->flush;
-}
-
-sub set_ip {
-    my ($twig, $value) = @_;
-    $value->set_att( value => $new_ip );
-    $twig->flush;
-}
+#sub set_source {
+#    my ($twig, $bridge) = @_;
+#    $bridge->set_att( bridge => $new_bridge );
+#    $twig->flush;
+#}
+#
+#sub set_ip {
+#    my ($twig, $value) = @_;
+#    $value->set_att( value => $new_ip );
+#    $twig->flush;
+#}
 
 

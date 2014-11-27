@@ -56,7 +56,7 @@ class hp_kvm_rpm::config ( $natnet_default_active='',
     if ( $routednet_active == 'true' ) {
         
         file { "/etc/libvirt/qemu/networks/$routednet_name.xml":
-            content =>  template( "hp_kvm_rpm/$routednet_name.erb" ),
+            content =>  template( "hp_kvm_rpm/$routednet_name.xml.erb" ),
               owner => 'root',
               group => 'root',
                mode => '0600',

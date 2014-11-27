@@ -70,31 +70,18 @@ node 'ol65.home.tld' {
                 routed_uuid => '02bfac05-336c-4a2a-b533-1f4a472bcdfc',
     }
     
-    # clone new nat guest from 'wheezy' image (use 'default' network)
-    #hp_kvm_rpm::add_guest { 'default' :
-    #            local_guest_gw  => '192.168.122.1',                
-    #            local_guest_ip  => '192.168.122.122',
-    #            local_hostname  => 'default',
-    #            bridge_name => 'virbr0',
-    #}    
-    
-    ## Post-install: add local ip to to filterref with 'virsh edit <domain>' 
-    # -- first guest domain (always in public subnet 192.168.0.0/24)
+    # -- first guest (subnet 192.168.40.0/24) - routed network
     # -- Note: hostname must use only 'a-z' or '.' (no - or _ in hostname)
-    #hp_kvm_rpm::add_guest { 'debinixorg' :
-    #            local_guest_gw  => '192.168.0.254',                
-    #            local_guest_ip  => '192.168.0.41',
-    #            local_hostname  => 'deborg',
-    #            bridge_name => 'virbr1',
-    #}
+    hp_kvm_rpm::add_guest { 'debinixorg' :
+                local_guest_gw  => '192.168.40.1',                
+                local_guest_ip  => '192.168.40.40',
+                local_hostname  => 'deborg',
+                    bridge_name => 'virbr1',
+                routed_network  => 'routed40',
+                guest_uuid => '4a6e421b-d4aa-46d5-b484-c81b9e812f60',
+    }
     
-    # -- second guest domain (always in public subnet 192.168.0.0/24)
-    #hp_kvm_rpm::add_guest { 'triatagroupse' :
-    #            local_guest_gw  => '192.168.0.254',
-    #            local_guest_ip  => '192.168.0.42',
-    #            local_hostname  => 'trise',
-    #            bridge_name => 'virbr1',
-    #}
+
     
     # temporary skip fstab final entry
     #class { hp_fstab::config : fstabhost => 'ol65' }
