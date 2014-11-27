@@ -61,7 +61,7 @@ my $new_net = $ARGV[4];
 my $new_host_name = $ARGV[5];
 my $new_bridge = $ARGV[6];
 
-system("virt-clone -o $original_domain_name -n $new_domain -f $out_image_path");
+system("virt-clone -o $original_domain_name --mac=RANDOM -n $new_domain -f $out_image_path");
 
 # 2. Update the domain configuration with mac and ip address
 #my $xmlpathfile = "/etc/libvirt/qemu/" . $new_domain . ".xml" ;
