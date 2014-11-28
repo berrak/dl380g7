@@ -23,7 +23,6 @@ node 'ol65.home.tld' {
                 real_hostname => 'ol65',
     }
     
-    
     # above DNS must resolv before 'hp_pupetize'. Note that 'puppet-server'
     # host will be named 'puppet'. Oracle use latest puppet-server 3.7
     include hp_puppetize
@@ -40,25 +39,8 @@ node 'ol65.home.tld' {
                 ispdns2 => '195.67.199.19',
     }
     
-    # secondary host networking configuration (generate uuid with 'uuidgen')
-    #hp_network_rpm::config { 'eth1'  :
-    #            ip => '192.168.0.40',
-    #            prefix => '24',
-    #            uuid => 'e880e2e9-7754-4a7c-a197-acecf36f575b',
-    #            gateway => '192.168.0.1',
-    #            broadcast => '192.168.0.255',
-    #            ispdns1 => '195.67.199.18',
-    #            ispdns2 => '195.67.199.19',
-    #}  
-    
     # virtual network aliases PUBLIC interfaces for KVM guests
-    hp_network_rpm::alias { 'eth0:0' : public_guest_ip => '192.168.0.122', onboot => 'yes' }   
-    hp_network_rpm::alias { 'eth0:1' : public_guest_ip => '192.168.0.41', onboot => 'no'  }
-    hp_network_rpm::alias { 'eth0:2' : public_guest_ip => '192.168.0.42', onboot => 'no'  }
-    hp_network_rpm::alias { 'eth0:3' : public_guest_ip => '192.168.0.43', onboot => 'no'  }
-    hp_network_rpm::alias { 'eth0:4' : public_guest_ip => '192.168.0.44', onboot => 'no'  }
-    hp_network_rpm::alias { 'eth0:5' : public_guest_ip => '192.168.0.45', onboot => 'no'  }
-  
+    hp_network_rpm::alias { 'eth0:0' : public_guest_ip => '192.168.0.122', onboot => 'yes' }  
     
     # set up KVM and two networks (NAT at subnet 122 and one routed subnet 40) for VM guests
     class { hp_kvm_rpm::config :
@@ -70,15 +52,15 @@ node 'ol65.home.tld' {
                 routed_uuid => '02bfac05-336c-4a2a-b533-1f4a472bcdfc',
     }
     
-    # -- first guest (subnet 192.168.40.0/24) -  network
+    # -- first guest (subnet 192.168.122.0/24) -  network
     # -- Note: hostname must use only 'a-z' or '.' (no - or _ in hostname)
     #hp_kvm_rpm::add_guest { 'debinixorg' :
-    #            local_guest_ip  => '192.168.40.40',
-    #            local_guest_gw  => '192.168.40.1',                  
-    #            local_guest_bcst => '192.168.40.255',
-    #            local_guest_netw => '192.168.40.0',
+    #            local_guest_ip  => '192.168.122.122',
+    #            local_guest_gw  => '192.168.122.1',                  
+    #            local_guest_bcst => '192.168.122.255',
+    #            local_guest_netw => '192.168.122.0',
     #            local_hostname  => 'deborg',
-    #                bridge_name => 'virbr1',
+    #                bridge_name => 'virbr0',
     #            routed_network  => 'routed40',
     #            guest_uuid => '4a6e421b-d4aa-46d5-b484-c81b9e812f60',
     #}
