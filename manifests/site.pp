@@ -81,13 +81,13 @@ node 'ol65.home.tld' {
     
     
     ## SECURITY
-    #hp_selinux::state { 'enforcing' : }
-    #hp_sudo::config { 'bekr': }
-    #include hp_logwatch
-    #include hp_iptables_rpm
+    hp_selinux::state { 'enforcing' : }
+    hp_sudo::config { 'bekr': }
+    include hp_logwatch
+    include hp_iptables_rpm
     
     # Enable mac filtering but no custom rules yet - libvirt adds own chains
-    #include hp_ebtables_rpm    
+    include hp_ebtables_rpm    
     
     # disable unnecessary services
     hp_service::disable { 'atd' : }
@@ -103,7 +103,7 @@ node 'ol65.home.tld' {
     
     ## MAINTENANCE
 	include hp_ssh_server
-#    hp_ssh_server::sshuser { 'bekr' : }
+    hp_ssh_server::sshuser { 'bekr' : }
     include hp_auto_upgrade
     include hp_logrotate
     include hp_rsyslog
