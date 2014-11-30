@@ -18,8 +18,8 @@ node 'ol65.home.tld' {
     
     # above DNS must resolv before 'hp_pupetize'. Note that 'puppet-server'
     # host will be named 'puppet'. Oracle use latest puppet-server 3.7
-    #include hp_puppetize
-    #include puppet_utils
+    include hp_puppetize
+    include puppet_utils
     
     # primary host networking configuration (generate uuid with 'uuidgen')
     #hp_network_rpm::config { 'eth0'  :
@@ -28,8 +28,8 @@ node 'ol65.home.tld' {
     #            uuid => '8f83faf4-4ac3-4211-8616-1a87c6244039',
     #            gateway => '192.168.0.1',
     #            broadcast => '192.168.0.255',
-    #            ispdns1 => '195.67.199.18',
-    #            ispdns2 => '195.67.199.19',
+    #            ispdns1 => '208.67.222.222',
+    #            ispdns2 => '208.67.220.220',
     #}
     
     # virtual network aliases PUBLIC interfaces for KVM guests
