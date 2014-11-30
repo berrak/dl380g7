@@ -31,6 +31,12 @@ define hp_network_rpm::config ( $ip, $prefix, $uuid,
 
 	$host_domain = $::domain
 	
+	# only the primary interface use mac-address (really cannot easily map correct
+	# mac to correct interface with facter) - thus only eth0 add the mac address.
+	if ( $name == 'eth0' ) {
+		$mac_address = $::macaddress
+	}
+	
 	$host_uuid_interface = $uuid
 	
 	file { "/etc/sysconfig/network-scripts/ifcfg-$name":
