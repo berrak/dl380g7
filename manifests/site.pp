@@ -64,20 +64,20 @@ node 'ol65.home.tld' {
     #class { hp_fstab::config : fstabhost => 'ol65' }
     
     # This is the ntp server for localnet
-    #class { hp_ntp : role => 'lanserver', peerntpip => '192.168.0.66' }
-    #include hp_smartmontools
+    class { hp_ntp : role => 'lanserver', peerntpip => '192.168.0.66' }
+    include hp_smartmontools
     
-    ## USER PROFILES (note user must first exist)
+    ## USER PROFILES (note e.g. user 'bekr' must first exist!)
     
-    #include hp_root_home
-    #include hp_root_bashrc
+    include hp_root_home
+    include hp_root_bashrc
     # add local users
-    #hp_user_bashrc::config { 'bekr' : }
+    hp_user_bashrc::config { 'bekr' : }
 
     
     ## APPLICATIONS
 	# Install REDHAT packages without any special configurations
-    #class { hp_install_rpms : rpms => [ "tree", "ethtool", "parted", "lsof", "curl" ] }
+    class { hp_install_rpms : rpms => [ "tree", "ethtool", "parted", "lsof", "curl" ] }
     
     
     ## SECURITY
@@ -90,23 +90,23 @@ node 'ol65.home.tld' {
     #include hp_ebtables_rpm    
     
     # disable unnecessary services
-    #hp_service::disable { 'atd' : }
-    #hp_service::disable { 'autofs' : }
-    #hp_service::disable { 'kdump' : }
-    #hp_service::disable { 'rhnsd' : }
-    #hp_service::disable { 'mdmonitor' : }  
-    #hp_service::disable { 'portreserve' : }
+    hp_service::disable { 'atd' : }
+    hp_service::disable { 'autofs' : }
+    hp_service::disable { 'kdump' : }
+    hp_service::disable { 'rhnsd' : }
+    hp_service::disable { 'mdmonitor' : }  
+    hp_service::disable { 'portreserve' : }
     
     # remove these, for a server unnecessary REDHAT packages
-    #class { hp_remove_rpms : rpms => [ "cups" ] }
+    class { hp_remove_rpms : rpms => [ "cups" ] }
     
     
     ## MAINTENANCE
-#	include hp_ssh_server
+	include hp_ssh_server
 #    hp_ssh_server::sshuser { 'bekr' : }
     include hp_auto_upgrade
-    #include hp_logrotate
-    #include hp_rsyslog
+    include hp_logrotate
+    include hp_rsyslog
 
 }
 
