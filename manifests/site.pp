@@ -22,15 +22,15 @@ node 'ol65.home.tld' {
     include puppet_utils
     
     # primary host networking configuration (generate uuid with 'uuidgen')
-    #hp_network_rpm::config { 'eth0'  :
-    #            ip => '192.168.0.66',
-    #            prefix => '24',
-    #            uuid => '8f83faf4-4ac3-4211-8616-1a87c6244039',
-    #            gateway => '192.168.0.1',
-    #            broadcast => '192.168.0.255',
-    #            ispdns1 => '208.67.222.222',
-    #            ispdns2 => '208.67.220.220',
-    #}
+    hp_network_rpm::config { 'eth0'  :
+                ip => '192.168.0.66',
+                prefix => '24',
+                uuid => '8f83faf4-4ac3-4211-8616-1a87c6244039',
+                gateway => '192.168.0.1',
+                broadcast => '192.168.0.255',
+                ispdns1 => '208.67.222.222',
+                ispdns2 => '208.67.220.220',
+    }
     
     # virtual network aliases PUBLIC interfaces for KVM guests
     #hp_network_rpm::alias { 'eth0:0' : public_guest_ip => '192.168.0.122', onboot => 'yes' }  
