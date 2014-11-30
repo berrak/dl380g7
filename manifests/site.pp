@@ -9,48 +9,41 @@ node 'ol65.home.tld' {
 
     ## BASIC
     
-    # Disable Bind to provide DNS for OracleLinux (no need for puppet module: hp_host)
-    #class { hp_bind_rpm::config :
-    #            ispdns1 => '195.67.199.18',
-    #            ispdns2 => '195.67.199.19',
+    # Enable dnsmasq for DNS
+    #class { hp_dnsmasq::config :
+    #            ispdns1 => '208.67.222.222',
+    #            ispdns2 => '208.67.220.220',
     #            real_hostname => 'ol65',
     #}
     
-    # Enable dnsmasq for DNS
-    class { hp_dnsmasq::config :
-                ispdns1 => '195.67.199.18',
-                ispdns2 => '195.67.199.19',
-                real_hostname => 'ol65',
-    }
-    
     # above DNS must resolv before 'hp_pupetize'. Note that 'puppet-server'
     # host will be named 'puppet'. Oracle use latest puppet-server 3.7
-    include hp_puppetize
-    include puppet_utils
+    #include hp_puppetize
+    #include puppet_utils
     
     # primary host networking configuration (generate uuid with 'uuidgen')
-    hp_network_rpm::config { 'eth0'  :
-                ip => '192.168.0.66',
-                prefix => '24',
-                uuid => '8f83faf4-4ac3-4211-8616-1a87c6244039',
-                gateway => '192.168.0.1',
-                broadcast => '192.168.0.255',
-                ispdns1 => '195.67.199.18',
-                ispdns2 => '195.67.199.19',
-    }
+    #hp_network_rpm::config { 'eth0'  :
+    #            ip => '192.168.0.66',
+    #            prefix => '24',
+    #            uuid => '8f83faf4-4ac3-4211-8616-1a87c6244039',
+    #            gateway => '192.168.0.1',
+    #            broadcast => '192.168.0.255',
+    #            ispdns1 => '195.67.199.18',
+    #            ispdns2 => '195.67.199.19',
+    #}
     
     # virtual network aliases PUBLIC interfaces for KVM guests
-    hp_network_rpm::alias { 'eth0:0' : public_guest_ip => '192.168.0.122', onboot => 'yes' }  
+    #hp_network_rpm::alias { 'eth0:0' : public_guest_ip => '192.168.0.122', onboot => 'yes' }  
     
     # set up KVM and two networks (NAT at subnet 122 and one routed subnet 40) for VM guests
-    class { hp_kvm_rpm::config :
-                natnet_default_active => 'true',
-                routednet_name => 'routed40',
-                routednet_active => 'false',
-                routed_br_name => 'virbr1',
-                routed_host_if => 'eth1',
-                routed_uuid => '02bfac05-336c-4a2a-b533-1f4a472bcdfc',
-    }
+    #class { hp_kvm_rpm::config :
+    #            natnet_default_active => 'true',
+    #            routednet_name => 'routed40',
+    #            routednet_active => 'false',
+    #            routed_br_name => 'virbr1',
+    #            routed_host_if => 'eth1',
+    #            routed_uuid => '02bfac05-336c-4a2a-b533-1f4a472bcdfc',
+    #}
     
     # -- first guest (subnet 192.168.122.0/24) -  network
     # -- Note: hostname must use only 'a-z' or '.' (no - or _ in hostname)
@@ -71,49 +64,49 @@ node 'ol65.home.tld' {
     #class { hp_fstab::config : fstabhost => 'ol65' }
     
     # This is the ntp server for localnet
-    class { hp_ntp : role => 'lanserver', peerntpip => '192.168.0.66' }
-    include hp_smartmontools
+    #class { hp_ntp : role => 'lanserver', peerntpip => '192.168.0.66' }
+    #include hp_smartmontools
     
     ## USER PROFILES (note user must first exist)
     
-    include hp_root_home
-    include hp_root_bashrc
+    #include hp_root_home
+    #include hp_root_bashrc
     # add local users
-    hp_user_bashrc::config { 'bekr' : }
+    #hp_user_bashrc::config { 'bekr' : }
 
     
     ## APPLICATIONS
 	# Install REDHAT packages without any special configurations
-    class { hp_install_rpms : rpms => [ "tree", "ethtool", "parted", "lsof", "curl" ] }
+    #class { hp_install_rpms : rpms => [ "tree", "ethtool", "parted", "lsof", "curl" ] }
     
     
     ## SECURITY
-    hp_selinux::state { 'enforcing' : }
-    hp_sudo::config { 'bekr': }
-    include hp_logwatch
-    include hp_iptables_rpm
+    #hp_selinux::state { 'enforcing' : }
+    #hp_sudo::config { 'bekr': }
+    #include hp_logwatch
+    #include hp_iptables_rpm
     
     # Enable mac filtering but no custom rules yet - libvirt adds own chains
-    include hp_ebtables_rpm    
+    #include hp_ebtables_rpm    
     
     # disable unnecessary services
-    hp_service::disable { 'atd' : }
-    hp_service::disable { 'autofs' : }
-    hp_service::disable { 'kdump' : }
-    hp_service::disable { 'rhnsd' : }
-    hp_service::disable { 'mdmonitor' : }  
-    hp_service::disable { 'portreserve' : }
+    #hp_service::disable { 'atd' : }
+    #hp_service::disable { 'autofs' : }
+    #hp_service::disable { 'kdump' : }
+    #hp_service::disable { 'rhnsd' : }
+    #hp_service::disable { 'mdmonitor' : }  
+    #hp_service::disable { 'portreserve' : }
     
     # remove these, for a server unnecessary REDHAT packages
-    class { hp_remove_rpms : rpms => [ "cups" ] }
+    #class { hp_remove_rpms : rpms => [ "cups" ] }
     
     
     ## MAINTENANCE
-	include hp_ssh_server
-    hp_ssh_server::sshuser { 'bekr' : }
+#	include hp_ssh_server
+#    hp_ssh_server::sshuser { 'bekr' : }
     include hp_auto_upgrade
-    include hp_logrotate
-    include hp_rsyslog
+    #include hp_logrotate
+    #include hp_rsyslog
 
 }
 
