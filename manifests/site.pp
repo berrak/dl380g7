@@ -10,11 +10,11 @@ node 'ol65.home.tld' {
     ## BASIC
     
     # Enable dnsmasq for DNS
-    #class { hp_dnsmasq::config :
-    #            ispdns1 => '208.67.222.222',
-    #            ispdns2 => '208.67.220.220',
-    #            real_hostname => 'ol65',
-    #}
+    class { hp_dnsmasq::config :
+                ispdns1 => '208.67.222.222',
+                ispdns2 => '208.67.220.220',
+                real_hostname => 'ol65',
+    }
     
     # above DNS must resolv before 'hp_pupetize'. Note that 'puppet-server'
     # host will be named 'puppet'. Oracle use latest puppet-server 3.7
