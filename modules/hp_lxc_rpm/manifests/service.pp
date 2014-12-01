@@ -1,7 +1,7 @@
 ##
 ## This class manage LXC
 ##
-class hp_kvm_lxc::service {
+class hp_lxc_rpm::service {
     	
 	service { "cgconfig" :
 			ensure => running,
