@@ -32,10 +32,11 @@ node 'ol65.home.tld' {
                 ispdns2 => '208.67.220.220',
     }
     
-    # install KVM virtualization
+    # install KVM virtualization packages and set 'default' network
     class { hp_kvm_rpm::config : natnet_default_active => 'true' }   
     
-    
+    # install LXC isolation packages
+    include hp_lxc_rpm
     
     
     
