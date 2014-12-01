@@ -32,12 +32,18 @@ node 'ol65.home.tld' {
                 ispdns2 => '208.67.220.220',
     }
     
+    # install KVM virtualization
+    class { hp_kvm_rpm::config : natnet_default_active => 'true' }   
+    
+    
+    
+    
+    
     # virtual network aliases PUBLIC interfaces for KVM guests
     #hp_network_rpm::alias { 'eth0:0' : public_guest_ip => '192.168.0.122', onboot => 'yes' }  
     
-    # set up KVM and two networks (NAT at subnet 122 and one routed subnet 40) for VM guests
-    #class { hp_kvm_rpm::config :
-    #            natnet_default_active => 'true',
+    # add two networks (NAT at subnet 122 - if not running and one routed subnet 40) for VM guests
+    #class { hp_kvm_rpm::add_net :
     #            routednet_name => 'routed40',
     #            routednet_active => 'false',
     #            routed_br_name => 'virbr1',
@@ -57,8 +63,6 @@ node 'ol65.home.tld' {
     #            routed_network  => 'routed40',
     #            guest_uuid => '4a6e421b-d4aa-46d5-b484-c81b9e812f60',
     #}
-    
-
     
     # temporary skip fstab final entry
     #class { hp_fstab::config : fstabhost => 'ol65' }

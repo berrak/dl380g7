@@ -1,13 +1,7 @@
 ##
 ## This class manage KVM
 ##
-class hp_kvm_rpm::config ( $natnet_default_active='',
-                           $routednet_name='',
-                           $routednet_active='',
-                           $routed_br_name='',
-                           $routed_host_if='',
-                           $routed_uuid='' )
-{
+class hp_kvm_rpm::config {
 
     include hp_kvm_rpm
 
@@ -42,35 +36,23 @@ class hp_kvm_rpm::config ( $natnet_default_active='',
 		     unless => 'ls /etc/libvirt/qemu/networks | grep default',
 	}	   
     
+    # Enable or Disable 'default' network
     if ( $natnet_default_active == 'true' ) {
-        # when enabled, run this unless default is already started  
+        # when enabled, run this unless 'default' is already started  
         exec { "Enable_default_network" :
                    path => '/root/bin:/bin:/sbin:/usr/bin:/usr/sbin',
                 command => "virsh net-start default && virsh net-autostart default",
                  unless => 'virsh net-list | grep default',
                  require => Exec["Create_default_network"],
         }
-    }
-    
-	# create new ROUTED subnet 40 network
-    if ( $routednet_active == 'true' ) {
-        
-        file { "/etc/libvirt/qemu/networks/$routednet_name.xml":
-            content =>  template( "hp_kvm_rpm/$routednet_name.xml.erb" ),
-              owner => 'root',
-              group => 'root',
-               mode => '0600',
-        }
-        
-        # start network and make it persistent
-        exec { "Create_new_network_$routednet_name" :
+    } else {
+        # when enabled, run this only if 'default' is already started  
+        exec { "Disable_default_network" :
                    path => '/root/bin:/bin:/sbin:/usr/bin:/usr/sbin',
-                command => "virsh net-define /etc/libvirt/qemu/networks/$routednet_name.xml && virsh net-start $routednet_name && virsh net-autostart $routednet_name",
-            refreshonly => 'true',
-              subscribe => File["/etc/libvirt/qemu/networks/$routednet_name.xml"],
-                require => File["/etc/libvirt/qemu/networks/$routednet_name.xml"],
-                 unless => "virsh net-list | grep $routednet_name",
+                command => "virsh net-destroy default",
+                 onlyif => 'virsh net-list | grep default',
+                 require => Exec["Create_default_network"],
         }
-    }
     
+    }
 }
