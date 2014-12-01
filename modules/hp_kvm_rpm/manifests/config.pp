@@ -1,7 +1,7 @@
 ##
 ## This class manage KVM
 ##
-class hp_kvm_rpm::config {
+class hp_kvm_rpm::config ( $natnet_default_active ) {
 
     include hp_kvm_rpm
 
