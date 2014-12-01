@@ -1,7 +1,7 @@
 ##
 ## This class manage LXC
 ##
-class hp_lxm_rpm::install {
+class hp_lxc_rpm::install {
 
     if ! ( $::lsbdistid == 'OracleServer' ) {
         fail("FAIL: Aborting. This module (lxc) is only for OracleLinux based distributions!")
