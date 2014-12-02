@@ -48,43 +48,15 @@ node 'ol65.home.tld' {
     # install LXC packages
     include hp_lxc_rpm
     
-    
-    # Add container (all use virbr0, veth and libvirt dnsmasq dhcp)
+    # Add OracleLinux container (all use virbr0, veth and libvirt dnsmasq/dhcp)
     #class { hp_lxc_rpm::add_container :
     #            host_name => 'deborg',
     #            public_ip_addr => '192.168.0.40',
-    #            container_mac_addr => '',
-    #            host_if_alias => 'eth0:0',
-    #            routed_uuid => '02bfac05-336c-4a2a-b533-1f4a472bcdfc',
+    #            container_mac_addr => '52:54:00:00:00:40',
     #}
     
-    
-    
-    # virtual network aliases PUBLIC interfaces for LXC
-    hp_network_rpm::alias { 'eth0:0' : public_guest_ip => '192.168.0.40', onboot => 'yes' }
-    
-    
-    # add two networks (NAT at subnet 122 - if not running and one routed subnet 40) for VM guests
-    #class { hp_kvm_rpm::add_net :
-    #            routednet_name => 'routed40',
-    #            routednet_active => 'false',
-    #            routed_br_name => 'virbr1',
-    #            routed_host_if => 'eth1',
-    #            routed_uuid => '02bfac05-336c-4a2a-b533-1f4a472bcdfc',
-    #}
-    
-    # -- first guest (subnet 192.168.122.0/24) -  network
-    # -- Note: hostname must use only 'a-z' or '.' (no - or _ in hostname)
-    #hp_kvm_rpm::add_guest { 'debinixorg' :
-    #            local_guest_ip  => '192.168.122.122',
-    #            local_guest_gw  => '192.168.122.1',                  
-    #            local_guest_bcst => '192.168.122.255',
-    #            local_guest_netw => '192.168.122.0',
-    #            local_hostname  => 'deborg',
-    #                bridge_name => 'virbr0',
-    #            routed_network  => 'routed40',
-    #            guest_uuid => '4a6e421b-d4aa-46d5-b484-c81b9e812f60',
-    #}
+
+
     
     # temporary skip fstab final entry
     #class { hp_fstab::config : fstabhost => 'ol65' }
