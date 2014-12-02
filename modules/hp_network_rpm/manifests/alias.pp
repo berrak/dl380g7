@@ -2,9 +2,9 @@
 # Manage network (add alias interface for virtual guest)
 #
 # Usage:
-#      hp_network_rpm::alias { 'eth0:1' : public_guest_ip => '192.168.0.42', $onboot => 'yes' }    
+#      hp_network_rpm::alias { 'eth0:1' : public_guest_ip => '192.168.0.42', prefix => '24', onboot => 'yes' }    
 #
-define hp_network_rpm::alias ( $public_guest_ip, $onboot ) {
+define hp_network_rpm::alias ( $public_guest_ip, $prefix, $onboot ) {
 
     include hp_network_rpm
 	
@@ -12,7 +12,7 @@ define hp_network_rpm::alias ( $public_guest_ip, $onboot ) {
 		fail("FAIL: Missing given virtual host public IP address")
 	}
 	
-    $host_netmask = $::netmask
+    $ip_prefix = $prefix
 	$alias_interface = $name
 	$onboot_if = $onboot
  

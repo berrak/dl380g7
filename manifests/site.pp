@@ -32,13 +32,23 @@ node 'ol65.home.tld' {
                 ispdns2 => '208.67.220.220',
     }
     
-    # install KVM virtualization packages (and set 'default' network/virbr0 status)
-    # dhcp server with private IPs: 192.168.122.40 -- 192.168.122.44 and
-    # corresponding macs: 52:54:00:00:00:40 -- 52:54:00:00:00:44'
+    # install KVM virtualization packages (and set 'default' network)
+    # dhcp server with 5 PRIVATE IPs: 192.168.122.40 -- 192.168.122.44 and
+    # corresponding 5 macs: 52:54:00:00:00:40 -- 52:54:00:00:00:44'
+    # also contains name i.e. FQDN for each LXC for above IPs.
     class { hp_kvm_rpm::config : natnet_default_active => 'true' }   
+    
+    # on host, virtual network aliases PUBLIC interfaces for LXC
+    hp_network_rpm::alias { 'eth0:0' : public_guest_ip => '192.168.0.40', prefix => '24', onboot => 'yes' }    
+    hp_network_rpm::alias { 'eth0:1' : public_guest_ip => '192.168.0.41', prefix => '24', onboot => 'yes' }
+    hp_network_rpm::alias { 'eth0:2' : public_guest_ip => '192.168.0.42', prefix => '24', onboot => 'yes' }
+    hp_network_rpm::alias { 'eth0:3' : public_guest_ip => '192.168.0.43', prefix => '24', onboot => 'yes' }
+    hp_network_rpm::alias { 'eth0:4' : public_guest_ip => '192.168.0.44', prefix => '24', onboot => 'yes' } 
     
     # install LXC packages
     include hp_lxc_rpm
+    
+    
     # Add container (all use virbr0, veth and libvirt dnsmasq dhcp)
     #class { hp_lxc_rpm::add_container :
     #            host_name => 'deborg',
@@ -50,8 +60,9 @@ node 'ol65.home.tld' {
     
     
     
-    # virtual network aliases PUBLIC interfaces for KVM guests
-    #hp_network_rpm::alias { 'eth0:0' : public_guest_ip => '192.168.0.122', onboot => 'yes' }  
+    # virtual network aliases PUBLIC interfaces for LXC
+    hp_network_rpm::alias { 'eth0:0' : public_guest_ip => '192.168.0.40', onboot => 'yes' }
+    
     
     # add two networks (NAT at subnet 122 - if not running and one routed subnet 40) for VM guests
     #class { hp_kvm_rpm::add_net :
