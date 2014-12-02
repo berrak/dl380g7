@@ -33,7 +33,7 @@ node 'ol65.home.tld' {
     }
     
     # install KVM virtualization packages (and set 'default' network status)
-    class { hp_kvm_rpm::config : natnet_default_active => 'false' }   
+    class { hp_kvm_rpm::config : natnet_default_active => 'true' }   
     
     # install LXC packages
     include hp_lxc_rpm
