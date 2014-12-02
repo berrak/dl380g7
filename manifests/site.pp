@@ -32,11 +32,21 @@ node 'ol65.home.tld' {
                 ispdns2 => '208.67.220.220',
     }
     
-    # install KVM virtualization packages (and set 'default' network status)
+    # install KVM virtualization packages (and set 'default' network/virbr0 status)
+    # dhcp server with private IPs: 192.168.122.40 -- 192.168.122.44 and
+    # corresponding macs: 52:54:00:00:00:40 -- 52:54:00:00:00:44'
     class { hp_kvm_rpm::config : natnet_default_active => 'true' }   
     
     # install LXC packages
     include hp_lxc_rpm
+    # Add container (all use virbr0, veth and libvirt dnsmasq dhcp)
+    #class { hp_lxc_rpm::add_container :
+    #            host_name => 'deborg',
+    #            public_ip_addr => '192.168.0.40',
+    #            container_mac_addr => '',
+    #            host_if_alias => 'eth0:0',
+    #            routed_uuid => '02bfac05-336c-4a2a-b533-1f4a472bcdfc',
+    #}
     
     
     

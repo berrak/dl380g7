@@ -1,0 +1,15 @@
+<network>
+  <name>default</name>
+  <bridge name="virbr0" />
+  <forward mode="nat"/>
+  <ip address="192.168.122.1" netmask="255.255.255.0">
+    <dhcp>
+      <range start="192.168.122.2" end="192.168.122.254" />
+      <host mac="52:54:00:00:00:40" name="deborg.debinix.tld" ip="192.168.122.40"/>
+      <host mac="52:54:00:00:00:41" name="trise.debinix.tld" ip="192.168.122.41"/>
+      <host mac="52:54:00:00:00:42" name="mc.debinix.tld" ip="192.168.122.42"/>
+      <host mac="52:54:00:00:00:43" name="kronlund.debinix.tld" ip="192.168.122.43"/>
+      <host mac="52:54:00:00:00:44" name="git.debinix.tld" ip="192.168.122.44"/>	  
+    </dhcp>
+  </ip>
+</network>

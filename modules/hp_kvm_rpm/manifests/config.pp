@@ -29,11 +29,21 @@ class hp_kvm_rpm::config ( $natnet_default_active ) {
 		 group => 'root',
 	}
     
+    # custom 'default.xml' defined in '/usr/share/libvirt/networks'
+    # dhcp server with IPs: 192.168.122.40 -- 192.168.122.44 and
+    # corresponding macs: 52:54:00:00:00:40 -- 52:54:00:00:00:44'
+	file { '/usr/share/libvirt/networks/default.xml' :
+		source => "puppet:///modules/hp_kvm_rpm/default.xml",
+		 owner => 'root',
+		 group => 'root',
+	}
+    
     # re-create default NAT subnet 122 network - unless 'default' network does not exist
  	exec { "Create_default_network" :
 		       path => '/root/bin:/bin:/sbin:/usr/bin:/usr/sbin',
 		    command => "virsh net-define /usr/share/libvirt/networks/default.xml",
 		     unless => 'ls /etc/libvirt/qemu/networks | grep default',
+            require => File["/usr/share/libvirt/networks/default.xml"],
 	}	   
     
     # Enable or Disable 'default' network
