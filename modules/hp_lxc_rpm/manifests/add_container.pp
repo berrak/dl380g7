@@ -37,7 +37,7 @@ define hp_lxc_rpm::add_container ( $run_cont, $cont_private_mac_addr ) {
 	# create the container configuration -
 	# TODO: how about configuration changes -- stop-start exec?
 	file { "/container/$cont_host_name/config":
-		content =>  template( "hp_lxm_rpm/$cont_host_name.config.erb" ),
+		content =>  template( "hp_lxc_rpm/$cont_host_name.config.erb" ),
 		  owner => 'root',
 		  group => 'root',
 	}
