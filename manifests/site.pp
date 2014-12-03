@@ -48,8 +48,12 @@ node 'ol65.home.tld' {
     # install LXC packages
     include hp_lxc_rpm
     
-    # Add OracleLinux EL6 NAT container (hostname 'deborg')
-    hp_lxc_rpm::add_container { 'deborg' : run_cont => 'true', cont_private_mac_addr => '52:54:00:00:00:40' }
+    # Configure default OracleLinux EL6 NAT container CONFIGURATION (for container/hostname 'deborg')
+    # NOTE: Container must have been created with 'xlc-create' command first!
+    # NOTE: IP address is not used with dhcp, mac address and libvirt net 'default' defines container IP
+    hp_lxc_rpm::add_container_config { 'deborg' :
+                              cont_private_mac_addr => '52:54:00:00:00:40',
+                               cont_private_ip_addr => '192.168.122.40' }
     
 
 
