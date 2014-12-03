@@ -17,10 +17,6 @@ define hp_lxc_rpm::add_container ( $run_cont, $cont_private_mac_addr ) {
         fail("FAIL: Aborting. This module (hp_lxc_rpm) is only for OracleLinux based distributions!")
     }
 	
-	if ( $cont_public_ip == '' ) {
-		fail("FAIL: Missing given public IP address for container!")
-	}
-
 	if ( $cont_private_mac_addr == '' ) {
 		fail("FAIL: Missing given container MAC address!")
 	}
