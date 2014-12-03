@@ -49,7 +49,7 @@ node 'ol65.home.tld' {
     include hp_lxc_rpm
     
     # Add OracleLinux EL6 NAT container (hostname 'deborg')
-    hp_lxc_rpm::add_container { 'deborg' : run_cont => 'true', cont_private_mac_addr_last_octet => '40' }
+    hp_lxc_rpm::add_container { 'deborg' : run_cont => 'true', cont_private_mac_addr => '52:54:00:00:00:40' }
     
 
 

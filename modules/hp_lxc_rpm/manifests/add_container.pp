@@ -4,10 +4,10 @@
 #
 # Usage: hp_lxc_rpm::add_container { 'deborg' :
 #            					run_cont => 'true',
-#            					cont_private_mac_addr_last_octet => '40',
+#            					cont_private_mac_addr => '52:54:00:00:00:40',
 #}
 #        
-define hp_lxm_rpm::add_container ( $run_cont, $cont_private_mac_addr_last_octet ) {
+define hp_lxc_rpm::add_container ( $run_cont, $cont_private_mac_addr ) {
 
     include hp_lxm_rpm
 	
@@ -21,8 +21,8 @@ define hp_lxm_rpm::add_container ( $run_cont, $cont_private_mac_addr_last_octet 
 		fail("FAIL: Missing given public IP address for container!")
 	}
 
-	if ( $cont_private_mac_addr_last_octet == '' ) {
-		fail("FAIL: Missing given container MAC (last octet) address!")
+	if ( $cont_private_mac_addr == '' ) {
+		fail("FAIL: Missing given container MAC address!")
 	}
 	
 	if ( $cont_host_name == '' ) {
