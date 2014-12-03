@@ -34,14 +34,21 @@ define hp_lxc_rpm::add_container ( $run_cont, $cont_private_mac_addr ) {
 		 notify => File["/container/$cont_host_name/config"],
 	}
 
-	# create the container configuration -
-	# TODO: how about configuration changes -- stop-start exec?
+	# create the directory for the new container (needed for config file)
+	file { "/container/$cont_host_name":
+		ensure => "directory",
+		owner => 'root',
+		group => 'root',
+	}	
+
+	# create the container configuration
 	file { "/container/$cont_host_name/config":
 		content =>  template( "hp_lxc_rpm/$cont_host_name.config.erb" ),
 		  owner => 'root',
 		  group => 'root',
+		  require => File["/container/$cont_host_name"],
 	}
-
+	
 	# run the container
 	if ( $run_cont == 'true' ) {
 		
@@ -55,12 +62,10 @@ define hp_lxc_rpm::add_container ( $run_cont, $cont_private_mac_addr ) {
                  onlyif => "lxc-info -n $cont_host_name | grep STOPPED",
         }
 		
-	} else {
-	    
-		# stop the container if running
-		exec { "STOP_container_$cont_host_name" :
+		# re-start the container if running (to re-load config-changes)
+		exec { "RESTART_container_$cont_host_name" :
 			   path => '/root/bin:/bin:/sbin:/usr/bin:/usr/sbin',
-			command => "lxc-shutdown -n $cont_host_name", 
+			command => "lxc-stop -n $cont_host_name && lxc-start -n $cont_host_name -d", 
 		refreshonly => 'true',
 		  subscribe => File["/container/$cont_host_name/config"],
 			require => File["/container/$cont_host_name/config"],
