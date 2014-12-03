@@ -4,7 +4,7 @@
 lxc.network.type = veth
 lxc.network.flags = up
 lxc.network.link = virbr0
-lxc.rootfs = /container/ol6ctr1/rootfs
+lxc.rootfs = /container/%= cont_host_name %>/rootfs
 # Common configuration
 lxc.include = /usr/share/lxc/config/oracle.common.conf
 # Container configuration for Oracle Linux 6.latest
