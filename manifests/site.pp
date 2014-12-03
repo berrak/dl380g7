@@ -48,28 +48,39 @@ node 'ol65.home.tld' {
     # install LXC packages
     include hp_lxc_rpm
     
-    # Configure default OracleLinux EL6 NAT container CONFIGURATION (for container/hostname 'deborg')
-    # NOTE: Container must have been created with 'xlc-create' command first!
-    # NOTE: IP address is not used with dhcp, mac address and libvirt net 'default' defines container IP
+    # Configure initial OracleLinux EL6 container (all use libvirt 'default' net)
+    # NOTE: Create container first: 'xlc-create -n <cont_name> -t oracle -- --release=6.latest'
+    # NOTE: IP address and domain is used to update /etc/hosts-file in conatainer
+    # NOTE: MAC address and libvirt 'default' net and DHCP defines the container (fixed) IP
     hp_lxc_rpm::add_container_config { 'deborg' :
-                              cont_private_mac_addr => '52:54:00:00:00:40',
-                               cont_private_ip_addr => '192.168.122.40' }
+                               cont_private_mac_addr => '52:54:00:00:00:40',
+                               cont_private_ip_addr => '192.168.122.40',
+                               cont_domain_name => 'debinix.tld',
+    }
     
     hp_lxc_rpm::add_container_config { 'trise' :
-                              cont_private_mac_addr => '52:54:00:00:00:41',
-                               cont_private_ip_addr => '192.168.122.41' }
+                               cont_private_mac_addr => '52:54:00:00:00:41',
+                               cont_private_ip_addr => '192.168.122.41',
+                               cont_domain_name => 'debinix.tld',                               
+    }
                                
     hp_lxc_rpm::add_container_config { 'mc' :
-                              cont_private_mac_addr => '52:54:00:00:00:42',
-                               cont_private_ip_addr => '192.168.122.42' }
+                               cont_private_mac_addr => '52:54:00:00:00:42',
+                               cont_private_ip_addr => '192.168.122.42',
+                               cont_domain_name => 'debinix.tld',                               
+    }
                                
     hp_lxc_rpm::add_container_config { 'kronlund' :
-                              cont_private_mac_addr => '52:54:00:00:00:43',
-                               cont_private_ip_addr => '192.168.122.43' }
+                               cont_private_mac_addr => '52:54:00:00:00:43',
+                               cont_private_ip_addr => '192.168.122.43',
+                               cont_domain_name => 'debinix.tld',                               
+    }
                                
     hp_lxc_rpm::add_container_config { 'git' :
-                              cont_private_mac_addr => '52:54:00:00:00:44',
-                               cont_private_ip_addr => '192.168.122.44' }
+                               cont_private_mac_addr => '52:54:00:00:00:44',
+                               cont_private_ip_addr => '192.168.122.44',
+                               cont_domain_name => 'debinix.tld',                               
+    }
     
     # temporary skip fstab final entry
     #class { hp_fstab::config : fstabhost => 'ol65' }
