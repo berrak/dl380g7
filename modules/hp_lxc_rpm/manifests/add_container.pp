@@ -60,7 +60,7 @@ define hp_lxc_rpm::add_container ( $run_cont, $cont_private_mac_addr ) {
 		# stop the container if running
 		exec { "STOP_container_$cont_host_name" :
 			   path => '/root/bin:/bin:/sbin:/usr/bin:/usr/sbin',
-			command => "lxc-stop -n $cont_host_name", 
+			command => "lxc-shutdown -n $cont_host_name", 
 		refreshonly => 'true',
 		  subscribe => File["/container/$cont_host_name/config"],
 			require => File["/container/$cont_host_name/config"],
