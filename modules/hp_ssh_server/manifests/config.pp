@@ -4,6 +4,7 @@
 class hp_ssh_server::config {
     
     $myhostname = $::hostname
+	$mydomain = $::domain
 	
 	$ostype = $::lsbdistid
 	
@@ -26,7 +27,7 @@ class hp_ssh_server::config {
 	# our custom ssh login banner (warning for unauthorized access)
 	
 	file { '/etc/issue.net' :
-           source => "puppet:///modules/hp_ssh_server/issue.net",		  
+		  content =>  template( "hp_ssh_server/issue.net.erb" ),		  
 			owner => 'root',
 			group => 'root',
 		  require => Package["openssh-server"],
