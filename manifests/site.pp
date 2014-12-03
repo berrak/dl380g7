@@ -48,11 +48,11 @@ node 'ol65.home.tld' {
     # install LXC packages
     include hp_lxc_rpm
     
-    # Add OracleLinux container (all use virbr0, veth and libvirt dnsmasq/dhcp)
-    #class { hp_lxc_rpm::add_container :
-    #            host_name => 'deborg',
-    #            public_ip_addr => '192.168.0.40',
-    #            container_mac_addr => '52:54:00:00:00:40',
+    # Add OracleLinux EL6 NAT container (host is OL6.6)
+    # hp_lxc_rpm::add_container { '192.168.0.40' :
+    #            run_cont => 'true',
+    #            cont_host_name => 'deborg',
+    #            cont_private_mac_addr => '52:54:00:00:00:40',
     #}
     
 

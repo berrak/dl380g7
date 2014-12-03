@@ -1,0 +1,18 @@
+##############################################################
+# MANAGED BY PUPPET. DO NOT EDIT. CHANGES WILL BE WIPED OUT. #
+##############################################################
+lxc.network.type = veth
+lxc.network.flags = up
+lxc.network.link = virbr0
+lxc.rootfs = /container/ol6ctr1/rootfs
+# Common configuration
+lxc.include = /usr/share/lxc/config/oracle.common.conf
+# Container configuration for Oracle Linux 6.latest
+lxc.arch = x86_64
+lxc.utsname = <%= cont_host_name %>
+lxc.cap.drop = sys_resource
+lxc.cap.drop = setfcap setpcap
+# Networking
+lxc.network.name = eth0
+lxc.network.mtu = 1500
+lxc.network.hwaddr = <%= cont_private_mac_addr %>
