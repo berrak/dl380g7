@@ -15,4 +15,4 @@ lxc.cap.drop = setfcap setpcap
 # Networking
 lxc.network.name = eth0
 lxc.network.mtu = 1500
-lxc.network.hwaddr = <%= cont_private_mac_addr %>
+lxc.network.hwaddr = 52:54:00:00:00:<%= cont_private_mac_addr_last_octet %>
