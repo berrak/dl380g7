@@ -9,7 +9,7 @@
 #        
 define hp_lxc_rpm::add_container ( $run_cont, $cont_private_mac_addr ) {
 
-    include hp_lxm_rpm
+    include hp_lxc_rpm
 	
 	$cont_host_name = $name 
 	
