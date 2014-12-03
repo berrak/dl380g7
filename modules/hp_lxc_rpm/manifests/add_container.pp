@@ -1,17 +1,16 @@
 #
 # This define adds a new NAT system container (latest version of EL6)
 #
-# Usage: hp_lxc_rpm::add_container { '198.168.0.40' :
+# Usage: hp_lxc_rpm::add_container { 'deborg' :
 #            					run_cont => 'true',
-#            					cont_host_name => 'deborg',
 #            					cont_private_mac_addr => '52:54:00:00:00:40',
 #}
 #        
-define hp_lxm_rpm::add_container ( $run_cont, $cont_host_name, $cont_private_mac_addr ) {
+define hp_lxm_rpm::add_container ( $run_cont, $cont_private_mac_addr ) {
 
     include hp_lxm_rpm
 	
-	$cont_public_ip = $name 
+	$cont_host_name = $name 
 	
     if ! ( $::lsbdistid == 'OracleServer' ) {
         fail("FAIL: Aborting. This module (hp_lxc_rpm) is only for OracleLinux based distributions!")
