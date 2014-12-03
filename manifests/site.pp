@@ -55,8 +55,21 @@ node 'ol65.home.tld' {
                               cont_private_mac_addr => '52:54:00:00:00:40',
                                cont_private_ip_addr => '192.168.122.40' }
     
-
-
+    hp_lxc_rpm::add_container_config { 'trise' :
+                              cont_private_mac_addr => '52:54:00:00:00:41',
+                               cont_private_ip_addr => '192.168.122.41' }
+                               
+    hp_lxc_rpm::add_container_config { 'mc' :
+                              cont_private_mac_addr => '52:54:00:00:00:42',
+                               cont_private_ip_addr => '192.168.122.42' }
+                               
+    hp_lxc_rpm::add_container_config { 'kronlund' :
+                              cont_private_mac_addr => '52:54:00:00:00:43',
+                               cont_private_ip_addr => '192.168.122.43' }
+                               
+    hp_lxc_rpm::add_container_config { 'git' :
+                              cont_private_mac_addr => '52:54:00:00:00:44',
+                               cont_private_ip_addr => '192.168.122.44' }
     
     # temporary skip fstab final entry
     #class { hp_fstab::config : fstabhost => 'ol65' }
