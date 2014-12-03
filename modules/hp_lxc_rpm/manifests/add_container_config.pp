@@ -48,6 +48,10 @@ define hp_lxc_rpm::add_container_config ( $cont_private_mac_addr, $cont_private_
 		  require => File["/container/$cont_host_name"],
 	}
 
+	# for agent to find puppet server
+	$puppet_host_ip = $::ipaddress
+	$puppet_host_domain = $::domain
+
 	# configure hostname/domain for this container
 	file { "/container/$cont_host_name/rootfs/etc/hosts":
 		content =>  template( "hp_lxc_rpm/$cont_host_name.hosts.erb" ),
