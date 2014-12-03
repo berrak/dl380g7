@@ -55,31 +55,31 @@ node 'ol65.home.tld' {
     hp_lxc_rpm::add_container_config { 'deborg' :
                                cont_private_mac_addr => '52:54:00:00:00:40',
                                cont_private_ip_addr => '192.168.122.40',
-                               cont_domain_name => 'debinix.tld',
+                               cont_domain_name => 'lxc.tld',
     }
     
     hp_lxc_rpm::add_container_config { 'trise' :
                                cont_private_mac_addr => '52:54:00:00:00:41',
                                cont_private_ip_addr => '192.168.122.41',
-                               cont_domain_name => 'debinix.tld',                               
+                               cont_domain_name => 'lxc.tld',                               
     }
                                
     hp_lxc_rpm::add_container_config { 'mc' :
                                cont_private_mac_addr => '52:54:00:00:00:42',
                                cont_private_ip_addr => '192.168.122.42',
-                               cont_domain_name => 'debinix.tld',                               
+                               cont_domain_name => 'lxc.tld',                               
     }
                                
     hp_lxc_rpm::add_container_config { 'kronlund' :
                                cont_private_mac_addr => '52:54:00:00:00:43',
                                cont_private_ip_addr => '192.168.122.43',
-                               cont_domain_name => 'debinix.tld',                               
+                               cont_domain_name => 'lxc.tld',                               
     }
                                
     hp_lxc_rpm::add_container_config { 'git' :
                                cont_private_mac_addr => '52:54:00:00:00:44',
                                cont_private_ip_addr => '192.168.122.44',
-                               cont_domain_name => 'debinix.tld',                               
+                               cont_domain_name => 'lxc.tld',                               
     }
     
     # temporary skip fstab final entry
@@ -181,6 +181,18 @@ node 'wheezy.vm.tld' {
     
     
     ## MAINTENANCE
+
+}
+
+
+########################################################################
+
+## LXC container try-out, OracleLinux (EL6.6) - 192.168.122.40
+node 'deborg.lxc.tld' {
+
+    ## APPLICATIONS
+	# Install REDHAT packages without any special configurations
+    class { hp_install_rpms : rpms => [ "tree", "ethtool", "parted", "lsof", "curl" ] }
 
 }
 
