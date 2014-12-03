@@ -52,22 +52,23 @@ define hp_lxm_rpm::add_guest ( $run_cont, $cont_host_name, $cont_private_mac_add
         # start container if stopped
         exec { "RUN_container_$cont_host_name" :
                    path => '/root/bin:/bin:/sbin:/usr/bin:/usr/sbin',
-                command => "lxc-start -n $cont_host_name -d" 
+                command => "lxc-start -n $cont_host_name -d", 
             refreshonly => 'true',
               subscribe => File["/container/$cont_host_name/config"],
                 require => File["/container/$cont_host_name/config"],
-                 onlyif => "lxc-info -n $cont_host_name | grep "STOPPED",
+                 onlyif => "lxc-info -n $cont_host_name | grep STOPPED",
         }
 		
 	} else {
-	    # stop the container if running
+	    
+		# stop the container if running
 		exec { "STOP_container_$cont_host_name" :
 			   path => '/root/bin:/bin:/sbin:/usr/bin:/usr/sbin',
-			command => "lxc-stop -n $cont_host_name" 
+			command => "lxc-stop -n $cont_host_name", 
 		refreshonly => 'true',
 		  subscribe => File["/container/$cont_host_name/config"],
 			require => File["/container/$cont_host_name/config"],
-			 onlyif => "lxc-info -n $cont_host_name | grep "RUNNING",
+			 onlyif => "lxc-info -n $cont_host_name | grep RUNNING",
 		}
 	
 	}
