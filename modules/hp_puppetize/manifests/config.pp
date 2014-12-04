@@ -19,9 +19,18 @@ class hp_puppetize::config {
     $myhostname = $::hostname
     $mydomain = $::domain
     
-    ## DEBIAN 7 (runs Puppet 2.7)
+    ## NOTE: This needs to be updated for LXC continers at target deployment
     
-    if $::lsbdistid == 'Debian' {
+    case $myhostname {
+        'ol65', 'hphome': { $myserverdomain = $::hp_puppetize::params::server_domain_home }
+        'dl380g7': { $myserverdomain = $::hp_puppetize::params::server_domain_bahnhof }
+        'deborg','trise','kronlund','git','mc': { $myserverdomain = $::hp_puppetize::params::server_domain_home }
+        default: { fail("FAIL: Puppet server domain is missing from puppetize params-file") }
+    }
+    
+    ## DEBIAN 7
+    
+    if $::operatingsystem == 'Debian' {
             
         file { '/etc/puppet/puppet.conf' :
             ensure => present,
@@ -46,7 +55,7 @@ class hp_puppetize::config {
     
     ## Oracle Linux 6.5 (runs Puppet 3.7)
     
-    if $::lsbdistid == 'OracleServer' {
+    if $::operatingsystem == 'OracleLinux' {
             
         file { '/etc/puppet/puppet.conf' :
             ensure => present,
@@ -99,7 +108,7 @@ class hp_puppetize::config {
         }
 
         ## DEBIAN PUPPETMASTER OPTIONS
-        if $::lsbdistid == 'Debian' {
+        if $::operatingsystem == 'Debian' {
         
             # sets e.g. if puppetmaster runs as daemon (default) or not
             file { '/etc/default/puppetmaster' :
@@ -113,7 +122,7 @@ class hp_puppetize::config {
         }
         
         ## OL6 PUPPETMASTER OPTIONS
-        if $::lsbdistid == 'OracleServer' {
+        if $::operatingsystem == 'OracleLinux' {
         
             # sets e.g. if puppetmaster runs as daemon (default) or not
             file { '/etc/sysconfig/puppetmaster' :

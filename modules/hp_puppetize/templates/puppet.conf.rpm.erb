@@ -19,9 +19,9 @@
     pluginsync = true
     
 [master]    
-    server = puppet.<%= mydomain %>
-    certname = puppet.<%= mydomain %>
-    dns_alt_names = puppet.<%= mydomain %>,puppet
+    server = puppet.<%= myserverdomain %>
+    certname = puppet.<%= myserverdomain %>
+    dns_alt_names = puppet.<%= myserverdomain %>,puppet
 
 [agent]
     # The file in which puppetd stores a list of the classes
@@ -37,4 +37,4 @@
     localconfig = $vardir/localconfig
     
     certname = <%= puppetsrvfqdn %>
-    server = puppet.<%= mydomain %>
+    server = puppet.<%= myserverdomain %>

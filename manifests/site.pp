@@ -190,7 +190,12 @@ node 'wheezy.vm.tld' {
 ## LXC container try-out, OracleLinux (EL6.6) - 192.168.122.40
 node 'deborg.lxc.tld' {
 
-
+	## BASIC
+	
+	# Puppet helper routines
+    include puppet_utils
+	# Manage puppet itself
+    include hp_puppetize
 
 
     ## USER PROFILES (note e.g. user 'bekr' must first exist!)

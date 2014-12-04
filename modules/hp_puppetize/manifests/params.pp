@@ -8,5 +8,11 @@ class hp_puppetize::params {
 
     $list_puppetservers_fqdn = [ 'hphome.home.tld', 'dl380g7.debinix.org',
                                  'ol65.home.tld' ]
+                                 
+    # hard-code the puppet-server domain details - otherwise a system that does
+    # not run in the same domain fails (e.g behing NAT or in a LXC container)
+    
+    $server_domain_home = 'home.tld'
+    $server_domain_bahnhof = 'debinix.org'
 
 }

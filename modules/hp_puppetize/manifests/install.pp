@@ -10,7 +10,7 @@ class hp_puppetize::install {
     ## Install puppet agent
 	## regardless if this is the puppet server or an agent
   	    
-	if $::lsbdistid == 'Debian' {
+	if $::operatingsystem == 'Debian' {
 	
 		file { '/root/bin/puppet.exec':
 			source => 'puppet:///modules/hp_puppetize/puppet.exec.deb',
@@ -24,7 +24,7 @@ class hp_puppetize::install {
 		 allow_virtual => true,
 		}
 		
-    } elsif $::lsbdistid == 'OracleServer' {
+    } elsif $::operatingsystem == 'OracleLinux' {
 	
 		file { '/root/bin/puppet.exec':
 			source => 'puppet:///modules/hp_puppetize/puppet.exec.rpm',
@@ -60,7 +60,7 @@ class hp_puppetize::install {
     
     if  $::fqdn in $::hp_puppetize::params::list_puppetservers_fqdn  {
     
-		$ostype = $::lsbdistid	
+		$ostype = $::operatingsystem	
 	
 		if $ostype == 'Debian' {
 		
@@ -69,7 +69,7 @@ class hp_puppetize::install {
 				allow_virtual => true,
 			}
 		
-		} elsif $ostype == 'OracleServer' {
+		} elsif $ostype == 'OracleLinux' {
 		
 			package { 'puppet-server':
 				       ensure => latest,
