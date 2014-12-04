@@ -208,6 +208,8 @@ node 'deborg.lxc.tld' {
     ## APPLICATIONS
 	# Install REDHAT packages without any special configurations
     class { hp_install_rpms : rpms => [ "tree", "nano", "nmap", "curl", "bind-utils", "git" ] }
+    
+    include hp_apache2_rpm
 
     ## MAINTENANCE
 	include hp_ssh_server
