@@ -190,6 +190,16 @@ node 'wheezy.vm.tld' {
 ## LXC container try-out, OracleLinux (EL6.6) - 192.168.122.40
 node 'deborg.lxc.tld' {
 
+
+
+
+    ## USER PROFILES (note e.g. user 'bekr' must first exist!)
+    
+    include hp_root_home
+    include hp_root_bashrc
+    # add local users
+    hp_user_bashrc::config { 'bekr' : }
+
     ## APPLICATIONS
 	# Install REDHAT packages without any special configurations
     class { hp_install_rpms : rpms => [ "tree", "nano", "nmap", "curl", "bind-utils" ] }
