@@ -6,11 +6,12 @@ class hp_ssh_server::config {
     $myhostname = $::hostname
 	$mydomain = $::domain
 	
-	$ostype = $::lsbdistid
+	# works in VMs and in LXC containers
+	$ostype = $::operatingsystem
 	
 	if $ostype == 'Debian' {
 		$sshservicename = 'ssh'
-	} elsif $ostype == 'OracleServer' {
+	} elsif $ostype == 'OracleLinux' {
 		$sshservicename = 'sshd'
 	} else {
 		fail("FAIL: Unknown $ostype distribution. Aborting...")
