@@ -15,7 +15,7 @@ if [ "$?" != "0" ] ; then
     iptables -I INPUT 1 -i virbr0 -p tcp -m tcp --dport 8140 -m state --state NEW -j ACCEPT
 fi
 # accept incoming public http/DNAT traffic to containers
-iptables -L -v --line-numbers | grep dpt:80
+iptables -L -v --line-numbers | grep dpt:http
 if [ "$?" != "0" ] ; then
     iptables -I FORWARD 1 -i eth0 -o virbr0 -p tcp -m tcp --dport 80 -m state --state NEW -j ACCEPT
 fi
