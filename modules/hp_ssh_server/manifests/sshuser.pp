@@ -20,7 +20,7 @@ define hp_ssh_server::sshuser {
     }
     
     # ensure user .ssh directory exist with right permissions
-    file { '/home/$name/.ssh':
+    file { "/home/$name/.ssh":
         ensure => 'directory',
 		 owner => $name,
 		 group => $name,
