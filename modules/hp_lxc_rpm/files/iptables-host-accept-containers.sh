@@ -11,6 +11,6 @@
 ###############################################################
 # puppet server listen port 8140 from agents (default)
 iptables -L -v --line-numbers | grep dpt:8140
-if [ "$?" != "0"] ; then
+if [ "$?" != "0" ] ; then
     iptables -I INPUT 1 -i virbr0 -p tcp -m tcp --dport 8140 -m state --state NEW -j ACCEPT
 fi

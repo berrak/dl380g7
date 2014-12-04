@@ -21,7 +21,7 @@ class hp_lxc_rpm::config {
 		 source => "puppet:///modules/hp_lxc_rpm/iptables-host-accept-containers.sh",
 		  owner => 'root',
 		  group => 'root',
-		   mode => '0755',
+		   mode => '0750',
 	    require => File["/container/common-hooks"],
 	}
 	
