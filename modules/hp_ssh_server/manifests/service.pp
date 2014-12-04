@@ -3,12 +3,12 @@
 ##
 class hp_ssh_server::service {
     
-	
-	$ostype = $::lsbdistid
+	# this facter variable works in VMs and in LXC containers
+	$ostype = $::operatingsystem
 	
 	if $ostype == 'Debian' {
 		$sshservicename = 'ssh'
-	} elsif $ostype == 'OracleServer' {
+	} elsif $ostype == 'OracleLinux' {
 		$sshservicename = 'sshd'
 	} else {
 		fail("FAIL: Unknown $ostype distribution. Aborting...")

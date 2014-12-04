@@ -6,7 +6,7 @@ class hp_ssh_server::config {
     $myhostname = $::hostname
 	$mydomain = $::domain
 	
-	# works in VMs and in LXC containers
+	# this facter variable works in VMs and in LXC containers
 	$ostype = $::operatingsystem
 	
 	if $ostype == 'Debian' {
