@@ -16,3 +16,5 @@ lxc.cap.drop = setfcap setpcap
 lxc.network.name = eth0
 lxc.network.mtu = 1500
 lxc.network.hwaddr = <%= cont_private_mac_addr %>
+# iptables hook to insert rule to accept puppet agent
+lxc.hook.pre-start = /container/common-hooks/iptables-host-accept-containers.sh

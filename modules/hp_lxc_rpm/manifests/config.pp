@@ -10,4 +10,20 @@ class hp_lxc_rpm::config {
 		 group => 'root',
 	}
 	
+	# create the directory for hooks scripts
+	file { "/container/common-hooks":
+		ensure => "directory",
+		owner => 'root',
+		group => 'root',
+	}
+	
+	file { '/container/common-hooks/iptables-host-accept-containers.sh' :
+		 source => "puppet:///modules/hp_lxc_rpm/iptables-host-accept-containers.sh",
+		  owner => 'root',
+		  group => 'root',
+		   mode => '0755',
+	    require => File["/container/common-hooks"],
+	}
+	
+	
 }
