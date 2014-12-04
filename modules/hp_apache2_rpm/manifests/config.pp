@@ -14,6 +14,7 @@ class hp_apache2_rpm::config {
           group => 'root',
            mode => '0644',
          notify => Service["httpd"],
+        require => Package["httpd"],
     }
     
 }
