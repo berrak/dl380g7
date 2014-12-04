@@ -3,7 +3,7 @@
 ##
 class hp_root_bashrc::config {
 
-    $ostype = $::lsbdistid	
+    $ostype = $::operatingsystem	
 	
 	if $ostype == 'Debian' {
 	 
@@ -30,7 +30,7 @@ class hp_root_bashrc::config {
 			refreshonly => true,
 		}	
 	
-	} elsif $ostype == 'OracleServer' {
+	} elsif $ostype == 'OracleLinux' {
 	
 		file { '/root/.bash_profile':
 			source => 'puppet:///modules/hp_root_bashrc/bash_profile_rpm',

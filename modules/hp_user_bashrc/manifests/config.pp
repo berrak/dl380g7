@@ -15,12 +15,12 @@ define hp_user_bashrc::config {
 		 group => "${name}",
 	}	
 	
-    # Handle some differences between Debian and OracleServer(OracleLinux)
+    # Handle some differences between Debian and OracleLinux(OracleLinux)
 	
-    $ostype = $::lsbdistid
+    $ostype = $::operatingsystem
 
 	# replace OL6 default .bashrc (to only source global bashrc)
-    if $ostype == 'OracleServer'  {
+    if $ostype == 'OracleLinux'  {
 
 	    file { "/home/${name}/.bashrc":
 			source => "puppet:///modules/hp_user_bashrc/bashrc_rpm",
@@ -85,7 +85,7 @@ define hp_user_bashrc::config {
 				line => "[ -f ~/bashrc.d/${name} ] && source ~/bashrc.d/${name}" 
 			
 			}
-		} elsif $ostype == 'OracleServer' {
+		} elsif $ostype == 'OracleLinux' {
 		
            	file { "/home/${name}/.bash_profile":
 				content =>  template( "hp_user_bashrc/bash_profile_rpm.erb" ),
