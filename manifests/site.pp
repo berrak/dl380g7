@@ -192,7 +192,11 @@ node 'deborg.lxc.tld' {
 
     ## APPLICATIONS
 	# Install REDHAT packages without any special configurations
-    class { hp_install_rpms : rpms => [ "tree", "ethtool", "parted", "lsof", "curl" ] }
+    class { hp_install_rpms : rpms => [ "tree", "nano", "nmap", "curl", "bind-utils" ] }
+
+    ## MAINTENANCE
+	include hp_ssh_server
+    hp_ssh_server::sshuser { 'bekr' : }
 
 }
 
