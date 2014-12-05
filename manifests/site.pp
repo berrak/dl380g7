@@ -230,6 +230,13 @@ node 'deborg.lxc.tld' {
 ## LXC container try-out, OracleLinux (EL6.6) - 192.168.122.41
 node 'trise.lxc.tld' {
 
+	## BASIC
+	
+	# Puppet helper routines
+    include puppet_utils
+	# Manage puppet itself
+    include hp_puppetize
+
     # gateway is primary DNS (virbr0 runs dnsmasq service)
     class { hp_lxc_resolvconf_rpm::config :
                         lxcdomain => 'lxc.tld',
@@ -238,9 +245,20 @@ node 'trise.lxc.tld' {
                              dns3 => '208.67.220.220',                
     }
 
+    ## USER PROFILES (note e.g. user 'bekr' must first exist!)
+    
+    include hp_root_home
+    include hp_root_bashrc
+    # add local users
+    hp_user_bashrc::config { 'bekr' : }
+
     ## APPLICATIONS
 	# Install REDHAT packages without any special configurations
     class { hp_install_rpms : rpms => [ "tree", "nano", "nmap", "curl", "bind-utils" ] }
+
+    include hp_apache2_rpm
+
+    ## MAINTENANCE
 
 
 }
