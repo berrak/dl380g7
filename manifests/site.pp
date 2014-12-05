@@ -215,13 +215,33 @@ node 'deborg.lxc.tld' {
 
     ## APPLICATIONS
 	# Install REDHAT packages without any special configurations
-    class { hp_install_rpms : rpms => [ "tree", "nano", "nmap", "curl", "bind-utils", "git" ] }
+    class { hp_install_rpms : rpms => [ "tree", "nano", "nmap", "curl", "bind-utils" ] }
     
     include hp_apache2_rpm
 
     ## MAINTENANCE
 	include hp_ssh_server
     hp_ssh_server::sshuser { 'bekr' : }
+
+}
+
+########################################################################
+
+## LXC container try-out, OracleLinux (EL6.6) - 192.168.122.41
+node 'trise.lxc.tld' {
+
+    # gateway is primary DNS (virbr0 runs dnsmasq service)
+    class { hp_lxc_resolvconf_rpm::config :
+                        lxcdomain => 'lxc.tld',
+                             dns1 => '192.168.122.1',
+                             dns2 => '208.67.222.222',
+                             dns3 => '208.67.220.220',                
+    }
+
+    ## APPLICATIONS
+	# Install REDHAT packages without any special configurations
+    class { hp_install_rpms : rpms => [ "tree", "nano", "nmap", "curl", "bind-utils" ] }
+
 
 }
 
