@@ -196,6 +196,13 @@ node 'deborg.lxc.tld' {
     include puppet_utils
 	# Manage puppet itself
     include hp_puppetize
+    
+    # gateway is primary DNS (virbr0 runs dnsmasq service)
+    hp_lxc_resolvconf_rpm::config { 'lxc.tld'  :
+                        dns1 => '192.168.122.1',
+                        dns2 => '208.67.222.222',
+                        dns3 => '208.67.220.220',                
+    }
 
 
     ## USER PROFILES (note e.g. user 'bekr' must first exist!)
