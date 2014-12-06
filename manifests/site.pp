@@ -99,7 +99,7 @@ node 'ol65.home.tld' {
     
     ## APPLICATIONS
 	# Install REDHAT packages without any special configurations
-    class { hp_install_rpms : rpms => [ "tree", "ethtool", "parted", "lsof", "curl" ] }
+    class { hp_install_rpms : rpms => [ "yum-plugin-priorities", "tree", "ethtool", "parted", "lsof", "curl" ] }
     
     
     ## SECURITY
