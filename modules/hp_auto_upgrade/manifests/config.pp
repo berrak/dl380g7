@@ -18,7 +18,7 @@ class hp_auto_upgrade::config {
               group => 'root',
                mode => '0644',
         }
-    } elsif $::lsbdistid == 'OracleServer' {
+    } elsif $::operatingsystem == 'OracleLinux' {
     
         file { '/etc/cron.weekly/yum-auto-updates':
              source => "puppet:///modules/hp_auto_upgrade/yum-auto-updates",

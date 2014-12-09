@@ -22,7 +22,7 @@ class hp_puppetize::config {
     ## NOTE: This needs to be updated for LXC continers at target deployment
     
     case $myhostname {
-        'ol65', 'hphome': { $myserverdomain = $::hp_puppetize::params::server_domain_home }
+        'ol65', 'hphome', 'hp': { $myserverdomain = $::hp_puppetize::params::server_domain_home }
         'dl380g7': { $myserverdomain = $::hp_puppetize::params::server_domain_bahnhof }
         'deborg','trise','kronlund','git','mc': { $myserverdomain = $::hp_puppetize::params::server_domain_home }
         default: { fail("FAIL: Puppet server domain is missing from puppetize params-file") }
