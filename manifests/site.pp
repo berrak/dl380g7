@@ -485,15 +485,15 @@ node 'node-dl380g7.home.tld' {
 
 ########################################################################
 
-## NEW development server, Debian 7 (wheezy)
+## NEW development server, Debian 7 (wheezy) - puppet/puppetmaster 3.7.X
 node 'hp.home.tld' {
 
 	## BASIC
     
     # Puppet helper routines
-#    include puppet_utils
-#	# Manage puppet itself
-#    include hp_puppetize
+    include puppet_utils
+	# Manage puppet itself
+    include hp_puppetize
     
     ## SECURITY
 

@@ -12,3 +12,6 @@ START=yes
 
 # Startup options.
 DAEMON_OPTS=""
+
+# Required - otherwise an arbitary port is used
+PORT=8140
