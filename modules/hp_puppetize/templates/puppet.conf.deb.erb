@@ -8,7 +8,13 @@ ssldir=/var/lib/puppet/ssl
 rundir=/var/run/puppet
 factpath=$vardir/lib/facter
 
+pluginsync=true
 server = puppet.home.tld
+
+[master]
+certname=puppet.home.tld
+dns_alt_names=puppet.home.tld,puppet
+
 [agent]
 certname = <%= myhostname %>.<%= mydomain %>
 

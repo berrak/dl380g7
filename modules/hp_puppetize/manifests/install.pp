@@ -1,7 +1,10 @@
 ##
-## Manage Puppet
-## Note: Oracle Linux 6.X requires puppet-labs repository.
-##   Pre-install with: rpm -ivh http://yum.puppetlabs.com/puppetlabs-release-el-6.noarch.rpm
+## Manage Puppet (3.7.x)
+##
+## Note: Oracle Linux 6 requires puppet-labs repository.
+##   Update repositories with: rpm -ivh http://yum.puppetlabs.com/puppetlabs-release-el-6.noarch.rpm
+## Note: Debian Wheezy requires puppet-labs repository.
+##   Update repositories with: wget http://apt.puppetlabs.com/puppetlabs-release-wheezy.deb
 ##
 class hp_puppetize::install {
   

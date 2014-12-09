@@ -488,7 +488,14 @@ node 'node-dl380g7.home.tld' {
 ## NEW development server, Debian 7 (wheezy)
 node 'hp.home.tld' {
 
-	## SECURITY
+	## BASIC
+    
+    # Puppet helper routines
+    include puppet_utils
+	# Manage puppet itself
+    include hp_puppetize
+    
+    ## SECURITY
 
     # Automatic security upgrades with cron script
 	include hp_auto_upgrade
