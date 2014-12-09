@@ -491,9 +491,9 @@ node 'hp.home.tld' {
 	## BASIC
     
     # Puppet helper routines
-    include puppet_utils
-	# Manage puppet itself
-    include hp_puppetize
+#    include puppet_utils
+#	# Manage puppet itself
+#    include hp_puppetize
     
     ## SECURITY
 
