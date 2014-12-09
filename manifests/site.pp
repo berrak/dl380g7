@@ -495,10 +495,36 @@ node 'hp.home.tld' {
 	# Manage puppet itself
     include hp_puppetize
     
+    # Lan ntp server provids time services to all lan clients
+    class { 'hp_ntp' : role => 'lanserver', peerntpip => '192.168.0.111' }
+    
+    
+    ## USER PROFILES ##
+	
+	# Set up root's home directories and bash customization
+    include hp_root_home
+    include hp_root_bashrc
+    
+    # Set up user's home directories and bash customization
+    hp_user_bashrc::config { 'bekr' : }
+	hp_sudo::config { 'bekr': }
+    
+    
+    ## APPLICATIONS ##
+    
+	# DEBIAN packages without any special configurations
+    class { hp_install_debs : debs => [ "tree", "sipcalc", "lshw",
+	                                    "pydf" , "dnsutils" ] }
+    
     ## SECURITY
 
     # Automatic security upgrades with cron script
 	include hp_auto_upgrade
+
+
+    ## MAINTENANCE
+	include hp_ssh_server
+    hp_ssh_server::sshuser { 'bekr' : }
 
 }
 
