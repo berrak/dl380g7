@@ -482,6 +482,19 @@ node 'node-dl380g7.home.tld' {
     include hp_screen
 
 }
+
+########################################################################
+
+## NEW development server, Debian 7 (wheezy)
+node 'hp.home.tld' {
+
+	## SECURITY
+
+    # Automatic security upgrades with cron script
+	include hp_auto_upgrade
+
+}
+
 #
 ## eof
 #
