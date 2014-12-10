@@ -1,0 +1,17 @@
+##############################################################
+# MANAGED BY PUPPET. DO NOT EDIT. CHANGES WILL BE WIPED OUT. #
+##############################################################
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+# The primary network interface
+auto <%= host_interface %>
+allow-hotplug <%= host_interface %>
+iface <%= host_interface %> inet static
+        address <%= host_address %>
+        netmask <%= host_netmask %>
+        network <%= host_network %>
+        broadcast <%= host_broadcast %>
+        gateway <%= host_gateway %>

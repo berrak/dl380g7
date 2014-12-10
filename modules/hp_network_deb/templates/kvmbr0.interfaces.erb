@@ -1,0 +1,37 @@
+##############################################################
+# MANAGED BY PUPPET. DO NOT EDIT. CHANGES WILL BE WIPED OUT. #
+##############################################################
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+# The enslaved network interface
+auto <%= host_enslaved_interface %>
+allow-hotplug <%= host_enslaved_interface %>
+iface <%= host_enslaved_interface %> inet manual
+
+# The bridge interface
+auto <%= host_interface %>
+allow-hotplug <%= host_interface %>
+iface <%= host_interface %> inet static
+        address <%= host_address %>
+        netmask <%= host_netmask %>
+        network <%= host_network %>
+        broadcast <%= host_broadcast %>
+        gateway <%= host_gateway %>
+        # configure bridge
+        bridge_fd 0
+        bridge_maxwait 0
+        bridge_stp on
+        # bring interface and bridge up
+        pre-up ifconfig <%= host_enslaved_interface %> up
+        pre-up brctl addbr <%= host_interface %>
+        pre-up brctl addif <%= host_interface %> <%= host_enslaved_interface %>
+        pre-up ifconfig <%= host_enslaved_interface %> 0.0.0.0
+        # prepare for clean shutdown
+        post-down ifconfig <%= host_enslaved_interface %> down
+        post-down ifconfig <%= host_interface %> down
+        post-down brctl delif <%= host_interface %> <%= host_enslaved_interface %>
+        post-down brctl delbr <%= host_interface %>
+        
