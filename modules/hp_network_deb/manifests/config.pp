@@ -12,7 +12,7 @@
 #
 define hp_network_deb::config ( $ip, $netmask, $network, $enlaved_if, $gateway, $broadcast ) {
 
-	include hp_network_deb
+	include hp_network_deb::install, hp_network_deb::service
 	
 	if ( $ip == '' ) {
 		fail("FAIL: Missing given host IP address")
@@ -36,7 +36,7 @@ define hp_network_deb::config ( $ip, $netmask, $network, $enlaved_if, $gateway, 
 			  owner => 'root',
 			  group => 'root',
 			 notify => Service['networking'],
-			require => Package ['bridge-utils'],
+			require => Package['bridge-utils'],
 		}
 			 
 	} else {
@@ -46,7 +46,7 @@ define hp_network_deb::config ( $ip, $netmask, $network, $enlaved_if, $gateway, 
 			  owner => 'root',
 			  group => 'root',
 			 notify => Service['networking'],
-			require => Package ['bridge-utils'],
+			require => Package['bridge-utils'],
 		}
 	}
 	
