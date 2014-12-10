@@ -485,8 +485,9 @@ node 'node-dl380g7.home.tld' {
 
 ########################################################################
 
-## NEW development server, Debian 7 (wheezy) - puppet/puppetmaster 3.7.X
+## NEW development server, Debian 7 (wheezy) puppetmaster 3.7.X
 node 'hp.home.tld' {
+
 
 	## BASIC
     
@@ -496,14 +497,14 @@ node 'hp.home.tld' {
     include hp_puppetize
     
     # configure bridge with enslaved eth1 interface
-#    hp_network_deb::config { 'kvmbr0'  :
-#                ip => '192.168.0.66',
-#           netmask => '255.255.255.0',
-#		   network => '192.168.0.0',
-#        enlaved_if => 'eth1',
-#           gateway => '192.168.0.1',
-#         broadcast => '192.168.0.255',
-#    }
+    hp_network_deb::config { 'kvmbr0'  :
+                ip => '192.168.0.66',
+           netmask => '255.255.255.0',
+		   network => '192.168.0.0',
+        enlaved_if => 'eth1',
+           gateway => '192.168.0.1',
+         broadcast => '192.168.0.255',
+    }
     
     # Lan ntp server provids time services to all lan clients
     class { 'hp_ntp' : role => 'lanserver', peerntpip => '192.168.0.111' }
@@ -523,9 +524,9 @@ node 'hp.home.tld' {
     ## APPLICATIONS ##
     
 	# DEBIAN packages without any special configurations
-    class { hp_install_debs : debs => [ "tree", "sipcalc", "lshw",
-	                                    "pydf" , "dnsutils" ] }
+    class { hp_install_debs : debs => [ "tree", "sipcalc", "lshw", "pydf" , "dnsutils" ] }
     
+	
     ## SECURITY
 
     # Automatic security upgrades with cron script
