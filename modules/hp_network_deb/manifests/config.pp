@@ -31,8 +31,8 @@ define hp_network_deb::config ( $ip, $netmask, $network, $enlaved_if, $gateway, 
 	# configure normal interface (eth0 or eth1) or bridge
     if ( enlaved_if == '' ) {
 	
-		file { "/etc/network/interface":
-			content =>  template( "hp_network_deb/$name.interface.erb" ),
+		file { "/etc/network/interfaces":
+			content =>  template( "hp_network_deb/$name.interfaces.erb" ),
 			  owner => 'root',
 			  group => 'root',
 			 notify => Service['networking'],
@@ -41,8 +41,8 @@ define hp_network_deb::config ( $ip, $netmask, $network, $enlaved_if, $gateway, 
 			 
 	} else {
 	
-		file { "/etc/network/interface":
-			content =>  template( "hp_network_deb/$name.interface.erb" ),
+		file { "/etc/network/interfaces":
+			content =>  template( "hp_network_deb/$name.interfaces.erb" ),
 			  owner => 'root',
 			  group => 'root',
 			 notify => Service['networking'],
