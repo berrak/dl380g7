@@ -51,7 +51,7 @@ node 'ol65.home.tld' {
     # Configure initial OracleLinux EL6 container (all use libvirt 'default' net)
     # NOTE: Create container first: 'xlc-create -n <cont_name> -t oracle -- --release=6.latest'
     # NOTE: IP address and domain is used to update /etc/hosts-file in conatainer
-    # NOTE: MAC address and libvirt 'default' net and DHCP defines the container (fixed) IP
+    # NOTE: MAC address and libvirt 'default' net and DHCP defines the container (fixed) IP
     hp_lxc_rpm::add_container_config { 'deborg' :
                                cont_private_mac_addr => '52:54:00:00:00:40',
                                cont_private_ip_addr => '192.168.122.40',
