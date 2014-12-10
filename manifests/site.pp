@@ -496,14 +496,14 @@ node 'hp.home.tld' {
     include hp_puppetize
     
     # configure bridge with enslaved eth1 interface
-    hp_network_deb::config { 'kvmbr0'  :
-                ip => '192.168.0.66',
-           netmask => '255.255.255.0',
-		   network => '192.168.0.0',
-        enlaved_if => 'eth1',
-           gateway => '192.168.0.1',
-         broadcast => '192.168.0.255',
-    }
+#    hp_network_deb::config { 'kvmbr0'  :
+#                ip => '192.168.0.66',
+#           netmask => '255.255.255.0',
+#		   network => '192.168.0.0',
+#        enlaved_if => 'eth1',
+#           gateway => '192.168.0.1',
+#         broadcast => '192.168.0.255',
+#    }
     
     # Lan ntp server provids time services to all lan clients
     class { 'hp_ntp' : role => 'lanserver', peerntpip => '192.168.0.111' }
