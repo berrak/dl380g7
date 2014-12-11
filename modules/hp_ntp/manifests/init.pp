@@ -18,15 +18,15 @@ class hp_ntp(
         allow_virtual => true,
     }
     
-    $ostype = $::lsbdistid
+    $ostype = $::operatingsystem
     
-    # Handle some differences between Debian and OracleServer(OracleLinux)
+    # Handle some differences between Debian and OracleLinux(OracleLinux)
     
     if $ostype == 'Debian' {
         $ntpservicename = 'ntp'
         $ntpqbinpath = '/usr/bin/ntpq' 
     }
-    elsif $ostype == 'OracleServer'  {
+    elsif $ostype == 'OracleLinux'  {
         $ntpservicename = 'ntpd'
         $ntpqbinpath = '/usr/sbin/ntpq' 
     } else {
@@ -87,7 +87,7 @@ class hp_ntp(
     }
     
     # Enable ntpd at boot
-    if $ostype == 'OracleServer'  {
+    if $ostype == 'OracleLinux'  {
         
         exec { 'Enable_OL6_ntpd_at_boot':
 		command => '/sbin/chkconfig ntpd on',
