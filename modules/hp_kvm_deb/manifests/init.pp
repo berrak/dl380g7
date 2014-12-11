@@ -7,6 +7,6 @@ class hp_kvm_deb {
         fail("FAIL: This module is intended only for Debian!")
     }
 
-    include hp_kvm_deb::install, hp_kvm_deb::config, hp_kvm_deb::service
+    include hp_kvm_deb::install, hp_kvm_deb::config
 
 }

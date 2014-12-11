@@ -527,7 +527,7 @@ node 'hp.home.tld' {
     ## APPLICATIONS ##
     
 	# DEBIAN packages without any special configurations
-    class { hp_install_debs : debs => [ "tree", "sipcalc", "lshw", "pydf" , "dnsutils" ] }
+    class { hp_install_debs : debs => [ "tree", "sipcalc", "lshw", "pydf" , "dnsutils", "chkconfig" ] }
     
 	
     ## SECURITY
