@@ -20,15 +20,18 @@ iface <%= host_interface %> inet static
         network <%= host_network %>
         broadcast <%= host_broadcast %>
         gateway <%= host_gateway %>
+        
         # configure bridge
         bridge_fd 0
         bridge_maxwait 0
         bridge_stp on
+        
         # bring interface and bridge up
         pre-up ifconfig <%= host_enslaved_interface %> up
         pre-up brctl addbr <%= host_interface %>
         pre-up brctl addif <%= host_interface %> <%= host_enslaved_interface %>
         pre-up ifconfig <%= host_enslaved_interface %> 0.0.0.0
+        
         # prepare for clean shutdown
         post-down ifconfig <%= host_enslaved_interface %> down
         post-down ifconfig <%= host_interface %> down

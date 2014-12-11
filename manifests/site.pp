@@ -509,7 +509,8 @@ node 'hp.home.tld' {
     # Lan ntp server provids time services to all lan clients
     class { 'hp_ntp' : role => 'lanserver', peerntpip => '192.168.0.66' }
     
-	
+	# KVM host virtualisation
+	include hp_kvm_deb
 	
     
     ## USER PROFILES ##
