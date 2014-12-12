@@ -21,7 +21,11 @@ alias mv='mv -i'
 alias cls='clear'
 
 alias iptables-show='iptables -L -v --line-numbers'
+alias iptables-show-nat='iptables -t nat -L -v --line-numbers'
 alias ebtables-show='ebtables -Ln --Lmac2'
+alias ebtables-show-nat='ebtables -t nat -Ln --Lmac2'
+
+alias pu='cd /etc/puppet;pwd;git pull;puppet.exec'
 
 export PATH=$PATH:/root/bin
 export EDITOR=nano
