@@ -509,10 +509,16 @@ node 'hp.home.tld' {
     # Lan ntp server provids time services to all lan clients
     class { 'hp_ntp' : role => 'lanserver', peerntpip => '192.168.0.66' }
     
-	# KVM host virtualisation
+	# KVM host virtualisation (based on kvmbr0 - no NAT)
 	include hp_kvm_deb
 	
-    
+	# add guests (based on kvmbr0 - no NAT)
+	hp_kvm_deb::add_guest { 'trise' :
+          local_guest_gw => '192.168.0.1', local_guest_ip  => '192.168.0.41', local_mac_address => '52:54:00:00:00:41',
+		local_guest_bcst => '192.168.0.255', local_guest_netw => '192.168.0.0',
+		 local_hostname  => 'trise', bridge_name => 'kvmbr0',
+    }
+	
     ## USER PROFILES ##
 	
 	# Set up root's home directories and bash customization
