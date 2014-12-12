@@ -512,12 +512,19 @@ node 'hp.home.tld' {
 	# KVM host virtualisation (based on kvmbr0 - no NAT)
 	include hp_kvm_deb
 	
-	# add KVM guests (based on kvmbr0 - no NAT)
+	# add KVM 1st guest (based on kvmbr0 - no NAT)
 	hp_kvm_deb::add_guest { 'trise' :
           local_guest_gw => '192.168.0.1', local_guest_ip  => '192.168.0.41', local_mac_address => '52:54:00:00:00:41',
 		local_guest_bcst => '192.168.0.255', local_guest_netw => '192.168.0.0',
 		 local_hostname  => 'trise', bridge_name => 'kvmbr0',
     }
+
+	# add KVM 2nd guest (based on kvmbr0 - no NAT)	
+	hp_kvm_deb::add_guest { 'mc' :
+          local_guest_gw => '192.168.0.1', local_guest_ip  => '192.168.0.42', local_mac_address => '52:54:00:00:00:42',
+		local_guest_bcst => '192.168.0.255', local_guest_netw => '192.168.0.0',
+		 local_hostname  => 'mc', bridge_name => 'kvmbr0',
+    }	
 	
     ## USER PROFILES ##
 	
