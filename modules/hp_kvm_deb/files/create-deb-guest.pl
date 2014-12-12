@@ -30,7 +30,7 @@ if ( ! -f $original_domain_path ) {
 # Pre-check, check passed arguments
 my $num_args = $#ARGV +1 ;
 if ($num_args != 8) {
-print "\nUsage: create-deb guest.pl <new_domain> <local_gw_address> <local_ip_address> <local_mac_address> <new_broadcast> <new_network> <new_host_name> <new_bridge>\n";
+print "\nUsage: create-deb-guest.pl <new_domain> <local_gw_address> <local_ip_address> <local_mac_address> <new_broadcast> <new_network> <new_host_name> <new_bridge>\n";
 exit 2;
 }
 

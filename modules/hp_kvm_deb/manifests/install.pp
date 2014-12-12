@@ -3,7 +3,7 @@
 ##
 class hp_kvm_deb::install {
 
-    package { ["qemu-kvm", "libvirt-bin", "virtinst" ] :
+    package { ["qemu-kvm", "libvirt-bin", "virtinst", "liblog-log4perl-perl" ] :
                ensure => present,
         allow_virtual => true,
     }
