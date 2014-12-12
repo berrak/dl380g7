@@ -14,7 +14,7 @@
 define hp_kvm_deb::add_guest ( $local_guest_gw, $local_guest_ip, $local_mac_address, $local_guest_bcst, $local_guest_netw, $local_hostname, $bridge_name ) {
 
     
-	if ! ( $::operatingsystem != 'Debian' ) {
+	if ( $::operatingsystem != 'Debian' ) {
         fail("FAIL: Aborting. This module (add_guest) is only for Debian based hosts!")
     }
 	
