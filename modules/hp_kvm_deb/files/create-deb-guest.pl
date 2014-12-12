@@ -69,9 +69,16 @@ INFO "Twig done with XML-processing of $xmlpathfile";
 
 # 3. Clean new image to sane default before first use with 'virt-sysprep'
 #    Note cannot expect to set hostname (accepts only a-z) equal to new-domain name!
+#####################################################################################
+## If (3) and (4) deos not look like it work, e.g. the hostname is not changed nor
+## ipaddreses etc. Try 'update-guestfs-appliance' - it worked with Debian wheezy.
+## https://www.redhat.com/archives/libguestfs/2012-May/msg00158.html
+#####################################################################################
 
 INFO "virt-sysprep -d $new_domain --enable udev-persistent-net,hostname,logfiles,bash-history --hostname $new_host_name";
 system("virt-sysprep -d $new_domain --enable udev-persistent-net,hostname,logfiles,bash-history --hostname $new_host_name");
+
+#
 
 # 4. Set assigned ip address and domain name to new guest with 'virt-edit'
 system("virt-edit -d $new_domain /etc/network/interfaces -e 's/address 192.168.0.40/address $new_ip/'");
