@@ -34,6 +34,7 @@ define hp_kvm_deb::add_guest ( $local_guest_gw, $local_guest_ip, $local_mac_addr
 		  owner => 'root',
 		  group => 'root',
 		   mode => '0600',
+		require => File['/root/bin/create-deb-guest.pl'],
 	}	
 		
 	# create the new guest (from '/data/vm-images/wheezy.img', must exist) 
