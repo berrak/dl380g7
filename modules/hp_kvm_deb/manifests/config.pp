@@ -26,7 +26,14 @@ class hp_kvm_deb::config {
 		require => File['/data/vm-images'],
 	}
 	
-
+	# auto-start pool at boot
+	exec { 'auto_start_pool_vm_images' :
+		   path => "/bin:/sbin:/usr/bin:/usr/sbin",
+		command => "virsh pool-autostart vm-images",
+		 unless => "virsh pool-list | grep vm-images | grep yes",
+		require => File['/data/vm-images'],
+	}
+	
     # Disable 'default' network
 	# run this only if 'default' is already started  
 	exec { "Disable_default_network" :
