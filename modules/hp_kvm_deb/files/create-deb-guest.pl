@@ -23,7 +23,7 @@ my $log_conf = q(
     log4perl.appender.LOG1.filename  = /var/log/perl.log
     log4perl.appender.LOG1.mode      = append
     log4perl.appender.LOG1.layout    = Log::Log4perl::Layout::PatternLayout
-    log4perl.appender.LOG1.layout.ConversionPattern = %d %p %m %n   
+    log4perl.appender.LOG1.layout.ConversionPattern = %d %p %F %m %n   
 );
 Log::Log4perl::init(\$log_conf);
 
@@ -65,6 +65,7 @@ my $new_bridge = $ARGV[7];
 
 $logger->info("virt-clone -o $original_domain_name --mac=$new_mac -n $new_domain -f $out_image_path");
 system("virt-clone -o $original_domain_name --mac=$new_mac -n $new_domain -f $out_image_path");
+$logger->info("virt-clone done created new domain $new_domain");
 
 # 2. Update the domain configuration with new mac address
 my $xmlpathfile = "/etc/libvirt/qemu/" . $new_domain . ".xml" ;
