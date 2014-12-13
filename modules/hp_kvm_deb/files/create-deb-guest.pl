@@ -14,8 +14,21 @@
 use strict;
 use warnings;
 use XML::Twig;
-use Log::Log4perl qw(:easy);
-Log::Log4perl->easy_init($INFO);
+use Log::Log4perl;
+
+# initilize logger
+my $log_conf = q(
+    log4perl.rootLogger              = DEBUG, LOG1
+    log4perl.appender.LOG1           = Log::Log4Perl::Appender::File
+    log4perl.appender.LOG1.filename  = /var/log/perl.log
+    log4perl.appender.LOG1.mode      = append
+    log4perl.appender.LOG1.layout    = Log::Log4Perl::Layout::PatternLayout
+    log4perl.appender.LOG1.layout.ConversionPattern = %d %p %m %n   
+);
+Log::Log4Perl::init(\$log_conf);
+
+my $logger = Log::Log4perl->get_logger();
+
 
 my $original_domain_name = 'wheezy';
 my $original_domain_path = "/etc/libvirt/qemu/" . $original_domain_name . ".xml" ;
@@ -25,16 +38,16 @@ my $original_domain_path = "/etc/libvirt/qemu/" . $original_domain_name . ".xml"
 
 # Pre-check, does the 'original domain' exist on host
 if ( ! -f $original_domain_path ) {
-    ERROR "\nMissing original guest image $original_domain_path - cannot proceed!\n";
+    $logger->error("Missing original guest image $original_domain_path - cannot proceed!");
     exit 1;
 }
 
 # Pre-check, check passed arguments
 my $num_args = $#ARGV +1 ;
 if ($num_args != 8) {
-print "\nUsage: create-deb-guest.pl <new_domain> <local_gw_address> <local_ip_address> <local_mac_address> <new_broadcast> <new_network> <new_host_name> <new_bridge>\n";
-ERROR "Wrong number of arguments ($num_args) passed to create-deb-guest.pl";
-exit 2;
+    print "\nUsage: create-deb-guest.pl <new_domain> <local_gw_address> <local_ip_address> <local_mac_address> <new_broadcast> <new_network> <new_host_name> <new_bridge>\n";
+    $logger->error("Wrong number of arguments ($num_args) passed to create-deb-guest.pl");
+    exit 2;
 }
 
 # 1. Clone the existing original image (e.g. from /data/vm-images/wheezy.img)
@@ -50,7 +63,7 @@ my $new_net = $ARGV[5];
 my $new_host_name = $ARGV[6];
 my $new_bridge = $ARGV[7];
 
-INFO "virt-clone -o $original_domain_name --mac=$new_mac -n $new_domain -f $out_image_path";
+$logger->info("virt-clone -o $original_domain_name --mac=$new_mac -n $new_domain -f $out_image_path");
 system("virt-clone -o $original_domain_name --mac=$new_mac -n $new_domain -f $out_image_path");
 
 # 2. Update the domain configuration with new mac address
@@ -65,7 +78,7 @@ my $twig = XML::Twig->new(
 $twig->parsefile_inplace( $xmlpathfile, '.tmp' );
 $twig->flush;
 
-INFO "Twig done with XML-processing of $xmlpathfile";
+$logger->info("Twig done with XML-processing of $xmlpathfile");
 
 # 3. Clean new image to sane default before first use with 'virt-sysprep'
 #    Note cannot expect to set hostname (accepts only a-z) equal to new-domain name!
@@ -75,7 +88,7 @@ INFO "Twig done with XML-processing of $xmlpathfile";
 ## https://www.redhat.com/archives/libguestfs/2012-May/msg00158.html
 #####################################################################################
 
-INFO "virt-sysprep -d $new_domain --enable udev-persistent-net,hostname,logfiles,bash-history --hostname $new_host_name";
+$logger->info("virt-sysprep -d $new_domain --enable udev-persistent-net,hostname,logfiles,bash-history --hostname $new_host_name");
 system("virt-sysprep -d $new_domain --enable udev-persistent-net,hostname,logfiles,bash-history --hostname $new_host_name");
 
 #
@@ -88,7 +101,7 @@ system("virt-edit -d $new_domain /etc/network/interfaces -e 's/network 192.168.0
 
 system("virt-edit -d $new_domain /etc/hosts -e 's/192.168.0.40/$new_ip/'");
 system("virt-edit -d $new_domain /etc/hosts -e 's/$original_domain_name/$new_host_name/g'");
-INFO "virt-edit done of domain $new_domain";
+$logger->info("virt-edit done of domain $new_domain");
 
  ### SUBROUTINE FOR XML ###
 
