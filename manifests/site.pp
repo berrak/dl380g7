@@ -584,6 +584,9 @@ node 'trise.home.tld' {
     ## BASIC
     include hp_puppetize
     include puppet_utils
+	
+	# hosts file (hostname, domain name for puppetserver is usually 'puppet.home.tld' and master ip address)
+	class { hp_hosts::config : srv_hostname => 'puppet', srv_domain => 'home.tld', srv_host_ip => '192.168.0.66' }
 
     ## SECURITY
 
