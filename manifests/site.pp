@@ -11,6 +11,7 @@ node 'ol65.home.tld' {
     
     # Enable dnsmasq for DNS
     class { hp_dnsmasq::config :
+				primary_interface => 'eth0',
                 ispdns1 => '208.67.222.222',
                 ispdns2 => '208.67.220.220',
                 srv_hostname => 'ol65',
@@ -493,6 +494,7 @@ node 'hp.home.tld' {
     
     # Enable dnsmasq for DNS
     class { hp_dnsmasq::config :
+				primary_interface => 'eth1',
                 ispdns1 => '208.67.222.222',
                 ispdns2 => '208.67.220.220',
                 srv_hostname => 'hp',

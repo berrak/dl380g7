@@ -2,7 +2,7 @@
 ## This class manage DNS, resolv.conf and the 'hosts' file.
 ## The 'puppetmaster' name resolution is always set to "puppet.$srv_domain" in 'hosts'.
 ##
-class hp_dnsmasq::config ( $ispdns1='', $ispdns2='', $srv_hostname='', $srv_domain='' ) {
+class hp_dnsmasq::config ( $primary_interface='', $ispdns1='', $ispdns2='', $srv_hostname='', $srv_domain='' ) {
 
     include hp_dnsmasq
      
