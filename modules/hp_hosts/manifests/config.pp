@@ -2,7 +2,7 @@
 ## NOTE: This class manage hosts file on puppet-agents only
 ## (not puppetservers -- use dnsmasq module for hosts file)
 ## 
-class hp_hosts::config ( $srv_hostname = '', $srv_domain = '', $srv_host_ip= '' ) {
+class hp_hosts::config ( $srv_hostname, $srv_domain, $srv_host_ip ) {
 
     # template variables for node
     $myhostname = $::hostname
@@ -13,7 +13,7 @@ class hp_hosts::config ( $srv_hostname = '', $srv_domain = '', $srv_host_ip= '' 
     if $myhostname != $srv_hostname {
 
         file { '/etc/hosts' :
-            content =>  template( "hp_hosts/$puppet_hosts.erb" ),    
+            content =>  template( "hp_hosts/${puppet_hosts.erb}" ),    
               owner => 'root',
               group => 'root',
                mode => '0644',
