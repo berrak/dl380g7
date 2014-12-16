@@ -581,6 +581,9 @@ node 'hp.home.tld' {
 
 node 'trise.home.tld' {
 
+    ## BASIC
+    include hp_puppetize
+    include puppet_utils
 
     ## SECURITY
 
