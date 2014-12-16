@@ -9,7 +9,7 @@ class hp_dnsmasq::install {
     }
 
     # ensure recognized opearting system
-    if ( $::operatingsystem != in ['OracleLinux', 'Debian' ] ) {
+    if ( $::operatingsystem in [ 'OracleLinux', 'Debian' ] ) {
 
     	fail("FAIL: Unknown $::operatingsystem distribution. Aborting...")
     }
