@@ -1,12 +1,7 @@
-# /etc/ntp.conf, configuration for ntpd; see ntp.conf(5) for help
 ##############################################################
 # MANAGED BY PUPPET. DO NOT EDIT. CHANGES WILL BE WIPED OUT. #
 ##############################################################
-#
-##############################################################
-# This is the local LAN NTP client configuration file
-##############################################################
-# THIS FILE IS NOT USED IF NO CLIENT ON PRIVAT LAN
+# This is the local LAN NTP client configuration file.       #
 ##############################################################
 
 driftfile /var/lib/ntp/ntp.drift
@@ -20,7 +15,7 @@ filegen peerstats file peerstats type day enable
 filegen clockstats file clockstats type day enable
 
 # Use our internal NTP server for internal clients
-server 192.168.0.1 iburst
+server <%= local_ntp_srvip %> iburst
 server 127.127.1.0   # local clock
 fudge 127.127.1.0 stratum 10
 

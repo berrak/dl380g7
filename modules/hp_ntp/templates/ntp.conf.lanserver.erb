@@ -1,8 +1,5 @@
-# /etc/ntp.conf, configuration for ntpd; see ntp.conf(5) for help
 ##############################################################
 # MANAGED BY PUPPET. DO NOT EDIT. CHANGES WILL BE WIPED OUT. #
-##############################################################
-#
 ##############################################################
 # This is the LAN NTP server configuration file
 # managed by puppet on the local master time server.
@@ -56,7 +53,7 @@ restrict 127.0.0.1
 #restrict ::1
 
 # Privat lan subnet have direct access, if any
-restrict 192.168.0.0 mask 255.255.255.0 nomodify notrap
+restrict <%= local_ntp_srvnet %> mask <%= local_ntp_srvmask %> nomodify notrap
 
 # Don't broadcast the world! Not required for LAN clients.
 # broadcast XXX.XXX.XXX.XXX
