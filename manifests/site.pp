@@ -13,7 +13,8 @@ node 'ol65.home.tld' {
     class { hp_dnsmasq::config :
                 ispdns1 => '208.67.222.222',
                 ispdns2 => '208.67.220.220',
-                real_hostname => 'ol65',
+                srv_hostname => 'ol65',
+				srv_domain => 'home.tld',
     }
     
     # above DNS must resolv before 'hp_pupetize'. Note that 'puppet-server'
@@ -488,9 +489,19 @@ node 'node-dl380g7.home.tld' {
 ## NEW development server, Debian 7 (wheezy) puppetmaster 3.7.X
 node 'hp.home.tld' {
 
-
 	## BASIC
     
+    # Enable dnsmasq for DNS
+    class { hp_dnsmasq::config :
+                ispdns1 => '208.67.222.222',
+                ispdns2 => '208.67.220.220',
+                srv_hostname => 'hp',
+				srv_domain => 'home.tld',
+    }	
+
+    # above DNS must resolv before 'hp_pupetize'. Note that 'puppetmaster'. The host
+    # will be named 'puppet'. Here use latest puppet version 3.7 (not Debain default)
+	
     # Puppet helper routines
     include puppet_utils
 	# Manage puppet itself
@@ -559,6 +570,14 @@ node 'hp.home.tld' {
     ## MAINTENANCE
 	include hp_ssh_server
     hp_ssh_server::sshuser { 'bekr' : }
+
+}
+
+#################################################
+#       VIRTUAL GUESTS IN HP.HOME.TLD           #
+#################################################
+
+node 'trise.home.tld' {
 
 }
 

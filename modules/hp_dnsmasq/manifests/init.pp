@@ -3,6 +3,6 @@
 ##
 class hp_dnsmasq {
 
-    include hp_dnsmasq::install, hp_dnsmasq::config, hp_dnsmasq::service
+    include hp_dnsmasq::install, hp_dnsmasq::config, hp_dnsmasq::service, hp_dnsmasq::params
 
 }

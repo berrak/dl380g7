@@ -1,24 +1,24 @@
 ##
-## This class manage DNS, resolv.conf and the 'hosts' file
+## This class manage DNS, resolv.conf and the 'hosts' file.
+## The 'puppetmaster' name resolution is always set to "puppet.$srv_domain" in 'hosts'.
 ##
-class hp_dnsmasq::config ( $ispdns1='', $ispdns2='', $real_hostname='' ) {
+class hp_dnsmasq::config ( $ispdns1='', $ispdns2='', $srv_hostname='', $srv_domain='' ) {
 
     include hp_dnsmasq
-    
-    # template variables
-    
+     
+    # template variables   
     $mydns1 = $ispdns1
     $mydns2 = $ispdns2 
     
-    $puppetsrvfqdn = $::fqdn
-    $myhostname = $::hostname
+    $myhostname = $srv_hostname
+    $mydomain = $srv_domain
+    
     $hostip = $::ipaddress
-    $mydomain = $::domain
 
-    if $myhostname == $real_hostname {
+    if ( $srv_hostname in $::hp_dnsmasq::params::puppet_server_list ) {
 
         file { '/etc/hosts' :
-            content =>  template( "hp_dnsmasq/${real_hostname}_hosts.erb" ),    
+            content =>  template( "hp_dnsmasq/$srv_hostname_hosts.erb" ),    
               owner => 'root',
               group => 'root',
                mode => '0644',
@@ -42,7 +42,7 @@ class hp_dnsmasq::config ( $ispdns1='', $ispdns2='', $real_hostname='' ) {
         
     }
     else {
-        fail("FAIL: Hostname ${real_hostname} unknown. Aborting...")
+        fail("FAIL: Hostname $srv_hostname is not a puppetmaster!. Aborting...")
     }
 
 }
