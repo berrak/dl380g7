@@ -2,8 +2,8 @@
 ##############################################################
 # MANAGED BY PUPPET. DO NOT EDIT. CHANGES WILL BE WIPED OUT. #
 ##############################################################
-FQDN=`hostname -f`
-DEBRELEASE=`lsb_release -cs`
+FQDN=$(hostname -f)
+DEBRELEASE=$(lsb_release -cs)
 
 echo "#######################" >> /var/log/apt-security-updates
 date +%Y-%m-%d-UTC-%H:%M:%S >> /var/log/apt-security-updates
