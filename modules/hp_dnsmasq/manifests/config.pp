@@ -18,7 +18,7 @@ class hp_dnsmasq::config ( $ispdns1='', $ispdns2='', $srv_hostname='', $srv_doma
     if ( $srv_hostname in $::hp_dnsmasq::params::puppet_server_list ) {
 
         file { '/etc/hosts' :
-            content =>  template( "hp_dnsmasq/$srv_hostname_hosts.erb" ),    
+            content =>  template( "hp_dnsmasq/${srv_hostname}_hosts.erb" ),    
               owner => 'root',
               group => 'root',
                mode => '0644',
@@ -42,7 +42,7 @@ class hp_dnsmasq::config ( $ispdns1='', $ispdns2='', $srv_hostname='', $srv_doma
         
     }
     else {
-        fail("FAIL: Hostname $srv_hostname is not a puppetmaster!. Aborting...")
+        fail("FAIL: Hostname ${srv_hostname} is not a puppetmaster!. Aborting...")
     }
 
 }
