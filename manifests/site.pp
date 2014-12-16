@@ -581,6 +581,12 @@ node 'hp.home.tld' {
 
 node 'trise.home.tld' {
 
+
+    ## SECURITY
+
+    # Automatic security upgrades with cron script
+	include hp_auto_upgrade
+
 }
 
 #
