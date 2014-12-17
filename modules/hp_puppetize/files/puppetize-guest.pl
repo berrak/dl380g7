@@ -45,7 +45,7 @@ use File::Basename qw( basename );
 use Net::Domain qw(hostname hostdomain);
 
 
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 our $FALSE = 0;
 our $OK = 0;
 
@@ -275,7 +275,6 @@ server=puppet.$nodedomain
 [agent]
 certname=$nodehost.$nodedomain
 EOF
-
         close $fh;
         $our_main_error_flag = $OK;  
 
@@ -330,6 +329,9 @@ sub init {
     my $linux_dist ; 
     my $init_error_flag = $FALSE;
     
+    # required for logging function
+    my $log4perl_pkg = 'liblog-log4perl-perl';
+    
     # initilize globals
     $our_main_error_flag = $FALSE;
     $our_script = basename($0);
@@ -338,6 +340,9 @@ sub init {
     if ( $EFFECTIVE_USER_ID != 0 ) {
         die "Script $our_script must run as root - Aborting...";
     }
+    
+    # install if missing perl library
+    system("dpkg -s $log4perl_pkg 2>/dev/null >/dev/null || aptitude -y install $log4perl_pkg");
     
     # initilize logger
     my $log_conf = q(
