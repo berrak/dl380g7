@@ -45,7 +45,7 @@ use File::Basename qw( basename );
 use Net::Domain qw(hostname hostdomain);
 
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 our $FALSE = 0;
 our $OK = 0;
 
@@ -61,7 +61,7 @@ our $our_main_error_flag ;
 # MAIN PROGRAM STARTS HERE #
 ############################
 
-my ( $puppetmaster_ip, $linux_distribution ) = init( $ARGV );
+my ( $puppetmaster_ip, $linux_distribution ) = init();
 
 if ( $our_main_error_flag == $OK ) {
     
@@ -310,8 +310,8 @@ sub update_local_hosts_file {
 #  INIT- AND FINISH SUBS   #
 ############################
 #
-# Usage     : init($ARGV)
-# Arguments : $ARGV - command line argument (puppetmaster ipaddress and linux distribution)
+# Usage     : init()
+# Arguments : N/A
 # Purpose   : Initilize logger and validate cli input
 # Returns   : Normally returns to caller with 0
 #             or with exit code 1 on error.
@@ -319,8 +319,8 @@ sub update_local_hosts_file {
 #
 sub init {
     
-    my $puppet_master_ip = shift @_;    
-    my $linux_dist = shift @_;
+    my $puppet_master_ip = shift @ARGV;    
+    my $linux_dist = shift @ARGV;
     
     my $num_args = $#ARGV +1 ;
     my $init_error_flag = $FALSE;
