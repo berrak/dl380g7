@@ -624,6 +624,24 @@ node 'trise.home.tld' {
 
 }
 
+###############################################################
+
+node 'mc.home.tld' {
+
+    # Automatic security upgrades with cron script
+	include hp_auto_upgrade
+	
+}
+
+###############################################################
+
+node 'deborg.home.tld' {
+
+    # Automatic security upgrades with cron script
+	include hp_auto_upgrade
+	
+}
+
 #
 ## eof
 #
