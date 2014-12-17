@@ -45,7 +45,7 @@ use File::Basename qw( basename );
 use Net::Domain qw(hostname hostdomain);
 
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 our $FALSE = 0;
 our $OK = 0;
 
@@ -199,7 +199,7 @@ sub install_puppet_agent {
         # install debian puppet agent
         if ( $our_main_error_flag == $OK ) {
             
-            system("aptitude update && aptitude install puppet");
+            system("aptitude update && aptitude -y install puppet");
             $exitvalue = $? >> 8;
             $exitsignal = $? & 127;
             
@@ -260,8 +260,15 @@ sub configure_puppet_agent {
     my $puppet_conf;
     my $nodehost = hostname();
     my $nodedomain = hostdomain();
-    
-    $puppet_conf = <<"END";
+  
+    # Replace default puppet.conf with above
+    if ( open(my $fh, ">", "/etc/puppet/puppet.conf" ) != $OK ) {
+        $our_logger->error("Failed to replace puppet.conf");      
+        $our_main_error_flag = 1;         
+    } else {   
+        
+
+        print $fh <<EOF;
 [main]
 logdir=/var/log/puppet
 vardir=/var/lib/puppet
@@ -270,14 +277,10 @@ rundir=/var/run/puppet
 server=puppet.$nodedomain
 [agent]
 certname=$nodehost.$nodedomain
-END
+EOF
 
-    # Replace default puppet.conf with above
-    if ( system("cat $puppet_conf > /etc/puppet/puppet.conf") != $OK ) {
-        $our_logger->error("Failed to replace puppet.conf");      
-        $our_main_error_flag = 1;         
-    } else {
-        $our_main_error_flag = $OK;         
+        close $fh;
+        $our_main_error_flag = $OK;    
     }
     
 }
