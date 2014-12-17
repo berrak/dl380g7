@@ -502,7 +502,7 @@ node 'hp.home.tld' {
     }	
 
     # above DNS must resolv before 'hp_pupetize'. Note that 'puppetmaster'. The host
-    # will be named 'puppet'. Here use latest puppet version 3.7 (not Debain default)
+    # will be named 'puppet'. Here use latest puppet version 3.7 (not Debian default)
 	
     # Puppet helper routines
     include puppet_utils

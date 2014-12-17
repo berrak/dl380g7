@@ -134,16 +134,16 @@ class hp_puppetize::config {
                 notify => Class['hp_puppetize::service'],
             }
         }     
-        ## DISABLE -- rewrite module set parameter from site.pp
-        # install job for puppetserver to pull updates from dl380g7.git repo
-        #file { '/etc/cron.daily/puppet-gitpull.sh' :
-        #    ensure => present,
-        #    source => 'puppet:///modules/hp_puppetize/puppet-gitpull.sh',
-        #     owner => 'root',
-        #     group => 'root',
-        #      mode => '0755',
-        #   require => Class['hp_puppetize::install'],
-        #}        
+
+        # install helper script to set up a puppet agent on virtual guest node
+        file { '/root/bin/puppetize-guest.pl' :
+            ensure => present,
+            source => 'puppet:///modules/hp_puppetize/puppetize-guest.pl',
+             owner => 'root',
+             group => 'root',
+              mode => '0755',
+           require => Class['hp_puppetize::install'],
+        }        
 
     }
 
