@@ -45,7 +45,7 @@ use File::Basename qw( basename );
 use Net::Domain qw(hostname hostdomain);
 
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 our $FALSE = 0;
 our $OK = 0;
 
@@ -260,13 +260,10 @@ sub configure_puppet_agent {
     my $puppet_conf;
     my $nodehost = hostname();
     my $nodedomain = hostdomain();
+    my $puppetconfpath = "/etc/puppet/puppet.conf";
   
     # Replace default puppet.conf with above
-    if ( open(my $fh, ">", "/etc/puppet/puppet.conf" ) != $OK ) {
-        $our_logger->error("Failed to replace puppet.conf");      
-        $our_main_error_flag = 1;         
-    } else {   
-        
+    if ( open my $fh, '>', $puppetconfpath ) {
 
         print $fh <<EOF;
 [main]
@@ -280,9 +277,14 @@ certname=$nodehost.$nodedomain
 EOF
 
         close $fh;
-        $our_main_error_flag = $OK;    
-    }
-    
+        $our_main_error_flag = $OK;  
+
+    } else {
+        
+        $our_logger->error("Failed to replace $puppetconfpath");      
+        $our_main_error_flag = 1;
+    }    
+     
 }
 
 #
