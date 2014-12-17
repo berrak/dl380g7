@@ -45,7 +45,7 @@ use File::Basename qw( basename );
 use Net::Domain qw(hostname hostdomain);
 
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 our $FALSE = 0;
 our $OK = 0;
 
@@ -61,7 +61,7 @@ our $our_main_error_flag ;
 # MAIN PROGRAM STARTS HERE #
 ############################
 
-my ( $puppetmaster_ip, $linux_distribution ) = init();
+my ( $puppetmaster_ip, $linux_distribution ) = init(\@ARGV);
 
 if ( $our_main_error_flag == $OK ) {
     
@@ -310,8 +310,8 @@ sub update_local_hosts_file {
 #  INIT- AND FINISH SUBS   #
 ############################
 #
-# Usage     : init()
-# Arguments : N/A
+# Usage     : init(\@ARGV)
+# Arguments : Ref to @ARGV -- command line list
 # Purpose   : Initilize logger and validate cli input
 # Returns   : Normally returns to caller with 0
 #             or with exit code 1 on error.
@@ -319,10 +319,10 @@ sub update_local_hosts_file {
 #
 sub init {
     
-    my $puppet_master_ip = shift @ARGV;    
-    my $linux_dist = shift @ARGV;
-    
-    my $num_args = $#ARGV +1 ;
+    my $ref_argv = shift @_;
+    my $num_args = scalar @$ref_argv ;
+    my $puppet_master_ip ;
+    my $linux_dist ; 
     my $init_error_flag = $FALSE;
     
     # initilize globals
@@ -353,6 +353,8 @@ sub init {
         $our_logger->error("Wrong number of arguments ($num_args) passed to $our_script");
         $init_error_flag = 1;
     } else {
+        $puppet_master_ip = $ref_argv->[0] ;
+        $linux_dist = $ref_argv->[1] ; 
          
         # validate
         if ( $linux_dist eq "wheezy" ) {

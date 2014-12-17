@@ -141,7 +141,7 @@ class hp_puppetize::config {
             source => 'puppet:///modules/hp_puppetize/puppetize-guest.pl',
              owner => 'root',
              group => 'root',
-              mode => '0755',
+              mode => '0700',
            require => Class['hp_puppetize::install'],
         }        
 
