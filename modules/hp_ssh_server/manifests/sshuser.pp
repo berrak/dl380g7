@@ -16,7 +16,7 @@ define hp_ssh_server::sshuser {
             command => "usermod -a -G sshusers $name",
                path => '/usr/bin:/usr/sbin:/bin',
              unless => "cat /etc/group | grep sshusers | grep $name",
-            require => Class["hp_ssh_server"],
+            require => Class["hp_ssh_server::config"],
     }
     
     # ensure user .ssh directory exist with right permissions
