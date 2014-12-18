@@ -608,7 +608,7 @@ node 'trise.home.tld' {
     ## APPLICATIONS ##
     
 	# DEBIAN packages without any special configurations
-    class { hp_install_debs : debs => [ "tree", "sipcalc", "lshw", "pydf" , "dnsutils", "chkconfig" ] }
+    class { hp_install_debs : debs => [ "tree", "sipcalc", "lshw", "pydf" , "dnsutils", "chkconfig", "liblog-log4perl-perl" ] }
 
 
 
@@ -628,8 +628,44 @@ node 'trise.home.tld' {
 
 node 'mc.home.tld' {
 
-    # Automatic security upgrades with cron script
+    ## BASIC
+    include hp_puppetize
+    include puppet_utils
+	
+	# hosts file (hostname, domain name for puppetserver is usually 'puppet.home.tld' and master ip address)
+	class { hp_hosts::config : srv_hostname => 'puppet', srv_domain => 'home.tld', srv_host_ip => '192.168.0.66' }
+
+    # ntp service for client
+    class { 'hp_ntp' : role => 'lanclient', local_ntp_srvip => '192.168.0.66',
+                      local_ntp_srvnet => '192.168.0.0', local_ntp_srvmask => '255.255.255.0' }
+
+
+    ## USER PROFILES ##
+	
+	# Set up root's home directories and bash customization
+    include hp_root_home
+    include hp_root_bashrc
+    
+    # Set up user's home directories and bash customization
+    hp_user_bashrc::config { 'bekr' : }
+	hp_sudo::config { 'bekr': }
+    
+    
+    ## APPLICATIONS ##
+    
+	# DEBIAN packages without any special configurations
+    class { hp_install_debs : debs => [ "tree", "sipcalc", "lshw", "pydf" , "dnsutils", "chkconfig", "liblog-log4perl-perl" ] }
+    
+	
+    ## SECURITY	
+	
+	# Automatic security upgrades with cron script
 	include hp_auto_upgrade
+	
+	
+    ## MAINTENANCE
+#	include hp_ssh_server
+#    hp_ssh_server::sshuser { 'bekr' : }		
 	
 }
 
@@ -637,8 +673,43 @@ node 'mc.home.tld' {
 
 node 'deborg.home.tld' {
 
+    ## BASIC
+    include hp_puppetize
+    include puppet_utils
+	
+	# hosts file (hostname, domain name for puppetserver is usually 'puppet.home.tld' and master ip address)
+	class { hp_hosts::config : srv_hostname => 'puppet', srv_domain => 'home.tld', srv_host_ip => '192.168.0.66' }
+
+    # ntp service for client
+    class { 'hp_ntp' : role => 'lanclient', local_ntp_srvip => '192.168.0.66',
+                      local_ntp_srvnet => '192.168.0.0', local_ntp_srvmask => '255.255.255.0' }
+
+
+    ## USER PROFILES ##
+	
+	# Set up root's home directories and bash customization
+    include hp_root_home
+    include hp_root_bashrc
+    
+    # Set up user's home directories and bash customization
+    hp_user_bashrc::config { 'bekr' : }
+	hp_sudo::config { 'bekr': }
+    
+    
+    ## APPLICATIONS ##
+    
+	# DEBIAN packages without any special configurations
+    class { hp_install_debs : debs => [ "tree", "sipcalc", "lshw", "pydf" , "dnsutils", "chkconfig", "liblog-log4perl-perl" ] }
+
+
+    ## SECURITY
+
     # Automatic security upgrades with cron script
 	include hp_auto_upgrade
+	
+    ## MAINTENANCE
+#	include hp_ssh_server
+#    hp_ssh_server::sshuser { 'bekr' : }			
 	
 }
 
