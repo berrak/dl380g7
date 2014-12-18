@@ -571,6 +571,8 @@ node 'hp.home.tld' {
 
 
     ## MAINTENANCE
+	#  Note: Before installing new ssh-configuration, first create rsa keys on remost
+	#  managing host and "$ ssh-copy-id -i /home/bekr/.ssh/id_hp_rsa bekr@192.168.0.66"
 	include hp_ssh_server
     hp_ssh_server::sshuser { 'bekr' : }
 
