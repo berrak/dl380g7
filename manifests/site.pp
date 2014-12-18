@@ -618,6 +618,8 @@ node 'trise.home.tld' {
 	include hp_auto_upgrade
 	
     ## MAINTENANCE
+	#  Note: Before installing new ssh-configuration, first create rsa keys on remost
+	#  managing host and "$ ssh-copy-id -i /home/bekr/.ssh/id_trise_rsa bekr@192.168.0.41"
 	include hp_ssh_server
     hp_ssh_server::sshuser { 'bekr' : }	
 	
@@ -664,8 +666,10 @@ node 'mc.home.tld' {
 	
 	
     ## MAINTENANCE
-#	include hp_ssh_server
-#    hp_ssh_server::sshuser { 'bekr' : }		
+	#  Note: Before installing new ssh-configuration, first create rsa keys on remost
+	#  managing host and "$ ssh-copy-id -i /home/bekr/.ssh/id_mc_rsa bekr@192.168.0.42"
+	include hp_ssh_server
+    hp_ssh_server::sshuser { 'bekr' : }		
 	
 }
 
@@ -708,8 +712,10 @@ node 'deborg.home.tld' {
 	include hp_auto_upgrade
 	
     ## MAINTENANCE
-#	include hp_ssh_server
-#    hp_ssh_server::sshuser { 'bekr' : }			
+	#  Note: Before installing new ssh-configuration, first create rsa keys on remost
+	#  managing host and "$ ssh-copy-id -i /home/bekr/.ssh/id_deborg_rsa bekr@192.168.0.43"
+	include hp_ssh_server
+    hp_ssh_server::sshuser { 'bekr' : }			
 	
 }
 
