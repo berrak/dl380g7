@@ -168,6 +168,9 @@ $IPTABLES -A OUTPUT -p tcp -m tcp --dport 587 -m state --state NEW -j ACCEPT
 # allow web traffic out
 $IPTABLES -A OUTPUT -p tcp -m tcp --dport 80 -m state --state NEW -j ACCEPT
 
+# allow puppet agent out
+$IPTABLES -A OUTPUT -p tcp -m tcp --dport 8140 -m state --state NEW -j ACCEPT
+
 # allow https out
 $IPTABLES -A OUTPUT -p tcp -m tcp --dport 443 -m state --state NEW -j ACCEPT
 
