@@ -631,6 +631,7 @@ node 'trise.home.tld' {
             priority => '001',
           devgroupid => 'root',
           execscript => 'none',
+			    port => '80',
     }
 
 
@@ -688,6 +689,7 @@ node 'mc.home.tld' {
             priority => '001',
           devgroupid => 'root',
           execscript => 'none',
+		  	    port => '80',
     }
 
 	
@@ -745,6 +747,7 @@ node 'deborg.home.tld' {
             priority => '001',
           devgroupid => 'root',
           execscript => 'none',
+		        port => '80',
     }
 
 
