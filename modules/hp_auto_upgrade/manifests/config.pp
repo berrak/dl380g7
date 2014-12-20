@@ -5,7 +5,7 @@ class hp_auto_upgrade::config {
 
     if $::lsbdistid == 'Debian' {
 
-        file { '/etc/cron.weekly/apt-security-updates':
+        file { '/etc/cron.daily/apt-security-updates':
              source => "puppet:///modules/hp_auto_upgrade/apt-security-updates",
               owner => 'root',
               group => 'root',
@@ -20,7 +20,7 @@ class hp_auto_upgrade::config {
         }
     } elsif $::operatingsystem == 'OracleLinux' {
     
-        file { '/etc/cron.weekly/yum-auto-updates':
+        file { '/etc/cron.daily/yum-auto-updates':
              source => "puppet:///modules/hp_auto_upgrade/yum-auto-updates",
               owner => 'root',
               group => 'root',
