@@ -587,6 +587,9 @@ node 'hp.home.tld' {
     hp_ssh_server::sshuser { 'bekr' : }
 
 	include hp_logwatch
+	
+	# Disable ipv6 in kernel/grub and use the more text lines in console mode
+	class { hp_grub::install : defaultline => 'vga=791', appendline => 'true', ipv6 => 'false' }
 
 }
 
