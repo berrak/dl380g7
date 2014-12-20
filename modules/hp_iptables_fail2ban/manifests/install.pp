@@ -4,7 +4,7 @@
 class hp_iptables_fail2ban::install {
 
     
-    if ! ( $:lsbdistid == 'Debian' ) {
+    if ! ( $::operatingsystem == 'Debian' ) {
         fail("FAIL: Aborting. This module is only for Debian based distributions!")
     }
     
