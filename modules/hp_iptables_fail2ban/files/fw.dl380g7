@@ -57,11 +57,11 @@ $IPTABLES -F
 $IPTABLES -X
 
 #---------------------------------------------------------------------
-# Default policies
+# Default policies (FORWARD ACCEPT to allow all VM traffic)
 #---------------------------------------------------------------------
 $IPTABLES -P INPUT DROP
 $IPTABLES -P OUTPUT DROP
-$IPTABLES -P FORWARD DROP
+$IPTABLES -P FORWARD ACCEPT
 
 #--------------------------------------------------------------------------------------
 ## Drop broadcast-packages (only log for initial test -- comment out not to fill logs)
