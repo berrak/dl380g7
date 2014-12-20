@@ -623,6 +623,15 @@ node 'trise.home.tld' {
 	# DEBIAN packages without any special configurations
     class { hp_install_debs : debs => [ "tree", "sipcalc", "lshw", "pydf" , "dnsutils", "chkconfig", "liblog-log4perl-perl" ] }
 
+    # APACHE2 prefork
+    include hp_apache2 
+		
+	## Define a new Apache2 virtual host (docroot directory writable by group 'root')
+    hp_apache2::vhost { 'trise.home.tld' :
+            priority => '001',
+          devgroupid => 'root',
+          execscript => 'none',
+    }
 
 
     ## SECURITY
@@ -671,6 +680,16 @@ node 'mc.home.tld' {
 	# DEBIAN packages without any special configurations
     class { hp_install_debs : debs => [ "tree", "sipcalc", "lshw", "pydf" , "dnsutils", "chkconfig", "liblog-log4perl-perl" ] }
     
+    # APACHE2 prefork
+    include hp_apache2 
+		
+	## Define a new Apache2 virtual host (docroot directory writable by group 'root')
+    hp_apache2::vhost { 'mc.home.tld' :
+            priority => '001',
+          devgroupid => 'root',
+          execscript => 'none',
+    }
+
 	
     ## SECURITY	
 	
@@ -717,6 +736,16 @@ node 'deborg.home.tld' {
     
 	# DEBIAN packages without any special configurations
     class { hp_install_debs : debs => [ "tree", "sipcalc", "lshw", "pydf" , "dnsutils", "chkconfig", "liblog-log4perl-perl" ] }
+
+    # APACHE2 prefork
+    include hp_apache2 
+		
+	## Define a new Apache2 virtual host (docroot directory writable by group 'root')
+    hp_apache2::vhost { 'deborg.home.tld' :
+            priority => '001',
+          devgroupid => 'root',
+          execscript => 'none',
+    }
 
 
     ## SECURITY
