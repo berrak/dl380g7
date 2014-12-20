@@ -566,6 +566,17 @@ node 'hp.home.tld' {
 	
     ## SECURITY
 
+	# Security (iptables + fail2ban)
+	# fail2ban ssh is enabled. disabled apache, modsec, postfix actions
+	# latter parameters needs both apache and mod-security installed
+    class { hp_iptables_fail2ban::config :
+		 puppetserver_hostname => 'hp',
+		   fail2ban_trusted_ip => '192.168.0.0/24  81.237.0.0/16',
+		       fail2ban_apache => 'false',
+		       fail2ban_modsec => 'false',
+			  fail2ban_postfix => 'false',
+	}
+
     # Automatic security upgrades with cron script
 	include hp_auto_upgrade
 
