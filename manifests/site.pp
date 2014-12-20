@@ -631,6 +631,7 @@ node 'trise.home.tld' {
             priority => '001',
           devgroupid => 'root',
           execscript => 'none',
+		  site_ipaddr => '192.168.0.41',
 			    port => '80',
     }
 
@@ -689,6 +690,7 @@ node 'mc.home.tld' {
             priority => '001',
           devgroupid => 'root',
           execscript => 'none',
+		 site_ipaddr => '192.168.0.42',
 		  	    port => '80',
     }
 
@@ -747,6 +749,7 @@ node 'deborg.home.tld' {
             priority => '001',
           devgroupid => 'root',
           execscript => 'none',
+		 site_ipaddr => '192.168.0.43', 
 		        port => '80',
     }
 

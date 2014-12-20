@@ -7,10 +7,11 @@
 #        priority => '001',
 #        devgroupid => 'bekr',
 #        execscript => 'php',
+#        site_ipaddr => '192.168.0.41',
 #        port => '80',
 #     } 
 #
-define hp_apache2::vhost ( $priority='', $devgroupid='', $urlalias='', $aliastgtpath='', $execscript='', $port='') {
+define hp_apache2::vhost ( $priority='', $devgroupid='', $urlalias='', $aliastgtpath='', $execscript='', $site_ipaddr='', $port='') {
 
     
     # Add a new virtual host fqdn to /etc/hosts for name resolution. This
@@ -28,7 +29,11 @@ define hp_apache2::vhost ( $priority='', $devgroupid='', $urlalias='', $aliastgt
     
     if $execscript == '' {
         fail("FAIL: Missing required execscript parameter ($execscript).")
-    }    
+    }
+	
+    if $site_ipaddr == '' {
+        fail("FAIL: Missing required IP address of site!.")
+    }    		
     
     if $port == '' {
         fail("FAIL: Missing required port number (e.g. 80 or 8080).")

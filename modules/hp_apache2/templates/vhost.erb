@@ -1,8 +1,8 @@
 ##############################################################
 # Managed by Puppet. Do not edit. Changes will be wiped out. #
 ##############################################################
-NameVirtualHost *:<%= port %>
-<VirtualHost *:<%= port %> >
+NameVirtualHost <%= site_ipaddr %>:<%= port %>
+<VirtualHost <%= site_ipaddr %>:<%= port %> >
 	
 	ServerAdmin root@localhost
     DocumentRoot /var/www/<%= name %>/public
