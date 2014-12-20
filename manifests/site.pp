@@ -638,6 +638,17 @@ node 'trise.home.tld' {
 
     ## SECURITY
 
+	# Security (iptables + fail2ban)
+	# fail2ban ssh is enabled. disabled apache, modsec, postfix actions
+	# latter parameters needs both apache and mod-security installed
+    class { hp_iptables_fail2ban::config :
+		 puppetserver_hostname => 'trise',
+		   fail2ban_trusted_ip => '192.168.0.0/24  81.237.0.0/16',
+		       fail2ban_apache => 'true',
+		       fail2ban_modsec => 'true',
+			  fail2ban_postfix => 'false',
+	}
+
     # Automatic security upgrades with cron script
 	include hp_auto_upgrade
 	
@@ -699,7 +710,17 @@ node 'mc.home.tld' {
 	
 	# Automatic security upgrades with cron script
 	include hp_auto_upgrade
-	
+
+	# Security (iptables + fail2ban)
+	# fail2ban ssh is enabled. disabled apache, modsec, postfix actions
+	# latter parameters needs both apache and mod-security installed
+    class { hp_iptables_fail2ban::config :
+		 puppetserver_hostname => 'mc',
+		   fail2ban_trusted_ip => '192.168.0.0/24  81.237.0.0/16',
+		       fail2ban_apache => 'true',
+		       fail2ban_modsec => 'true',
+			  fail2ban_postfix => 'false',
+	}	
 	
     ## MAINTENANCE
 	#  Note: Before installing new ssh-configuration, first create rsa keys on remost
