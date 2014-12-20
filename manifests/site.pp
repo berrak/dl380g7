@@ -579,13 +579,14 @@ node 'hp.home.tld' {
 
     # Automatic security upgrades with cron script
 	include hp_auto_upgrade
-
-
+	
     ## MAINTENANCE
 	#  Note: Before installing new ssh-configuration, first create rsa keys on remost
 	#  managing host and "$ ssh-copy-id -i /home/bekr/.ssh/id_hp_rsa bekr@192.168.0.66"
 	include hp_ssh_server
     hp_ssh_server::sshuser { 'bekr' : }
+
+	include hp_logwatch
 
 }
 
@@ -658,6 +659,7 @@ node 'trise.home.tld' {
 	include hp_ssh_server
     hp_ssh_server::sshuser { 'bekr' : }	
 	
+	include hp_logwatch
 
 }
 
@@ -728,6 +730,8 @@ node 'mc.home.tld' {
 	include hp_ssh_server
     hp_ssh_server::sshuser { 'bekr' : }		
 	
+	include hp_logwatch
+	
 }
 
 ###############################################################
@@ -796,6 +800,8 @@ node 'deborg.home.tld' {
 	#  managing host and "$ ssh-copy-id -i /home/bekr/.ssh/id_deborg_rsa bekr@192.168.0.43"
 	include hp_ssh_server
     hp_ssh_server::sshuser { 'bekr' : }			
+	
+	include hp_logwatch
 	
 }
 

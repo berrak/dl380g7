@@ -20,17 +20,12 @@ class hp_logwatch::config {
 	   require => Package["logwatch"],
     }
 	
-	# remove OracleLinux default cron.daily-file (since we add our own)
-	file { "/etc/cron.daily/0logwatch":
-	  ensure => absent,
+	if ( $::operatingsystem == 'OracleLinux' ) {
+	
+		# remove OracleLinux default cron.daily-file (since we add our own)
+		file { "/etc/cron.daily/0logwatch":
+		  ensure => absent,
+		}
 	}
 		
-#	# Since we have configured this to be logwatch tmp directory	
-#	file { "/var/tmp/logwatch":
-#		ensure => 'directory',
-#		 owner => 'root',
-#		 group => 'root',
-#		  mode => '0755',
-#	   require => File ["/etc/logwatch/conf/logwatch.conf"],
-#    }
 }
