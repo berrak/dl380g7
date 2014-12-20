@@ -1,10 +1,10 @@
 #!/bin/sh
-# /root/bin/deborg.hp
+# /root/bin/fw.trise
 ##############################################################
 # DO NOT EDIT. MANAGES BY PUPPET. CHANGES WILL BE WIPED OUT. #
 ##############################################################
 #
-# Rules for HP Test DL380G7 server (copy of production host).
+# Rules for HP VM server (VM host).
 #
 # Copyright (C) (2012-14) K-B.Kronlund <bkronmailbox-copyright@yahoo.se>
 #
@@ -57,11 +57,11 @@ $IPTABLES -F
 $IPTABLES -X
 
 #---------------------------------------------------------------------
-# Default policies (FORWARD ACCEPT to allow all VM traffic)
+# Default policies
 #---------------------------------------------------------------------
 $IPTABLES -P INPUT DROP
 $IPTABLES -P OUTPUT DROP
-$IPTABLES -P FORWARD ACCEPT
+$IPTABLES -P FORWARD DROP
 
 #--------------------------------------------------------------------------------------
 ## Drop broadcast-packages (only log for initial test -- comment out not to fill logs)
