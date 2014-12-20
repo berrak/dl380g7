@@ -61,7 +61,7 @@ $IPTABLES -X
 #---------------------------------------------------------------------
 $IPTABLES -P INPUT DROP
 $IPTABLES -P OUTPUT DROP
-$IPTABLES -P FORWARD ALLOW
+$IPTABLES -P FORWARD ACCEPT
 
 #--------------------------------------------------------------------------------------
 ## Drop broadcast-packages (only log for initial test -- comment out not to fill logs)
