@@ -125,7 +125,8 @@ $IPTABLES -A INPUT -p tcp -m tcp --dport 8140 -m state --state NEW -j ACCEPT
 $IPTABLES -A INPUT -p udp -m udp --dport 5353 -j ACCEPT
 
 # allow VNC client connections
-$IPTABLES -A INPUT -s $BKTRUSTEDNET -p tcp --dport 5901:5904 -m state --state NEW -j ACCEPT
+$IPTABLES -A INPUT -s $BKTRUSTEDNET -p tcp --dport 5900:5901 -m state --state NEW -j ACCEPT
+$IPTABLES -A INPUT -s $BKTRUSTEDNET -p tcp --dport 6000:6001 -m state --state NEW -j ACCEPT
 
 # allow Git (port 9418) access for trusted users
 $IPTABLES -A INPUT -p tcp -s $BKTRUSTEDNET -m tcp --dport 9418 -m state --state NEW -j ACCEPT
