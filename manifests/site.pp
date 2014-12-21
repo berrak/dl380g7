@@ -571,6 +571,18 @@ node 'hp.home.tld' {
     class { hp_install_debs : debs => [ "tree", "sipcalc", "lshw", "pydf" , "dnsutils", "chkconfig" ] }
     
 	
+	# MAIL server (relay external mails via google smtp)
+	hp_postfix::install { 'mta' :
+			            ensure => 'installed',
+			install_cyrus_sasl => 'true',
+			          mta_type => 'server',
+		 server_root_mail_user => 'bekr',
+	external_root_gmail_cc => 'bertil.kronlund',
+		   smtp_relayhost_fqdn => 'smtp.gmail.com',
+		  no_lan_outbound_mail => 'false',
+	}
+	
+	
     ## SECURITY
 
 	# Security (iptables + fail2ban)
@@ -581,7 +593,7 @@ node 'hp.home.tld' {
 		   fail2ban_trusted_ip => '192.168.0.0/24  81.237.0.0/16',
 		       fail2ban_apache => 'false',
 		       fail2ban_modsec => 'false',
-			  fail2ban_postfix => 'false',
+			  fail2ban_postfix => 'true',
 	}
 
     # Automatic security upgrades with cron script
