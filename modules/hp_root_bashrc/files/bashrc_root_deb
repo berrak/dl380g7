@@ -27,6 +27,9 @@ alias ebtables-show-nat='ebtables -t nat -Ln --Lmac2'
 
 alias pu='cd /etc/puppet;pwd;git pull;puppet.exec'
 
+alias ns='netstat -ntulp | grep LISTEN'
+alias ns-all='netstat -ntulp'
+
 export PATH=$PATH:/root/bin
 export EDITOR=nano
 export VISUAL=nano
