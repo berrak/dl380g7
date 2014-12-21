@@ -415,6 +415,9 @@ node 'node-dl380g7.home.tld' {
 	hp_sudo::config { 'bekr': }
 	hp_mutt::install { 'bekr': mailserver_hostname => 'dl380g7' }
 	
+	# Enable NFS for user 'bekr' (really just creates the mount point in users' home)
+	# This is required for virt-install OracleLinux VM on this Debian KVM host
+    class { 'hp_nfs4client_deb::config' : user => 'bekr' }	
 	
 	## APPLICATIONS ##
 	
