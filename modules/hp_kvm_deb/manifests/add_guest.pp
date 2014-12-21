@@ -9,9 +9,10 @@
 #                  local_guest_netw => '192.168.0.0',
 #                   local_hostname  => 'trise',
 #                       bridge_name => 'kvmbr0',
+#                        auto_start => 'true',
 #    }
 #        
-define hp_kvm_deb::add_guest ( $local_guest_gw, $local_guest_ip, $local_mac_address, $local_guest_bcst, $local_guest_netw, $local_hostname, $bridge_name ) {
+define hp_kvm_deb::add_guest ( $local_guest_gw, $local_guest_ip, $local_mac_address, $local_guest_bcst, $local_guest_netw, $local_hostname, $bridge_name, $auto_start ) {
 
     
 	if ( $::operatingsystem != 'Debian' ) {
@@ -44,5 +45,19 @@ define hp_kvm_deb::add_guest ( $local_guest_gw, $local_guest_ip, $local_mac_addr
 		 unless => "ls /data/vm-images/ | grep $guest_name",
 		require => File["/etc/libvirt/qemu/$guest_name.xml"],
 	}
+	
+	if ( $auto_start == 'true') {
+	
+		# create a link does the virsh autostart magic
+		file { "/etc/libvirt/qemu/autostart/${guest_name}.xml":
+			ensure => present,
+			target => "/etc/libvirt/qemu/${guest_name}.xml",
+			require => File["/etc/libvirt/qemu/$guest_name.xml"],
+		}
+	
+	
+	}
+	
+	
 
 }
