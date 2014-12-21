@@ -36,6 +36,9 @@ BKTRUSTEDADDR="81.237.245.35"
 # Ensure access to ssh incase Telia change ip (within a resonable range)
 BKTRUSTEDRANGE="81.237.0.0/16"
 
+# Internal NFSv4 server
+NFSHOSTADDR="192.168.0.10"
+
 # Trust google.com
 GOOGLENET="66.249.67.0/24"
 
@@ -127,6 +130,21 @@ $IPTABLES -A INPUT -p tcp -s $BKTRUSTEDADDR -m tcp --dport 9418 -m state --state
 
 # accept inbound ping requests to this server
 $IPTABLES -A INPUT -p icmp --icmp-type echo-request -m state --state NEW -j ACCEPT
+
+## NFS clients (consume exported file system)
+
+## UDP
+
+$IPTABLES -A INPUT -s $NFSHOSTADDR -p udp --dport 111 -m state --state NEW -j ACCEPT
+$IPTABLES -A INPUT -s $NFSHOSTADDR -p udp --dport 2049 -m state --state NEW -j ACCEPT
+$IPTABLES -A INPUT -s $NFSHOSTADDR -p udp --dport 4000:4001 -m state --state NEW -j ACCEPT
+
+## TCP
+
+$IPTABLES -A INPUT -s $NFSHOSTADDR -p tcp --dport 111 -m state --state NEW -j ACCEPT
+$IPTABLES -A INPUT -s $NFSHOSTADDR -p tcp --dport 2049 -m state --state NEW -j ACCEPT
+$IPTABLES -A INPUT -s $NFSHOSTADDR -p tcp --dport 4000:4001 -m state --state NEW -j ACCEPT
+
 
 ## ==========================
 ## DROP OTHER INBOUND TRAFFIC
