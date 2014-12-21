@@ -134,16 +134,16 @@ $IPTABLES -A INPUT -p icmp --icmp-type echo-request -m state --state NEW -j ACCE
 ## NFS clients (consume exported file system)
 
 ## UDP
-
-$IPTABLES -A INPUT -s $NFSHOSTADDR -p udp --dport 111 -m state --state NEW -j ACCEPT
-$IPTABLES -A INPUT -s $NFSHOSTADDR -p udp --dport 2049 -m state --state NEW -j ACCEPT
-$IPTABLES -A INPUT -s $NFSHOSTADDR -p udp --dport 4000:4001 -m state --state NEW -j ACCEPT
+$IPTABLES -A INPUT -s $NFSHOSTADDR -p udp -m state --state NEW -j ACCEPT
+#$IPTABLES -A INPUT -s $NFSHOSTADDR -p udp --dport 111 -m state --state NEW -j ACCEPT
+#$IPTABLES -A INPUT -s $NFSHOSTADDR -p udp --dport 2049 -m state --state NEW -j ACCEPT
+#$IPTABLES -A INPUT -s $NFSHOSTADDR -p udp --dport 4000:4001 -m state --state NEW -j ACCEPT
 
 ## TCP
-
-$IPTABLES -A INPUT -s $NFSHOSTADDR -p tcp --dport 111 -m state --state NEW -j ACCEPT
-$IPTABLES -A INPUT -s $NFSHOSTADDR -p tcp --dport 2049 -m state --state NEW -j ACCEPT
-$IPTABLES -A INPUT -s $NFSHOSTADDR -p tcp --dport 4000:4001 -m state --state NEW -j ACCEPT
+$IPTABLES -A INPUT -s $NFSHOSTADDR -p tcp -m state --state NEW -j ACCEPT
+#$IPTABLES -A INPUT -s $NFSHOSTADDR -p tcp --dport 111 -m state --state NEW -j ACCEPT
+#$IPTABLES -A INPUT -s $NFSHOSTADDR -p tcp --dport 2049 -m state --state NEW -j ACCEPT
+#$IPTABLES -A INPUT -s $NFSHOSTADDR -p tcp --dport 4000:4001 -m state --state NEW -j ACCEPT
 
 
 ## ==========================
@@ -198,17 +198,17 @@ $IPTABLES -A OUTPUT -p icmp --icmp-type echo-request -m state --state NEW -j ACC
 ## NFS clients (consume exported file system)
 
 ## UDP
-
-$IPTABLES -A OUTPUT -d $NFSHOSTADDR -p udp --dport 111 -m state --state NEW -j ACCEPT
-$IPTABLES -A OUTPUT -d $NFSHOSTADDR -p udp --dport 2049 -m state --state NEW -j ACCEPT
-$IPTABLES -A OUTPUT -d $NFSHOSTADDR -p udp --dport 4000:4001 -m state --state NEW -j ACCEPT
+$IPTABLES -A OUTPUT -d $NFSHOSTADDR -p udp -m state --state NEW -j ACCEPT
+#$IPTABLES -A OUTPUT -d $NFSHOSTADDR -p udp --dport 111 -m state --state NEW -j ACCEPT
+#$IPTABLES -A OUTPUT -d $NFSHOSTADDR -p udp --dport 2049 -m state --state NEW -j ACCEPT
+#$IPTABLES -A OUTPUT -d $NFSHOSTADDR -p udp --dport 4000:4001 -m state --state NEW -j ACCEPT
 
 
 ## TCP
-
-$IPTABLES -A OUTPUT -d $NFSHOSTADDR -p tcp --dport 111 -m state --state NEW -j ACCEPT
-$IPTABLES -A OUTPUT -d $NFSHOSTADDR -p tcp --dport 2049 -m state --state NEW -j ACCEPT
-$IPTABLES -A OUTPUT -d $NFSHOSTADDR -p tcp --dport 4000:4001 -m state --state NEW -j ACCEPT
+$IPTABLES -A OUTPUT -d $NFSHOSTADDR -p tcp -m state --state NEW -j ACCEPT
+#$IPTABLES -A OUTPUT -d $NFSHOSTADDR -p tcp --dport 111 -m state --state NEW -j ACCEPT
+#$IPTABLES -A OUTPUT -d $NFSHOSTADDR -p tcp --dport 2049 -m state --state NEW -j ACCEPT
+#$IPTABLES -A OUTPUT -d $NFSHOSTADDR -p tcp --dport 4000:4001 -m state --state NEW -j ACCEPT
 
 
 ## ===========================
