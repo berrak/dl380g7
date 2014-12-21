@@ -73,7 +73,7 @@ define hp_postfix::install(
     
     # facter variables (assumes server interface is on eth0)
     
-    $mynetwork_eth0 = $::network_eth0
+    $mynetwork = $::network
     $mydomain = $::domain
     $myfqdn = $::fqdn
     
