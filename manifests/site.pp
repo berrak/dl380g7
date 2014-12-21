@@ -545,6 +545,13 @@ node 'hp.home.tld' {
           local_guest_gw => '192.168.0.1', local_guest_ip  => '192.168.0.43', local_mac_address => '52:54:00:00:00:43',
 		local_guest_bcst => '192.168.0.255', local_guest_netw => '192.168.0.0',
 		 local_hostname  => 'deborg', bridge_name => 'kvmbr0', auto_start => 'true',
+    }
+	
+	# add KVM 4th guest (based on kvmbr0 - no NAT)		
+	hp_kvm_deb::add_guest { 'ilx' :
+          local_guest_gw => '192.168.0.1', local_guest_ip  => '192.168.0.44', local_mac_address => '52:54:00:00:00:44',
+		local_guest_bcst => '192.168.0.255', local_guest_netw => '192.168.0.0',
+		 local_hostname  => 'ilx', bridge_name => 'kvmbr0', auto_start => 'true',
     }	
 	
     ## USER PROFILES ##
