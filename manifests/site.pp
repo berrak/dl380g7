@@ -840,10 +840,46 @@ node 'ilx.home.tld' {
 	hp_sudo::config { 'bekr': }
 
 
+    ## APPLICATIONS ##
+    
+	# DEBIAN packages without any special configurations
+    class { hp_install_debs : debs => [ "tree", "sipcalc", "lshw", "pydf" , "dnsutils", "chkconfig", "liblog-log4perl-perl" ] }
+
+    # APACHE2 prefork
+    include hp_apache2 
+		
+	## Define a new Apache2 virtual host (docroot directory writable by group 'root')
+    hp_apache2::vhost { 'ilx.home.tld' :
+            priority => '001',
+          devgroupid => 'root',
+          execscript => 'none',
+		 site_ipaddr => '192.168.0.44', 
+		        port => '80',
+    }
+
     ## SECURITY
 
     # Automatic security upgrades with cron script
 	include hp_auto_upgrade
+	
+	# Security (iptables + fail2ban)
+	# fail2ban ssh is enabled. disabled apache, modsec, postfix actions
+	# latter parameters needs both apache and mod-security installed
+    class { hp_iptables_fail2ban::config :
+		 puppetserver_hostname => 'ilx',
+		   fail2ban_trusted_ip => '192.168.0.0/24  81.237.0.0/16',
+		       fail2ban_apache => 'true',
+		       fail2ban_modsec => 'true',
+			  fail2ban_postfix => 'false',
+	}
+	
+    ## MAINTENANCE
+	#  Note: Before installing new ssh-configuration, first create rsa keys on remost
+	#  managing host and "$ ssh-copy-id -i /home/bekr/.ssh/id_ilx_rsa bekr@192.168.0.43"
+	include hp_ssh_server
+    hp_ssh_server::sshuser { 'bekr' : }			
+	
+	include hp_logwatch
 
 }
 
