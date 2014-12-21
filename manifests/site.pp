@@ -568,7 +568,7 @@ node 'hp.home.tld' {
     ## APPLICATIONS ##
     
 	# DEBIAN packages without any special configurations
-    class { hp_install_debs : debs => [ "tree", "sipcalc", "lshw", "pydf" , "dnsutils", "chkconfig" ] }
+    class { hp_install_debs : debs => [ "tree", "sipcalc", "lshw", "pydf" , "dnsutils", "chkconfig", "virt-top" ] }
     
 	# MAIL server (relay external mails via google smtp)
 	hp_postfix::install { 'mta' :
