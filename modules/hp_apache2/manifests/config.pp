@@ -24,7 +24,7 @@ class hp_apache2::config {
 	## Disable apache Debian maintainer default site link/file configuration
 	
     file { '/etc/apache2/sites-enabled/000-default':
-        ensure => false,
+        ensure => absent,
         target => '/etc/apache2/sites-available/default',
        require => Class["hp_apache2::install"],
 	    notify => Service["apache2"],
