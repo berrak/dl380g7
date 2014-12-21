@@ -492,9 +492,9 @@ node 'hp.home.tld' {
 
 	## BASIC
     
-    # Enable dnsmasq for DNS
+    # Enable dnsmasq for DNS (note use the enslaved interface - since auto-stared at boot)
     class { hp_dnsmasq::config :
-				primary_interface => 'eth1',
+				primary_interface => 'kvmbr0',
                 ispdns1 => '208.67.222.222',
                 ispdns2 => '208.67.220.220',
                 srv_hostname => 'hp',
