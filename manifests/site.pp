@@ -815,6 +815,13 @@ node 'deborg.home.tld' {
 	
 }
 
+node 'ilx.home.tld' {
+
+    # Automatic security upgrades with cron script
+	include hp_auto_upgrade
+
+}
+
 #
 ## eof
 #
