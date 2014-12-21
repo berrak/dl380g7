@@ -20,6 +20,7 @@
 #                   smtp_relayhost_ip => '192.168.0.11',
 #                 smtp_relayhost_fqdn => 'smtp.example.com',
 #              external_root_gmail_cc => 'your.gmailname',
+#                  mymailserverdomain => 'home.tld',
 #    }
 #
 define hp_postfix::install(
@@ -33,6 +34,7 @@ define hp_postfix::install(
     $smtp_relayhost_ip = '',
     $smtp_relayhost_fqdn = '',
     $external_root_gmail_cc = '',
+    $mymailserverdomain ='',
 ) {
 
     include hp_postfix::params
@@ -80,13 +82,8 @@ define hp_postfix::install(
     # define template variables to control external domain mail
     # delivery. This will bounce back to sender if external destination.
     
-    # Allow our internal sub domain (this is not for the main domain)
-    
+    # Allow our internal sub domain (this is not for the main domain) 
     $mysubdomain1 = $::hp_postfix::params::my_subdomain_one
-    
-    # ensure local root goes to mail server regardless which domain host is in
-    
-    $mymailserverdomain = $::hp_postfix::params::mymail_server_domain
     
 
     if $no_lan_outbound_mail == 'true' {

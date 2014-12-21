@@ -11,13 +11,9 @@ class hp_postfix::params {
 
 
     # internal sub domains the mail server should use smtp transport for
-    
     $my_subdomain_one = ''
 
-    # ensure that local root aliases are forwarded to lan mail server
-    # always specify domain where the mail server is located (don't use facter)
-    
-    $mymail_server_domain = 'debinix.org'
+
 
 
 }
