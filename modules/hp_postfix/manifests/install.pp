@@ -71,7 +71,7 @@ define hp_postfix::install(
     
     package { "heirloom-mailx" : ensure => present }
     
-    # facter variables (assumes server interface is on eth0)
+    # facter variables
     
     $mynetwork = $::network
     $mydomain = $::domain
