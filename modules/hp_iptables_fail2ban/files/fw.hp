@@ -195,6 +195,22 @@ $IPTABLES -A OUTPUT -p udp -m udp --dport 123 -m state --state NEW -j ACCEPT
 # allow an outbound ping request from this host
 $IPTABLES -A OUTPUT -p icmp --icmp-type echo-request -m state --state NEW -j ACCEPT
 
+## NFS clients (consume exported file system)
+
+## UDP
+
+$IPTABLES -A OUTPUT -d $NFSHOSTADDR -p udp --dport 111 -m state --state NEW -j ACCEPT
+$IPTABLES -A OUTPUT -d $NFSHOSTADDR -p udp --dport 2049 -m state --state NEW -j ACCEPT
+$IPTABLES -A OUTPUT -d $NFSHOSTADDR -p udp --dport 4000:4001 -m state --state NEW -j ACCEPT
+
+
+## TCP
+
+$IPTABLES -A OUTPUT -d $NFSHOSTADDR -p tcp --dport 111 -m state --state NEW -j ACCEPT
+$IPTABLES -A OUTPUT -d $NFSHOSTADDR -p tcp --dport 2049 -m state --state NEW -j ACCEPT
+$IPTABLES -A OUTPUT -d $NFSHOSTADDR -p tcp --dport 4000:4001 -m state --state NEW -j ACCEPT
+
+
 ## ===========================
 ## DROP OTHER OUTBOUND TRAFFIC
 ## ===========================
