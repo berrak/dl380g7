@@ -31,7 +31,7 @@ MANANGED BY PUPPET. DO NOT EDIT. CHANGES WILL BE WIPED OUT!
       <address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x2'/>
     </controller>
     <interface type='bridge'>
-      <mac address='52:54:00:00:00:00'/>
+      <mac address='<%= local_mac_address %>'/>
       <source bridge='kvmbr0'/>
       <model type='virtio'/>
       <address type='pci' domain='0x0000' bus='0x00' slot='0x03' function='0x0'/>
