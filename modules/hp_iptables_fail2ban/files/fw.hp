@@ -128,6 +128,9 @@ $IPTABLES -A INPUT -p udp -m udp --dport 5353 -j ACCEPT
 $IPTABLES -A INPUT -s $BKTRUSTEDNET -p tcp --dport 5900:5901 -m state --state NEW -j ACCEPT
 $IPTABLES -A INPUT -s $BKTRUSTEDNET -p tcp --dport 6000:6001 -m state --state NEW -j ACCEPT
 
+# allow spice traffic
+$IPTABLES -A INPUT -s $BKTRUSTEDNET -p tcp --dport 5930 -m state --state NEW -j ACCEPT
+
 # allow Git (port 9418) access for trusted users
 $IPTABLES -A INPUT -p tcp -s $BKTRUSTEDNET -m tcp --dport 9418 -m state --state NEW -j ACCEPT
 $IPTABLES -A INPUT -p tcp -s $BKTRUSTEDADDR -m tcp --dport 9418 -m state --state NEW -j ACCEPT
