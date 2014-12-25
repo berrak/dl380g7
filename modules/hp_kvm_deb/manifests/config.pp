@@ -26,13 +26,20 @@ class hp_kvm_deb::config {
 			 onlyif => 'virsh net-list | grep default',
 	}
 	
-    # helper perl script to create guests
+	# helper script to create distribution specific kvm base images to clone new guest from
+	file { "/root/bin/create-kvm-box.pl":
+		content =>  template( "hp_kvm_deb/create-kvm-box.pl.erb" ),
+		  owner => 'root',
+		  group => 'root',
+		   mode => '0700',
+	}		
+	
+    # helper perl script to create guests from base images
 	file { '/root/bin/create-deb-guest.pl' :
 		source => "puppet:///modules/hp_kvm_deb/create-deb-guest.pl",
 		 owner => 'root',
 		 group => 'root',
 	      mode => '0700',
-	}	
-    
-    
+	}
+	
 }

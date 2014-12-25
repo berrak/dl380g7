@@ -1,0 +1,212 @@
+#!/usr/bin/perl
+##############################################################
+# DO NOT EDIT. MANAGED BY PUPPET. CHANGES WILL BE WIPED OUT. #
+##############################################################
+#
+# /root/bin/create-kvm-box.pl
+#
+# This is a wrapper script around the 'virt-install' command.
+#
+# Usage:   # create-kvm-box.pl { wheezy | oracle6 }
+# 
+# Purpose: Creates the initial Linux image (to be used as
+#          templates). When launched the VM boots up and manual
+#          (usual) install is to be done (either in console or
+#          GUI-based remotely via a spice client).
+#
+# Log:     Appends logger information to /var/log/perl.log
+#
+# Required Pre-install on host:
+#           aptitude install libspice-server1
+#           or yum install spice-server spice-protocol
+#
+# Steps:
+#
+#   a) builds the command line options to 'virt-install'
+#   b) runs the 'virt-install' command with options
+#   c) exits
+#
+
+
+use 5.010;
+use strict;
+use warnings;
+use English;
+use File::Basename qw( basename );
+use Carp;
+#
+# CONSTANTS     
+#
+our $VERSION = '0.01';
+our $FALSE = 0;
+our $OK = 0;
+our %ERROR = (
+    'argument_number_incorrect' => 1,
+    'unknown_distribution' => 2,
+    'virt_install_base_img_failed' => 3,
+    'unsupported_distribution' => 4
+);
+
+
+#
+# GLOBAL VARIABLES     
+#
+our $our_logger;
+our $our_script;
+our $our_is_main_error;
+
+
+#
+# MAIN PROGRAM STARTS HERE
+#
+init_pgm();
+my $distribution = validate_input(\@ARGV);
+
+if ( not $our_is_main_error ) {    
+    
+    create_kvm_distribution ( $distribution );
+
+}
+prepare_exit();
+exit ( $our_is_main_error );
+
+
+#
+#  SUBROUTINES
+#
+sub validate_input {
+    my $ref_argv = shift @_;
+    my $num_args = scalar @$ref_argv ;
+    my $linux_dist;
+
+    # Validate input
+    if ($num_args != 1) {
+        $our_logger->error("[$our_script]: Wrong number of arguments ($num_args) passed to script");
+        $our_is_main_error = $ERROR{'argument_number_incorrect'};
+    } else {
+        $linux_dist = $ref_argv->[0] ; 
+         
+        given ( $linux_dist ) {
+                when ( 'wheezy' )  { break }
+                when ( 'oracle6' ) { break }
+                default {
+                    $our_logger->error("[$our_script]: Unknown linux distribution ($linux_dist)");
+                    $our_is_main_error = $ERROR{'unknown_distribution'};
+                };
+        };
+    }
+
+    return( $linux_dist );
+}
+
+
+sub create_kvm_distribution {
+    my $distribution = shift;
+    my $virt_install_path = "/usr/bin/virt-install";
+    
+    if ( $distribution != 'oracle6' ) {
+        $our_logger->error("Unsupported distributin/version of ($distribution)");    
+        $our_is_main_error = $ERROR{'unsupported_distribution'};
+        return;
+    }
+    else {
+    
+        $our_logger->debug("[$our_script]: Creating base image for ($distribution)...");
+        
+        my $name="--name $distribution";
+        my $ram="--ram 2048";
+        my $cdrom="/dev/cdrom";
+        
+        my $size="60";
+        my $sparse="false";
+        my $diskpath="path=/data/vm-images/oracle6.img,size=$size,sparse=$sparse";
+        
+        my $bridge="kvmbr0";
+        my $mac="52:54:00:00:00:00";
+        my $network="--network bridge=$bridge,mac=$mac,model=virtio";
+        
+        my $graphics="--graphics spice,port=5930,listen=0.0.0.0,password=password";
+        my $video="--video qxl";
+        my $channel="--channel spicevmc";
+        
+        my $ostype="--os-type linux";
+        my $osvariant="--os-variant rhel6";
+        
+        my $extraargs="--extra-args='console=tty0 console=ttys0,115200n8 serial'";
+        
+        my $el6_virst_install_args="$name $ram $diskpath $network $graphics $video $channel $ostype $osvariant $extraargs";
+    
+        if ( system ($virt_install_path, "$el6_virst_install_args") ) {
+            $our_logger->error("[$our_script]: $virt_install_path could not create base image for ($distribution)");
+            $our_is_main_error = $ERROR{'virt_install_base_img_failed'};
+        } else {
+            $our_logger->debug("[$our_script]: $virt_install_path created base image for ($distribution)!");
+        }
+    }
+}
+
+#
+#  INIT- AND FINISH ROUTINES
+#
+sub init_pgm {
+    
+    # Initilize globals
+    $our_script = basename($0);
+    $our_is_main_error = $FALSE;
+    
+ 
+    # Ensure perl logger is available (Debian/Ubuntu host)  
+    our $our_log_is_available = eval
+    {
+      require Log::Log4perl;
+      Log::Log4perl->import();
+      1;
+    };
+    
+    
+    # This will install log4perl if missing
+    if (not $our_log_is_available) {
+        if ( system("aptitude", "-y", "install", "liblog-log4perl-perl")) {
+            croak "[$our_script]: Cannot install log4perl with aptitude on Debian/Ubuntu KVM host!\n";
+        }
+    }
+
+
+    # Script must run as root
+    if ( $EFFECTIVE_USER_ID != 0 ) {
+        croak "[$our_script]: Script must run as root - Aborting...";
+    }
+
+
+    # Initilize logger (output to file and to stdout)
+    my $log_conf = q(
+        log4perl.rootLogger              = DEBUG, LOG1, SCREEN
+        log4perl.appender.SCREEN         = Log::Log4perl::Appender::Screen
+        log4perl.appender.SCREEN.stderr  = 0
+        log4perl.appender.SCREEN.layout  = Log::Log4perl::Layout::PatternLayout
+        log4perl.appender.SCREEN.layout.ConversionPattern = %d %p %F %m %n           
+        log4perl.appender.LOG1           = Log::Log4perl::Appender::File
+        log4perl.appender.LOG1.filename  = /var/log/perl.log
+        log4perl.appender.LOG1.mode      = append
+        log4perl.appender.LOG1.layout    = Log::Log4perl::Layout::PatternLayout
+        log4perl.appender.LOG1.layout.ConversionPattern = %d %p %F %m %n   
+    );
+    Log::Log4perl::init(\$log_conf);
+    $our_logger = Log::Log4perl->get_logger();
+    $our_logger->info("[$our_script]: ------------ New logger initilized ------------");
+    
+}
+
+
+#
+# Usage     : prepare_exit()
+# Arguments : N/A
+# Purpose   : Write main exit code to logger
+# Returns   : Returns to caller with 0
+# Throws    : No
+#
+sub prepare_exit {
+      
+    $our_logger->info("[$our_script]: Logger closed - processing finished with exit code: $our_is_main_error");  
+    
+}
