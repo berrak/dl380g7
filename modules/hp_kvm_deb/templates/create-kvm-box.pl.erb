@@ -130,9 +130,10 @@ sub create_kvm_distribution {
         my $ostype="--os-type linux";
         my $osvariant="--os-variant rhel6";
         
-        my $extraargs="--extra-args='console=tty0 console=ttys0,115200n8 serial'";
+        # Only works with option --location
+        # my $extraargs="--extra-args='console=tty0 console=ttys0,115200n8 serial'";
         
-        my $el6_virst_install_args="$name $ram $cdrom $diskpath $network $graphics $video $channel $ostype $osvariant $extraargs";
+        my $el6_virst_install_args="$name $ram $cdrom $diskpath $network $graphics $video $channel $ostype $osvariant";
     
         $our_logger->debug("[$our_script]: Optionstring ($el6_virst_install_args)");
         $our_logger->debug("[$our_script]: Creating base image for ($distribution)...");
