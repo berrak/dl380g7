@@ -110,12 +110,10 @@ sub create_kvm_distribution {
         return;
     }
     else {
-    
-        $our_logger->debug("[$our_script]: Creating base image for ($distribution)...");
-        
+            
         my $name="--name $distribution";
         my $ram="--ram 2048";
-        my $cdrom="/dev/cdrom";
+        my $cdrom="--cdrom /dev/cdrom";
         
         my $size="60";
         my $sparse="false";
@@ -135,6 +133,9 @@ sub create_kvm_distribution {
         my $extraargs="--extra-args='console=tty0 console=ttys0,115200n8 serial'";
         
         my $el6_virst_install_args="$name $ram $diskpath $network $graphics $video $channel $ostype $osvariant $extraargs";
+    
+        $our_logger->debug("[$our_script]: Optionstring ($el6_virst_install_args)");
+        $our_logger->debug("[$our_script]: Creating base image for ($distribution)...");
     
         if ( system ( "$virt_install_path $el6_virst_install_args" ) ) {
             $our_logger->error("[$our_script]: $virt_install_path could not create base image for ($distribution)");
