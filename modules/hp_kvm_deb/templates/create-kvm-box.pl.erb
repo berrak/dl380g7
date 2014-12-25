@@ -104,7 +104,7 @@ sub create_kvm_distribution {
     my $distribution = shift;
     my $virt_install_path = "/usr/bin/virt-install";
     
-    if ( $distribution != 'oracle6' ) {
+    if ( $distribution ne 'oracle6' ) {
         $our_logger->error("Unsupported distributin/version of ($distribution)");    
         $our_is_main_error = $ERROR{'unsupported_distribution'};
         return;
