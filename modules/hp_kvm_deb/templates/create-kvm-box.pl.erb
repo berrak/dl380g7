@@ -113,7 +113,9 @@ sub create_kvm_distribution {
             
         my $name="--name $distribution";
         my $ram="--ram 2048";
-        my $cdrom="--cdrom /dev/cdrom";
+        
+        #my $cdrom="--cdrom /dev/cdrom";
+        my $location="--location nfs://mnt/oracle6";
         
         my $size="60";
         my $sparse="false";
@@ -133,7 +135,7 @@ sub create_kvm_distribution {
         # Only works with option --location
         # my $extraargs="--extra-args='console=tty0 console=ttys0,115200n8 serial'";
         
-        my $el6_virst_install_args="$name $ram $cdrom $diskpath $network $graphics $video $channel $ostype $osvariant";
+        my $el6_virst_install_args="$name $ram $location $diskpath $network $graphics $video $channel $ostype $osvariant";
     
         $our_logger->debug("[$our_script]: Optionstring ($el6_virst_install_args)");
         $our_logger->debug("[$our_script]: Creating base image for ($distribution)...");
