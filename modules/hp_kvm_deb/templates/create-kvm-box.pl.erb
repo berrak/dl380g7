@@ -34,9 +34,13 @@ use warnings;
 use English;
 use File::Basename qw( basename );
 use Carp;
+
+
 #
 # CONSTANTS     
 #
+
+
 our $VERSION = '0.01';
 our $FALSE = 0;
 our $OK = 0;
@@ -51,6 +55,8 @@ our %ERROR = (
 #
 # GLOBAL VARIABLES     
 #
+
+
 our $our_logger;
 our $our_script;
 our $our_is_main_error;
@@ -59,6 +65,8 @@ our $our_is_main_error;
 #
 # MAIN PROGRAM STARTS HERE
 #
+
+
 init_pgm();
 my $distribution = validate_input(\@ARGV);
 
@@ -74,6 +82,8 @@ exit ( $our_is_main_error );
 #
 #  SUBROUTINES
 #
+
+
 sub validate_input {
     my $ref_argv = shift @_;
     my $num_args = scalar @$ref_argv ;
@@ -103,46 +113,53 @@ sub validate_input {
 sub create_kvm_distribution {
     my $distribution = shift;
     my $virt_install_path = "/usr/bin/virt-install";
+    my $virt_install_args;
     
-    if ( $distribution ne 'oracle6' ) {
-        $our_logger->error("Unsupported distributin/version of ($distribution)");    
-        $our_is_main_error = $ERROR{'unsupported_distribution'};
-        return;
-    }
-    else {
-            
-        my $name="--name $distribution";
-        my $ram="--ram 2048";
+    # common options
+    my $name="--name $distribution";
+    my $ram="--ram 2048";
+    my $ostype="--os-type linux";
+    
+    my $size="60";
+    my $sparse="false";
+    my $diskpath="--disk /data/vm-images/$distribution.img,size=$size,sparse=$sparse";
+    
+    my $bridge="kvmbr0";
+    my $mac="52:54:00:00:00:00";
+    my $network="--network bridge=$bridge,mac=$mac,model=virtio";
+
+    if ( $distribution eq 'oracle6' ) {
         
-        #my $cdrom="--cdrom /dev/cdrom";
         my $location="--location nfs://192.168.0.10/root/$distribution";
-        
-        # dont use serial console for gui-installer type of installers
-        #my $extraargs="--extra-args='console=tty0 console=ttys0,115200n8 serial'";
-        
-        my $size="60";
-        my $sparse="false";
-        my $diskpath="--disk /data/vm-images/oracle6.img,size=$size,sparse=$sparse";
-        
-        my $bridge="kvmbr0";
-        my $mac="52:54:00:00:00:00";
-        my $network="--network bridge=$bridge,mac=$mac,model=virtio";
-        
         my $graphics="--graphics spice,port=5930,listen=0.0.0.0,password=password";
         my $video="--video qxl";
         my $channel="--channel spicevmc";
-        
-        my $ostype="--os-type linux";
         my $osvariant="--os-variant rhel6";
         
+        $virt_install_args="$name $ram $location $diskpath $network $graphics $video $channel $ostype $osvariant";
+        
+    } elsif ( $distribution eq 'wheezy' ) {
+        
+        my $location="--location http://ftp.us.debian.org/debian/dists/stable/main/installer-amd64/";
+        my $graphics="--graphics none";
+        my $video="--video none";
+        my $osvariant="--os-variant debianwheezy";
+        my $extraargs="--extra-args='console=tty0 console=ttys0,115200n8 serial'";
+        
+        $virt_install_args="$name $ram $location $diskpath $network $graphics $ostype $osvariant $extraargs";
+        
+    } else {
+        
+        $our_logger->error("Unsupported distributin/version of ($distribution)");    
+        $our_is_main_error = $ERROR{'unsupported_distribution'};
+    }
 
-        # finally the complete option string
-        my $el6_virst_install_args="$name $ram $location $diskpath $network $graphics $video $channel $ostype $osvariant";
-    
-        $our_logger->debug("[$our_script]: Optionstring ($el6_virst_install_args)");
-        $our_logger->debug("[$our_script]: Creating base image for ($distribution)...");
-    
-        if ( system ( "$virt_install_path $el6_virst_install_args" ) ) {
+    $our_logger->debug("[$our_script]: Optionstring ($virt_install_args)");
+    $our_logger->debug("[$our_script]: Creating base image for ($distribution)...");
+
+    if ( not $our_is_main_error ) {
+        
+        if ( system ( "$virt_install_path $virt_install_args" ) ) {
             $our_logger->error("[$our_script]: $virt_install_path could not create base image for ($distribution)");
             $our_is_main_error = $ERROR{'virt_install_base_img_failed'};
         } else {
@@ -151,9 +168,12 @@ sub create_kvm_distribution {
     }
 }
 
+
 #
 #  INIT- AND FINISH ROUTINES
 #
+
+
 sub init_pgm {
     
     # Initilize globals
@@ -204,15 +224,13 @@ sub init_pgm {
 }
 
 
-#
-# Usage     : prepare_exit()
-# Arguments : N/A
-# Purpose   : Write main exit code to logger
-# Returns   : Returns to caller with 0
-# Throws    : No
-#
 sub prepare_exit {
       
     $our_logger->info("[$our_script]: Logger closed - processing finished with exit code: $our_is_main_error");  
     
 }
+
+
+#
+# END OF PROGRAM
+#
