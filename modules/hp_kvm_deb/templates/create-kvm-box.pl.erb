@@ -116,7 +116,9 @@ sub create_kvm_distribution {
         
         #my $cdrom="--cdrom /dev/cdrom";
         my $location="--location nfs://192.168.0.10/root/$distribution";
-        my $extraargs="--extra-args='console=tty0 console=ttys0,115200n8 serial'";
+        
+        # dont use serial console for gui-installer type of installers
+        #my $extraargs="--extra-args='console=tty0 console=ttys0,115200n8 serial'";
         
         my $size="60";
         my $sparse="false";
@@ -135,7 +137,7 @@ sub create_kvm_distribution {
         
 
         # finally the complete option string
-        my $el6_virst_install_args="$name $ram $location $extraargs $diskpath $network $graphics $video $channel $ostype $osvariant";
+        my $el6_virst_install_args="$name $ram $location $diskpath $network $graphics $video $channel $ostype $osvariant";
     
         $our_logger->debug("[$our_script]: Optionstring ($el6_virst_install_args)");
         $our_logger->debug("[$our_script]: Creating base image for ($distribution)...");
