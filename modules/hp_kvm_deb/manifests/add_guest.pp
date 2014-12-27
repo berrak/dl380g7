@@ -81,7 +81,7 @@ define hp_kvm_deb::add_guest ( $local_guest_gw, $local_guest_ip, $local_mac_addr
 	if ( $auto_start == 'true') {
 	
 		# create a link does the virsh autostart magic
-		file { "/etc/libvirt/qemu/autostart/${guest_name}.xml":
+		file { "/etc/libvirt/qemu/autostart/$guest_name.xml":
 			ensure => present,
 			target => "/etc/libvirt/qemu/${guest_name}.xml",
 			require => File["/etc/libvirt/qemu/$guest_name.xml"],

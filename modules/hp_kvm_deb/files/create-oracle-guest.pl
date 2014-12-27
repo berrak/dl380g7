@@ -109,6 +109,9 @@ my $host_entry = $new_ip . " " . $new_host_name . "." . $new_inet_domain . " " .
 system("virt-edit -d $new_domain /etc/hosts -e 's/::1.*/$host_entry/g'");
 system("virt-edit -d $new_domain /etc/hosts -e 's/localhost6.localdomain6//g'");
 system("virt-edit -d $new_domain /etc/hosts -e 's/localhost6//g'");
+system("virt-edit -d $new_domain /etc/hosts -e 's/localhost4.localdomain4//g'");
+system("virt-edit -d $new_domain /etc/hosts -e 's/localhost4//g'");
+
 
 $logger->info("virt-edit done of domain $new_domain and hosts data ($host_entry)");
 
