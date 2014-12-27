@@ -2,7 +2,7 @@
 #
 # /root/bin/create-deb-guest.pl
 #
-# Usage: create-deb-guest.pl trise '192.168.0.1' '192.168.0.41' '52:54:00:00:00:41' '192.168.0.255' 192.168.0.0' trise kvmbr0 
+# Usage: create-deb-guest.pl trise '192.168.0.1' '192.168.0.41' '52:54:00:00:00:41' '192.168.0.255' 192.168.0.0' trise kvmbr0 255.255.255.0     
 # Note: Original domain 'wheezy' must exist, other wise script terminates
 #       IP addresses are public
 #
@@ -44,8 +44,8 @@ if ( ! -f $original_domain_path ) {
 
 # Pre-check, check passed arguments
 my $num_args = $#ARGV +1 ;
-if ($num_args != 8) {
-    print "\nUsage: create-deb-guest.pl <new_domain> <local_gw_address> <local_ip_address> <local_mac_address> <new_broadcast> <new_network> <new_host_name> <new_bridge>\n";
+if ($num_args != 9) {
+    print "\nUsage: create-deb-guest.pl <new_domain> <local_gw_address> <local_ip_address> <local_mac_address> <new_broadcast> <new_network> <new_host_name> <new_bridge> <new_netmask>\n";
     $logger->error("Wrong number of arguments ($num_args) passed to create-deb-guest.pl");
     exit 2;
 }
@@ -62,6 +62,7 @@ my $new_net = $ARGV[5];
 
 my $new_host_name = $ARGV[6];
 my $new_bridge = $ARGV[7];
+my $new_netmask = $ARGV[8];
 
 $logger->info("virt-clone -o $original_domain_name --mac=$new_mac -n $new_domain -f $out_image_path");
 system("virt-clone -o $original_domain_name --mac=$new_mac -n $new_domain -f $out_image_path");

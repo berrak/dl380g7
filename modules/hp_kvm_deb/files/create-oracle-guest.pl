@@ -2,7 +2,7 @@
 #
 # /root/bin/create-oracle-guest.pl
 #
-# Usage: create-oracle-guest.pl trise '192.168.0.1' '192.168.0.41' '52:54:00:00:00:41' '192.168.0.255' 192.168.0.0' trise kvmbr0 
+# Usage: create-oracle-guest.pl trise '192.168.0.1' '192.168.0.41' '52:54:00:00:00:41' '192.168.0.255' 192.168.0.0' trise kvmbr0 255.255.255.0
 # Note: Original domain 'oracle6' must exist, other wise script terminates
 #       IP addresses are public
 #
@@ -44,8 +44,8 @@ if ( ! -f $original_domain_path ) {
 
 # Pre-check, check passed arguments
 my $num_args = $#ARGV +1 ;
-if ($num_args != 8) {
-    print "\nUsage: create-oracle-guest.pl <new_domain> <local_gw_address> <local_ip_address> <local_mac_address> <new_broadcast> <new_network> <new_host_name> <new_bridge>\n";
+if ($num_args != 9) {
+    print "\nUsage: create-oracle-guest.pl <new_domain> <local_gw_address> <local_ip_address> <local_mac_address> <new_broadcast> <new_network> <new_host_name> <new_bridge> <new_netmask>\n";
     $logger->error("Wrong number of arguments ($num_args) passed to create-deb-guest.pl");
     exit 2;
 }
@@ -62,6 +62,7 @@ my $new_net = $ARGV[5];
 
 my $new_host_name = $ARGV[6];
 my $new_bridge = $ARGV[7];
+my $new_netmask = $ARGV[8];
 
 $logger->info("virt-clone -o $original_domain_name --mac=$new_mac -n $new_domain -f $out_image_path");
 system("virt-clone -o $original_domain_name --mac=$new_mac -n $new_domain -f $out_image_path");
@@ -95,13 +96,14 @@ system("virt-sysprep -d $new_domain --enable udev-persistent-net,hostname,logfil
 #
 
 # 4. Set assigned ip address and domain name to new guest with 'virt-edit'
-system("virt-edit -d $new_domain /etc/network/interfaces -e 's/address 192.168.0.50/address $new_ip/'");
-system("virt-edit -d $new_domain /etc/network/interfaces -e 's/gateway 192.168.0.1/gateway $new_gw/'");
-system("virt-edit -d $new_domain /etc/network/interfaces -e 's/broadcast 192.168.0.255/broadcast $new_bcst/'");
-system("virt-edit -d $new_domain /etc/network/interfaces -e 's/network 192.168.0.0/network $new_net/'");
+system("virt-edit -d $new_domain /etc/sysconfig/network-scripts/ifcfg-eth0 -e 's/IPADDR=\"192.168.0.50\"/IPADDR=\"$new_ip\"/'");
+system("virt-edit -d $new_domain /etc/sysconfig/network-scripts/ifcfg-eth0 -e 's/GATEWAY=\"192.168.0.1\"/GATEWAY=\"$new_gw\"/'");
+system("virt-edit -d $new_domain /etc/sysconfig/network-scripts/ifcfg-eth0 -e 's/BROADCAST=\"192.168.0.255\"/BROADCAST=\"$new_bcst\"/'");
+system("virt-edit -d $new_domain /etc/sysconfig/network-scripts/ifcfg-eth0 -e 's/NETMASK=\"255.255.255.0\"/NETMASK=\"$new_netmask\"/'");
+system("virt-edit -d $new_domain /etc/sysconfig/network-scripts/ifcfg-eth0 -e 's/HWADDR=\"52:54:00:00:00:00\"/HWADDR=\"$new_mac\"/'");
+system("virt-edit -d $new_domain /etc/sysconfig/network-scripts/ifcfg-eth0 -e 's/NM_CONTROLLED=\"yes\"/NM_CONTROLLED=\"no\"/'");
 
-system("virt-edit -d $new_domain /etc/hosts -e 's/192.168.0.50/$new_ip/'");
-system("virt-edit -d $new_domain /etc/hosts -e 's/$original_domain_name/$new_host_name/g'");
+system("virt-edit -d $new_domain /etc/hosts -e '$_ = $new_ip $new_host_name\n if /^127/'");
 $logger->info("virt-edit done of domain $new_domain");
 
  ### SUBROUTINE FOR XML ###
