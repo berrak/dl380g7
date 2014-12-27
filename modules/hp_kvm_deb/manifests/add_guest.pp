@@ -46,6 +46,7 @@ define hp_kvm_deb::add_guest ( $local_guest_gw, $local_guest_ip, $local_mac_addr
 		exec { "Create_new_guest_$guest_name" :
 			   path => '/root/bin:/bin:/sbin:/usr/bin:/usr/sbin',
 			command => "/root/bin/create-deb-guest.pl $guest_name $local_guest_gw $local_guest_ip $local_mac_address $local_guest_bcst $local_guest_netw $local_hostname $bridge_name $local_guest_netmask",
+			timeout => 0, 
 			 unless => "ls /data/vm-images/ | grep $guest_name",
 			require => File["/etc/libvirt/qemu/$guest_name.xml"],
 		}
@@ -65,6 +66,7 @@ define hp_kvm_deb::add_guest ( $local_guest_gw, $local_guest_ip, $local_mac_addr
 		exec { "Create_new_guest_$guest_name" :
 			   path => '/root/bin:/bin:/sbin:/usr/bin:/usr/sbin',
 			command => "/root/bin/create-oracle-guest.pl $guest_name $local_guest_gw $local_guest_ip $local_mac_address $local_guest_bcst $local_guest_netw $local_hostname $bridge_name $local_guest_netmask",
+			timeout => 0,
 			 unless => "ls /data/vm-images/ | grep -w $guest_name",
 			require => File["/etc/libvirt/qemu/$guest_name.xml"],
 		}	
