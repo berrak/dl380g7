@@ -103,7 +103,8 @@ system("virt-edit -d $new_domain /etc/sysconfig/network-scripts/ifcfg-eth0 -e 's
 system("virt-edit -d $new_domain /etc/sysconfig/network-scripts/ifcfg-eth0 -e 's/HWADDR=\"52:54:00:00:00:00\"/HWADDR=\"$new_mac\"/'");
 system("virt-edit -d $new_domain /etc/sysconfig/network-scripts/ifcfg-eth0 -e 's/NM_CONTROLLED=\"yes\"/NM_CONTROLLED=\"no\"/'");
 
-system("virt-edit -d $new_domain /etc/hosts -e '$_ = $new_ip $new_host_name\n if /^127/'");
+system("virt-edit -d $new_domain /etc/hosts -e 's/^:.*$/$new_ip $new_host_name /'");
+
 $logger->info("virt-edit done of domain $new_domain");
 
  ### SUBROUTINE FOR XML ###
