@@ -34,12 +34,22 @@ class hp_kvm_deb::config {
 		   mode => '0700',
 	}		
 	
-    # helper perl script to create guests from base images
+    # helper perl script to create guests from Debian based images
 	file { '/root/bin/create-deb-guest.pl' :
 		source => "puppet:///modules/hp_kvm_deb/create-deb-guest.pl",
 		 owner => 'root',
 		 group => 'root',
 	      mode => '0700',
 	}
+	
+    # helper perl script to create guests from OracleLinux 6 based images
+	file { '/root/bin/create-oracle-guest.pl' :
+		source => "puppet:///modules/hp_kvm_deb/create-oracle-guest.pl",
+		 owner => 'root',
+		 group => 'root',
+	      mode => '0700',
+	}	
+	
+	
 	
 }

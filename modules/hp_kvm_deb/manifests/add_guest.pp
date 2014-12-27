@@ -10,9 +10,11 @@
 #                   local_hostname  => 'trise',
 #                       bridge_name => 'kvmbr0',
 #                        auto_start => 'true',
+#                           os_name => 'debian' | 'oracle6',
 #    }
 #        
-define hp_kvm_deb::add_guest ( $local_guest_gw, $local_guest_ip, $local_mac_address, $local_guest_bcst, $local_guest_netw, $local_hostname, $bridge_name, $auto_start ) {
+define hp_kvm_deb::add_guest ( $local_guest_gw, $local_guest_ip, $local_mac_address, $local_guest_bcst,
+                               $local_guest_netw, $local_hostname, $bridge_name, $auto_start, $os_name ) {
 
     
 	if ( $::operatingsystem != 'Debian' ) {
@@ -29,21 +31,48 @@ define hp_kvm_deb::add_guest ( $local_guest_gw, $local_guest_ip, $local_mac_addr
 	$guest_name = $name 
 	
 
-	# create the guest configuration
-	file { "/etc/libvirt/qemu/$guest_name.xml":
-		content =>  template( "hp_kvm_deb/$guest_name.xml.erb" ),
-		  owner => 'root',
-		  group => 'root',
-		   mode => '0600',
-		require => File['/root/bin/create-deb-guest.pl'],
-	}	
-		
-	# create the new guest (from '/data/vm-images/wheezy.img', must exist) 
-	exec { "Create_new_guest_$guest_name" :
-		   path => '/root/bin:/bin:/sbin:/usr/bin:/usr/sbin',
-		command => "/root/bin/create-deb-guest.pl $guest_name $local_guest_gw $local_guest_ip $local_mac_address $local_guest_bcst $local_guest_netw $local_hostname $bridge_name",
-		 unless => "ls /data/vm-images/ | grep $guest_name",
-		require => File["/etc/libvirt/qemu/$guest_name.xml"],
+
+	if ( $os_name == 'debian' ) {
+		# create the Debian guest configuration
+		file { "/etc/libvirt/qemu/$guest_name.xml":
+			content =>  template( "hp_kvm_deb/$guest_name.xml.erb" ),
+			  owner => 'root',
+			  group => 'root',
+			   mode => '0600',
+			require => File['/root/bin/create-deb-guest.pl'],
+		}	
+			
+		# create the new guest (from '/data/vm-images/wheezy.img', must exist) 
+		exec { "Create_new_guest_$guest_name" :
+			   path => '/root/bin:/bin:/sbin:/usr/bin:/usr/sbin',
+			command => "/root/bin/create-deb-guest.pl $guest_name $local_guest_gw $local_guest_ip $local_mac_address $local_guest_bcst $local_guest_netw $local_hostname $bridge_name",
+			 unless => "ls /data/vm-images/ | grep $guest_name",
+			require => File["/etc/libvirt/qemu/$guest_name.xml"],
+		}
+	
+	} elsif ( $os_name == 'oracle6' ) {
+	
+		# create the OracleLinux6 guest configuration
+		file { "/etc/libvirt/qemu/$guest_name.xml":
+			content =>  template( "hp_kvm_deb/$guest_name.xml.erb" ),
+			  owner => 'root',
+			  group => 'root',
+			   mode => '0600',
+			require => File['/root/bin/create-oracle-guest.pl'],
+		}	
+			
+		# create the new guest (from '/data/vm-images/oracle6.img', must exist) 
+		exec { "Create_new_guest_$guest_name" :
+			   path => '/root/bin:/bin:/sbin:/usr/bin:/usr/sbin',
+			command => "/root/bin/create-oracle-guest.pl $guest_name $local_guest_gw $local_guest_ip $local_mac_address $local_guest_bcst $local_guest_netw $local_hostname $bridge_name",
+			 unless => "ls /data/vm-images/ | grep $guest_name",
+			require => File["/etc/libvirt/qemu/$guest_name.xml"],
+		}	
+	
+	} else {
+	
+	    fail("FAIL: Could not create guest for unknown ( $os_name ) os-name!")
+	
 	}
 	
 	if ( $auto_start == 'true') {
