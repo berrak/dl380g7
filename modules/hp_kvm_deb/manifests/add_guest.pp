@@ -11,10 +11,11 @@
 #                       bridge_name => 'kvmbr0',
 #                        auto_start => 'true',
 #                           os_name => 'debian' | 'oracle6',
-#               local_guest_netmask => '255.255.255.0',       
+#               local_guest_netmask => '255.255.255.0',
+#                local_guest_domain => 'home.tld',
 #    }
 #        
-define hp_kvm_deb::add_guest ( $local_guest_gw, $local_guest_ip, $local_mac_address, $local_guest_bcst, $local_guest_netw, $local_hostname, $bridge_name, $auto_start, $os_name, $local_guest_netmask ) {
+define hp_kvm_deb::add_guest ( $local_guest_gw, $local_guest_ip, $local_mac_address, $local_guest_bcst, $local_guest_netw, $local_hostname, $bridge_name, $auto_start, $os_name, $local_guest_netmask, $local_guest_domain ) {
 
     
 	if ( $::operatingsystem != 'Debian' ) {
@@ -45,7 +46,7 @@ define hp_kvm_deb::add_guest ( $local_guest_gw, $local_guest_ip, $local_mac_addr
 		# create the new guest (from '/data/vm-images/wheezy.img', must exist) 
 		exec { "Create_new_guest_$guest_name" :
 			   path => '/root/bin:/bin:/sbin:/usr/bin:/usr/sbin',
-			command => "/root/bin/create-deb-guest.pl $guest_name $local_guest_gw $local_guest_ip $local_mac_address $local_guest_bcst $local_guest_netw $local_hostname $bridge_name $local_guest_netmask",
+			command => "/root/bin/create-deb-guest.pl $guest_name $local_guest_gw $local_guest_ip $local_mac_address $local_guest_bcst $local_guest_netw $local_hostname $bridge_name $local_guest_netmask $local_guest_domain",
 			timeout => 0, 
 			 unless => "ls /data/vm-images/ | grep $guest_name",
 			require => File["/etc/libvirt/qemu/$guest_name.xml"],
@@ -65,7 +66,7 @@ define hp_kvm_deb::add_guest ( $local_guest_gw, $local_guest_ip, $local_mac_addr
 		# create the new guest (from '/data/vm-images/oracle6.img', must exist) 
 		exec { "Create_new_guest_$guest_name" :
 			   path => '/root/bin:/bin:/sbin:/usr/bin:/usr/sbin',
-			command => "/root/bin/create-oracle-guest.pl $guest_name $local_guest_gw $local_guest_ip $local_mac_address $local_guest_bcst $local_guest_netw $local_hostname $bridge_name $local_guest_netmask",
+			command => "/root/bin/create-oracle-guest.pl $guest_name $local_guest_gw $local_guest_ip $local_mac_address $local_guest_bcst $local_guest_netw $local_hostname $bridge_name $local_guest_netmask $local_guest_domain",
 			timeout => 0,
 			 unless => "ls /data/vm-images/ | grep -w $guest_name",
 			require => File["/etc/libvirt/qemu/$guest_name.xml"],

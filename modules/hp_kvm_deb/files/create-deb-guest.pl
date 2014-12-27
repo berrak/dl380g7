@@ -2,7 +2,7 @@
 #
 # /root/bin/create-deb-guest.pl
 #
-# Usage: create-deb-guest.pl trise '192.168.0.1' '192.168.0.41' '52:54:00:00:00:41' '192.168.0.255' 192.168.0.0' trise kvmbr0 255.255.255.0     
+# Usage: create-deb-guest.pl trise '192.168.0.1' '192.168.0.41' '52:54:00:00:00:41' '192.168.0.255' 192.168.0.0' trise kvmbr0 255.255.255.0 home.tld    
 # Note: Original domain 'wheezy' must exist, other wise script terminates
 #       IP addresses are public
 #
@@ -45,7 +45,7 @@ if ( ! -f $original_domain_path ) {
 # Pre-check, check passed arguments
 my $num_args = $#ARGV +1 ;
 if ($num_args != 9) {
-    print "\nUsage: create-deb-guest.pl <new_domain> <local_gw_address> <local_ip_address> <local_mac_address> <new_broadcast> <new_network> <new_host_name> <new_bridge> <new_netmask>\n";
+    print "\nUsage: create-deb-guest.pl <new_domain> <local_gw_address> <local_ip_address> <local_mac_address> <new_broadcast> <new_network> <new_host_name> <new_bridge> <new_netmask> <new_inet_domain>\n";
     $logger->error("Wrong number of arguments ($num_args) passed to create-deb-guest.pl");
     exit 2;
 }
@@ -63,6 +63,7 @@ my $new_net = $ARGV[5];
 my $new_host_name = $ARGV[6];
 my $new_bridge = $ARGV[7];
 my $new_netmask = $ARGV[8];
+my $new_inet_domain = $ARGV[9];
 
 $logger->info("virt-clone -o $original_domain_name --mac=$new_mac -n $new_domain -f $out_image_path");
 system("virt-clone -o $original_domain_name --mac=$new_mac -n $new_domain -f $out_image_path");
@@ -101,9 +102,12 @@ system("virt-edit -d $new_domain /etc/network/interfaces -e 's/gateway 192.168.0
 system("virt-edit -d $new_domain /etc/network/interfaces -e 's/broadcast 192.168.0.255/broadcast $new_bcst/'");
 system("virt-edit -d $new_domain /etc/network/interfaces -e 's/network 192.168.0.0/network $new_net/'");
 
+my $deb_host_entry = $new_host_name . " " . $new_host_name . "." . $new_inet_domain;
+
 system("virt-edit -d $new_domain /etc/hosts -e 's/192.168.0.40/$new_ip/'");
-system("virt-edit -d $new_domain /etc/hosts -e 's/$original_domain_name/$new_host_name/g'");
-$logger->info("virt-edit done of domain $new_domain");
+system("virt-edit -d $new_domain /etc/hosts -e 's/$original_domain_name/$deb_host_entry/g'");
+
+$logger->info("virt-edit done of domain $new_domain and hosts data ($deb_host_entry)");
 
  ### SUBROUTINE FOR XML ###
 

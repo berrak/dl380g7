@@ -2,7 +2,7 @@
 #
 # /root/bin/create-oracle-guest.pl
 #
-# Usage: create-oracle-guest.pl trise '192.168.0.1' '192.168.0.41' '52:54:00:00:00:41' '192.168.0.255' 192.168.0.0' trise kvmbr0 255.255.255.0
+# Usage: create-oracle-guest.pl trise '192.168.0.1' '192.168.0.41' '52:54:00:00:00:41' '192.168.0.255' 192.168.0.0' trise kvmbr0 255.255.255.0 home.tld
 # Note: Original domain 'oracle6' must exist, other wise script terminates
 #       IP addresses are public
 #
@@ -44,8 +44,8 @@ if ( ! -f $original_domain_path ) {
 
 # Pre-check, check passed arguments
 my $num_args = $#ARGV +1 ;
-if ($num_args != 9) {
-    print "\nUsage: create-oracle-guest.pl <new_domain> <local_gw_address> <local_ip_address> <local_mac_address> <new_broadcast> <new_network> <new_host_name> <new_bridge> <new_netmask>\n";
+if ($num_args != 10) {
+    print "\nUsage: create-oracle-guest.pl <new_domain> <local_gw_address> <local_ip_address> <local_mac_address> <new_broadcast> <new_network> <new_host_name> <new_bridge> <new_netmask> <new_inet_domain>\n";
     $logger->error("Wrong number of arguments ($num_args) passed to create-deb-guest.pl");
     exit 2;
 }
@@ -63,6 +63,7 @@ my $new_net = $ARGV[5];
 my $new_host_name = $ARGV[6];
 my $new_bridge = $ARGV[7];
 my $new_netmask = $ARGV[8];
+my $new_inet_domain = $ARGV[9];
 
 $logger->info("virt-clone -o $original_domain_name --mac=$new_mac -n $new_domain -f $out_image_path");
 system("virt-clone -o $original_domain_name --mac=$new_mac -n $new_domain -f $out_image_path");
@@ -103,9 +104,13 @@ system("virt-edit -d $new_domain /etc/sysconfig/network-scripts/ifcfg-eth0 -e 's
 system("virt-edit -d $new_domain /etc/sysconfig/network-scripts/ifcfg-eth0 -e 's/HWADDR=\"52:54:00:00:00:00\"/HWADDR=\"$new_mac\"/'");
 system("virt-edit -d $new_domain /etc/sysconfig/network-scripts/ifcfg-eth0 -e 's/NM_CONTROLLED=\"yes\"/NM_CONTROLLED=\"no\"/'");
 
-system("virt-edit -d $new_domain /etc/hosts -e 's/^:.*$/$new_ip $new_host_name /'");
+my $host_entry = $new_ip . " " . $new_host_name . " " . $new_host_name . "." . $new_inet_domain;
 
-$logger->info("virt-edit done of domain $new_domain");
+system("virt-edit -d $new_domain /etc/hosts -e 's/::1.*/$host_entry/g'");
+system("virt-edit -d $new_domain /etc/hosts -e 's/localhost6.localdomain6//g'");
+system("virt-edit -d $new_domain /etc/hosts -e 's/localhost6//g'");
+
+$logger->info("virt-edit done of domain $new_domain and hosts data ($host_entry)");
 
  ### SUBROUTINE FOR XML ###
 
