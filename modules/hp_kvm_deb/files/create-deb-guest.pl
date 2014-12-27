@@ -102,7 +102,7 @@ system("virt-edit -d $new_domain /etc/network/interfaces -e 's/gateway 192.168.0
 system("virt-edit -d $new_domain /etc/network/interfaces -e 's/broadcast 192.168.0.255/broadcast $new_bcst/'");
 system("virt-edit -d $new_domain /etc/network/interfaces -e 's/network 192.168.0.0/network $new_net/'");
 
-my $deb_host_entry = $new_host_name . " " . $new_host_name . "." . $new_inet_domain;
+my $deb_host_entry = $new_host_name . "." . $new_inet_domain . " " . $new_host_name ;
 
 system("virt-edit -d $new_domain /etc/hosts -e 's/192.168.0.40/$new_ip/'");
 system("virt-edit -d $new_domain /etc/hosts -e 's/$original_domain_name/$deb_host_entry/g'");

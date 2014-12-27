@@ -104,7 +104,7 @@ system("virt-edit -d $new_domain /etc/sysconfig/network-scripts/ifcfg-eth0 -e 's
 system("virt-edit -d $new_domain /etc/sysconfig/network-scripts/ifcfg-eth0 -e 's/HWADDR=\"52:54:00:00:00:00\"/HWADDR=\"$new_mac\"/'");
 system("virt-edit -d $new_domain /etc/sysconfig/network-scripts/ifcfg-eth0 -e 's/NM_CONTROLLED=\"yes\"/NM_CONTROLLED=\"no\"/'");
 
-my $host_entry = $new_ip . " " . $new_host_name . " " . $new_host_name . "." . $new_inet_domain;
+my $host_entry = $new_ip . " " . $new_host_name . "." . $new_inet_domain . " " . $new_host_name  ;
 
 system("virt-edit -d $new_domain /etc/hosts -e 's/::1.*/$host_entry/g'");
 system("virt-edit -d $new_domain /etc/hosts -e 's/localhost6.localdomain6//g'");
