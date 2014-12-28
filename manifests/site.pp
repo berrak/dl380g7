@@ -933,8 +933,11 @@ node 'ilx.home.tld' {
 node 'ora.home.tld' {
 
    ## BASIC
-   # (required for command 'virsh shutdown ora' to work) 
+   # (acpid is required for host 'virsh shutdown ora' to work) 
 	include hp_acpid_rpm
+	
+	include hp_puppetize
+    include puppet_utils
 
     ## APPLICATIONS
 	
