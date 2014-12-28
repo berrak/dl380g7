@@ -929,16 +929,18 @@ node 'ilx.home.tld' {
 
 # This is a OracleLinux-6 'minimal-install' guest (aka rhel 6 minimal)
 # Before this add EPEL-repo and add below required rpms manually.
-#node 'ora.home.tld' {
-#
-#   ## BASIC
-#   (required for command 'virsh shutdown ora' to work) 
-#	include hp_acpid_rpm
-#
+# Note this installs puppet agent 2.7!
+node 'ora.home.tld' {
+
+   ## BASIC
+   # (required for command 'virsh shutdown ora' to work) 
+	include hp_acpid_rpm
+
     ## APPLICATIONS
+	
     #Install REDHAT packages without any special configurations
-    #class { hp_install_rpms : rpms => [ "yum-plugin-priorities", "nano", "bind-utils", "wget", "perl-Log-Log4perl", "openssh-clients" ] }
-#}
+    class { hp_install_rpms : rpms => [ "yum-plugin-priorities", "nano", "bind-utils", "wget", "perl-Log-Log4perl", "openssh-clients" ] }
+}
 
 #
 ## eof
