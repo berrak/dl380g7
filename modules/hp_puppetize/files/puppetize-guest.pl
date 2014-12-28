@@ -380,7 +380,7 @@ sub init {
             $linux_dist = 'wheezy.deb';
             
         } elsif ( $linux_dist eq "oracle-6" ) {
-            $linux_dist = 'el-6-noarch.rpm';
+            $linux_dist = 'el-6.noarch.rpm';
             
         } else {
             $our_logger->error("Unknown linux distribution ($linux_dist) passed to $our_script");
