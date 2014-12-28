@@ -585,7 +585,7 @@ node 'hp.home.tld' {
     ## APPLICATIONS ##
     
 	# DEBIAN packages without any special configurations
-    class { hp_install_debs : debs => [ "tree", "sipcalc", "lshw", "pydf" , "dnsutils", "chkconfig", "virt-top" ] }
+    class { hp_install_debs : debs => [ "tree", "sipcalc", "lshw", "pydf" , "dnsutils", "chkconfig", "virt-top", "curl" ] }
     
 	# MAIL server (relay external mails via google smtp)
 	hp_postfix::install { 'mta' :
@@ -962,7 +962,7 @@ node 'ora.home.tld' {
     ## APPLICATIONS
 	
     #Install REDHAT packages without any special configurations
-    class { hp_install_rpms : rpms => [ "nano", "bind-utils", "wget", "perl-Log-Log4perl", "openssh-clients" ] }
+    class { hp_install_rpms : rpms => [ "nano", "bind-utils", "wget", "perl-Log-Log4perl", "openssh-clients", "curl" ] }
 	
 	include hp_apache2_rpm
 	
