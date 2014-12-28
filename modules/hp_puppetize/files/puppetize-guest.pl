@@ -4,10 +4,13 @@
 ##############################################################
 # /root/bin/puppetize-guest.pl
 #
-# Usage:   # scp puppetize-guest.pl <hostip>:/usr/local/bin/puppetize-deb-guest.pl
-#          # ssh <hostip> puppetize-guest.pl puppetmaster-ipaddress { wheezy | oracle-6 } 
+# Usage:   # scp puppetize-guest.pl <hostip>:/usr/local/bin/puppetize-guest.pl
+#          # ssh root@<hostip> or 'virsh console <name>'
+#          # puppetize-guest.pl puppetmaster-ipaddress { wheezy | oracle-6 } 
 # 
-# Purpose: Install latest puppet agent from puppetlabs on (virtual) node
+# Purpose: Install latest puppet agent from puppetlabs on (virtual) node.
+#
+#          NOTE Used both for Debian wheezy and OracleLinux 6 guests.
 #
 # Exit codes: Exit with non-zero code if errors
 #
@@ -329,8 +332,7 @@ sub init {
     my $linux_dist ; 
     my $init_error_flag = $FALSE;
     
-    # required for logging function
-    my $log4perl_pkg = 'liblog-log4perl-perl';
+
     
     # initilize globals
     $our_main_error_flag = $FALSE;
@@ -341,8 +343,10 @@ sub init {
         die "Script $our_script must run as root - Aborting...";
     }
     
-    # install if missing perl library
-    system("dpkg -s $log4perl_pkg 2>/dev/null >/dev/null || aptitude -y install $log4perl_pkg");
+    # install if missing perl library - Needs rewrite!
+    ## required for logging function
+    #my $log4perl_pkg = 'liblog-log4perl-perl';
+    #system("dpkg -s $log4perl_pkg 2>/dev/null >/dev/null || aptitude -y install $log4perl_pkg");
     
     # initilize logger
     my $log_conf = q(

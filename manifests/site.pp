@@ -928,6 +928,7 @@ node 'ilx.home.tld' {
 ###############################################################
 
 # This is a OracleLinux-6 'minimal-install' guest
+# Before this add EPEL-repo and add below required rpms manually.
 #node 'ora.home.tld' {
 #
 #   ## BASIC
@@ -936,7 +937,7 @@ node 'ilx.home.tld' {
 #
     ## APPLICATIONS
     #Install REDHAT packages without any special configurations
-    #class { hp_install_rpms : rpms => [ "tree", "nano", "bind-utils" ] }
+    #class { hp_install_rpms : rpms => [ "yum-plugin-priorities", "nano", "bind-utils", "wget", "perl-Log-Log4perl" ] }
 #}
 
 #
