@@ -852,6 +852,8 @@ node 'deborg.home.tld' {
 	
 }
 
+###############################################################
+
 node 'ilx.home.tld' {
 
     ## BASIC
@@ -922,6 +924,20 @@ node 'ilx.home.tld' {
 	class { hp_grub::install : defaultline => 'vga=791', appendline => 'true', ipv6 => 'false' }	
 
 }
+
+###############################################################
+
+# This is a OracleLinux-6 'minimal-install' guest
+#node 'ora.home.tld' {
+#
+#   ## BASIC
+#   (required for command 'virsh shutdown ora' to work) 
+#	include hp_acpid_rpm
+#
+    ## APPLICATIONS
+    #Install REDHAT packages without any special configurations
+    #class { hp_install_rpms : rpms => [ "tree", "nano", "bind-utils" ] }
+#}
 
 #
 ## eof
