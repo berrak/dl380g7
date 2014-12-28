@@ -106,8 +106,8 @@ $IPTABLES -A INPUT -p icmp --icmp-type echo-request -j ACCEPT
 #==============================================================================
 # DROP SPOOF, BROADCAST AND DEFAULT
 #==============================================================================
-# drop all broadcasts
-$IPTABLES -A INPUT -m pkttype --pkt-type broadcast -j DROP
+# drop (quiet) all broadcasts
+$IPTABLES -A INPUT -d 224.0.0.0/24 -j DROP
 
 # Log anything on eth0 claiming it's from a local or non-routable network
 # If you're using one of these local networks, remove it from the list below
