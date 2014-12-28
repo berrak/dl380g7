@@ -914,7 +914,7 @@ node 'ilx.home.tld' {
 	
     ## MAINTENANCE
 	#  Note: Before installing new ssh-configuration, first create rsa keys on remost
-	#  managing host and "$ ssh-copy-id -i /home/bekr/.ssh/id_ilx_rsa bekr@192.168.0.43"
+	#  managing host and "$ ssh-copy-id -i /home/bekr/.ssh/id_ilx_rsa bekr@192.168.0.44"
 	include hp_ssh_server
     hp_ssh_server::sshuser { 'bekr' : }			
 	
@@ -956,6 +956,7 @@ node 'ora.home.tld' {
     
     # Set up user's home directories and bash customization
     hp_user_bashrc::config { 'bekr' : }
+	hp_sudo::config { 'bekr': }
 
 
     ## APPLICATIONS
