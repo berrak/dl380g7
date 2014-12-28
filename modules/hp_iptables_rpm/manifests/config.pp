@@ -18,8 +18,8 @@ class hp_iptables_rpm::config  {
 	}
 	
 	# iptables file in production (manual activation)
-	file { '/root/bin/fw.init' :
-		 source => "puppet:///modules/hp_iptables_rpm/fw.init",
+	file { "/root/bin/fw.$myhostname" :
+		 source => "puppet:///modules/hp_iptables_rpm/fw.$myhostname",
 		  owner => 'root',
 		  group => 'root',
 		   mode => '0700',
@@ -33,16 +33,8 @@ class hp_iptables_rpm::config  {
 		  mode => '0700',
 	   require => Package['iptables'],
 	}
-	
-	# iptables file to open 'almost all rules' and set policy accept (manual activation)
-	file { '/root/bin/fw.open' :
-		 source => "puppet:///modules/hp_iptables_rpm/fw.open",
-		  owner => 'root',
-		  group => 'root',
-		   mode => '0700',
-	}
         
-	# iptables file to clear all rules and set policy accept (manual activation)
+	# iptables file to clear all rules and set all policy accept (manual activation)
 	file { '/root/bin/fw.clear' :
 		 source => "puppet:///modules/hp_iptables_rpm/fw.clear",
 		  owner => 'root',

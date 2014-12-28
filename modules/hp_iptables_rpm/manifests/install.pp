@@ -1,10 +1,10 @@
 ##
-## This class manage iptables and fail2ban
+## This class manage iptables
 ##
 class hp_iptables_rpm::install {
 
     
-    if ! ( $::lsbdistid == 'OracleServer' ) {
+    if ! ( $::operatingsystem == 'OracleLinux' ) {
         fail("FAIL: Aborting. This module (iptables) is only for OracleLinux based distributions!")
     }
     
