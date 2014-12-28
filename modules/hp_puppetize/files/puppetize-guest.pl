@@ -116,8 +116,10 @@ sub get_puppet_repository_information {
     # build puppetlabs url for apt repository update package
     if ( $pkg eq 'wheezy.deb' ) {
         $myurl = "http://apt.puppetlabs.com/puppetlabs-release-" . $pkg;
+        $our_logger->debug("wget of distribution: ($myurl)"); 
 
         system("wget $myurl");
+
         $exitvalue = $? >> 8;
         $exitsignal = $? & 127;
         
@@ -137,10 +139,12 @@ sub get_puppet_repository_information {
     }
     
     # build puppetlabs url for rpm repository update package
-    elsif ( $pkg eq 'el-6-noarch.rpm' ) {
+    elsif ( $pkg eq 'el-6.noarch.rpm' ) {
         $myurl = "http://yum.puppetlabs.com/puppetlabs-release-" . $pkg;
-
+        $our_logger->debug("wget of distribution: ($myurl)");
+        
         system("wget $myurl");
+
         $exitvalue = $? >> 8;
         $exitsignal = $? & 127;     
         
@@ -224,7 +228,7 @@ sub install_puppet_agent {
     }
         
     # install rpm puppet agent package
-    elsif ( $pkg eq 'el-6-noarch.rpm' ) {
+    elsif ( $pkg eq 'el-6.noarch.rpm' ) {
 
         system("yum install puppet");
         $exitvalue = $? >> 8;
