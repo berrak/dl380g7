@@ -111,7 +111,7 @@ sub get_puppet_repository_information {
     $our_logger->debug("get_puppet_repository_information($pkg)");
     my $exitvalue;
     my $exitsignal;
-    my $myurl;
+    my $myurl="";
  
     # build puppetlabs url for apt repository update package
     if ( $pkg eq 'wheezy.deb' ) {
@@ -159,7 +159,7 @@ sub get_puppet_repository_information {
         
     } else { 
 
-        $our_logger->error("Unknown distribution: $myurl");      
+        $our_logger->error("Unknown distribution: ($myurl)");      
         $our_main_error_flag = 1; 
     }
     
