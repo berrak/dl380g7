@@ -1,10 +1,10 @@
 #!/bin/bash
-# /root/bin/fw.ora
+# /root/bin/fw.vm-rpm
 ##############################################################
 # DO NOT EDIT. MANAGES BY PUPPET. CHANGES WILL BE WIPED OUT. #
 ##############################################################
 #
-# Rules for HP server (VM ora).
+# Rules for HP server (vm-rpm based hosts).
 #
 # Copyright (C) (2014) K-B.Kronlund <bkronmailbox-copyright@yahoo.se>
 #
@@ -28,6 +28,16 @@
 IPTABLES=/sbin/iptables
 MODPROBE=/sbin/modprobe
 SERVICE=/sbin/service
+
+#------------------------------------------------------------------------------
+# Remote access
+BKTRUSTEDNET="192.168.0.0/24"
+BKTRUSTEDADDR="81.237.245.35"
+# Ensure access to ssh incase Telia change ip (within a resonable range)
+BKTRUSTEDRANGE="81.237.0.0/16"
+# Trust google.com
+GOOGLENET="66.249.67.0/24"
+#------------------------------------------------------------------------------
 
 ## rsyslog: Configured to match log prefix 'FORWARD', 'INPUT' and 
 ##  'OUTPUT' to separate out logs to files in /var/log/iptables/
@@ -74,40 +84,56 @@ $IPTABLES -I OUTPUT 1 -o lo -j ACCEPT
 # INBOUND
 #==============================================================================
 # prevent all invalid input packages on INPUT
-$IPTABLES -A INPUT -m state --state INVALID -j $LOGOPT $RLIMIT --log-prefix "INPUT DROP INVALID "
+$IPTABLES -A INPUT -m state --state INVALID -j $LOGOPT $RLIMIT --log-prefix "INPUT DROP INVALID: "
 $IPTABLES -A INPUT -m state --state INVALID -j DROP
 
 # allow all established and related traffic in
 $IPTABLES -A INPUT -p all -m state --state ESTABLISHED,RELATED -j ACCEPT
 
-# Accept ssh traffic. Restrict this to known ips if possible.
-$IPTABLES -A INPUT -p tcp -m tcp --dport 22 --syn -m state --state NEW  -j ACCEPT
+# allow SSH client access for management
+$IPTABLES -A INPUT -p tcp -s $BKTRUSTEDNET -m tcp --dport 22 --syn -m state --state NEW -j ACCEPT
+$IPTABLES -A INPUT -p tcp -s $BKTRUSTEDADDR -m tcp --dport 22 --syn -m state --state NEW -j ACCEPT
+$IPTABLES -A INPUT -p tcp -s $BKTRUSTEDRANGE -m tcp --dport 22 --syn -m state --state NEW -j ACCEPT
 
+# allow DNS traffic
 $IPTABLES -A INPUT -p tcp -m tcp --dport 53 --syn -m state --state NEW -j ACCEPT
 $IPTABLES -A INPUT -p udp -m udp --dport 53 -m state --state NEW -j ACCEPT
 
-# Accept web traffic.
-# allow http access to proxy
-$IPTABLES -A INPUT -p tcp -m tcp --dport 80 --syn -m state --state NEW -j ACCEPT
+# accept HTTP traffic (remove -s when configured)
+$IPTABLES -A INPUT -p tcp -s $BKTRUSTEDNET -m tcp --dport 80 --syn -m state --state NEW -j ACCEPT
+$IPTABLES -A INPUT -p tcp -s $BKTRUSTEDADDR -m tcp --dport 80 --syn -m state --state NEW -j ACCEPT
 
-# allow inbound NTP communication
+# allow NTP communication
 $IPTABLES -A INPUT -p udp -m udp --dport 123 -m state --state NEW -j ACCEPT
+
+# allow possible multicast mDNS packets
+$IPTABLES -A INPUT -p udp -m udp --dport 5353 -j ACCEPT
 
 # allow all puppet agent-master communication
 $IPTABLES -A INPUT -p tcp -m tcp --dport 8139:8140 --syn -m state --state NEW -j ACCEPT
 
-# Accept Pings
+# allow GIT (port 9418) access for trusted users
+$IPTABLES -A INPUT -p tcp -s $BKTRUSTEDNET -m tcp --dport 9418 -m state --state NEW -j ACCEPT
+$IPTABLES -A INPUT -p tcp -s $BKTRUSTEDADDR -m tcp --dport 9418 -m state --state NEW -j ACCEPT
+
+# allow some meaningful ICMP
 $IPTABLES -A INPUT -p icmp --icmp-type echo-reply -j ACCEPT
 $IPTABLES -A INPUT -p icmp --icmp-type destination-unreachable -j ACCEPT
 $IPTABLES -A INPUT -p icmp --icmp-type time-exceeded -j ACCEPT
+
+# allow, but log all pings
+$IPTABLES -A INPUT -p icmp --icmp-type echo-request -j $LOGOPT $RLIMIT --log-prefix "INPUT PING: "
 $IPTABLES -A INPUT -p icmp --icmp-type echo-request -j ACCEPT
 
 
 #==============================================================================
-# DROP SPOOF, BROADCAST AND DEFAULT
+# DROP SPOOF, MULTI- and BROADCAST and other as DEFAULT DROP
 #==============================================================================
-# drop (quiet) all broadcasts
+# drop (quiet) all router multicasts (IGMP snooping)
 $IPTABLES -A INPUT -d 224.0.0.0/24 -j DROP
+
+# drop (quiet) all broadcasts (from e.g. printers)
+$IPTABLES -A INPUT -m pkttype --pkt-type broadcast -j DROP
 
 # Log anything on eth0 claiming it's from a local or non-routable network
 # If you're using one of these local networks, remove it from the list below
@@ -119,8 +145,8 @@ $IPTABLES -A INPUT -i eth0 -s 240.0.0.0/5 -j $LOGOPT $RLIMIT --log-prefix "INPUT
 $IPTABLES -A INPUT -i eth0 -d 127.0.0.0/8 -j $LOGOPT $RLIMIT --log-prefix "INPUT DROP LOOPBACK: "
 
 #Log and drop everything else
-$IPTABLES -A INPUT -j $LOGOPT $RLIMIT --log-prefix "INPUT DROP DEFAULT: "
-$IPTABLES -A INPUT -j DROP
+$IPTABLES -A INPUT ! -i lo -j $LOGOPT $RLIMIT --log-prefix "INPUT DROP DEFAULT: "
+$IPTABLES -A INPUT ! -i lo -j DROP
 
 ###############################################################################
 # To use this, manually run:
@@ -128,8 +154,6 @@ $IPTABLES -A INPUT -j DROP
 #    /root/bin/fw.ora
 #    service iptables save
 #    service iptables restart
-#    iptables -L -v --line-numbers
-#    iptables -t nat -L -v --line-numbers
 #
 ###############################################################################
 

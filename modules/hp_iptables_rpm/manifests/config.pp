@@ -9,7 +9,7 @@ class hp_iptables_rpm::config  {
 
 	# configuration for iptables
 	file { '/etc/sysconfig/iptables-config' :
-		source => "puppet:///modules/hp_iptables_rpm/iptables-config.${myhostname}",
+		source => "puppet:///modules/hp_iptables_rpm/iptables-config.vm-rpm",
 		 owner => 'root',
 		 group => 'root',
 		  mode => '0600',
@@ -18,8 +18,8 @@ class hp_iptables_rpm::config  {
 	}
 	
 	# iptables file in production (manual activation)
-	file { "/root/bin/fw.$myhostname" :
-		 source => "puppet:///modules/hp_iptables_rpm/fw.$myhostname",
+	file { "/root/bin/fw.vm-rpm" :
+		 source => "puppet:///modules/hp_iptables_rpm/fw.vm-rpm",
 		  owner => 'root',
 		  group => 'root',
 		   mode => '0700',
@@ -36,7 +36,7 @@ class hp_iptables_rpm::config  {
         
 	# iptables file to clear all rules and set all policy accept (manual activation)
 	file { '/root/bin/fw.clear' :
-		 source => "puppet:///modules/hp_iptables_rpm/fw.clear",
+		 source => "puppet:///modules/hp_iptables_rpm/fw.clear-vm-rpm",
 		  owner => 'root',
 		  group => 'root',
 		   mode => '0700',
