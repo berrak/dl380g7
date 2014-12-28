@@ -224,7 +224,7 @@ sub install_puppet_agent {
     }
         
     # install rpm puppet agent package
-    elsif ( $pkg eq 'el-6.noarch.rpm' ) {
+    elsif ( $pkg eq 'el-6-noarch.rpm' ) {
 
         system("yum install puppet");
         $exitvalue = $? >> 8;
@@ -361,7 +361,7 @@ sub init {
     Log::Log4perl::init(\$log_conf);
     $our_logger = Log::Log4perl->get_logger();
     
-    $our_logger->info("Logger initilized");
+    $our_logger->info("------------ New Logger Initilized ------------ ");
     
     # validate input argument numbers
     if ($num_args != 2) {
