@@ -100,11 +100,14 @@ $IPTABLES -A INPUT -p tcp -m tcp --dport 8139:8140 --syn -m state --state NEW -j
 $IPTABLES -A INPUT -p icmp --icmp-type echo-reply -j ACCEPT
 $IPTABLES -A INPUT -p icmp --icmp-type destination-unreachable -j ACCEPT
 $IPTABLES -A INPUT -p icmp --icmp-type time-exceeded -j ACCEPT
+$IPTABLES -A INPUT -p icmp --icmp-type echo-request -j ACCEPT
 
 
 #==============================================================================
-# DROP SPOOF AND DEFAULT
+# DROP SPOOF, BROADCAST AND DEFAULT
 #==============================================================================
+# drop all broadcasts
+$IPTABLES -A INPUT -m pkttype --pkt-type broadcast -j DROP
 
 # Log anything on eth0 claiming it's from a local or non-routable network
 # If you're using one of these local networks, remove it from the list below
