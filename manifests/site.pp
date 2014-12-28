@@ -966,11 +966,27 @@ node 'ora.home.tld' {
 	
 	include hp_apache2_rpm
 	
+	## SECURITY
+	
+	include hp_auto_upgrade
+	
+    hp_selinux::state { 'enforcing' : }
+    include hp_logwatch
+    include hp_iptables_rpm
+    
+    # disable unnecessary services
+    hp_service::disable { 'rhnsd' : }
+
+	
+	
     ## MAINTENANCE
 	#  Note: Before installing new ssh-configuration, first create rsa keys on remost
 	#  managing host and "$ ssh-copy-id -i /home/bekr/.ssh/id_ora_rsa bekr@192.168.0.45"
 	include hp_ssh_server
-    hp_ssh_server::sshuser { 'bekr' : }			
+    hp_ssh_server::sshuser { 'bekr' : }
+	
+    include hp_logrotate
+    include hp_rsyslog
 	
 	
 }

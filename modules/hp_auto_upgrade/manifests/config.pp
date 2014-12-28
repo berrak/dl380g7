@@ -3,7 +3,7 @@
 #
 class hp_auto_upgrade::config {
 
-    if $::lsbdistid == 'Debian' {
+    if $::operatingsystem == 'Debian' {
 
         file { '/etc/cron.daily/apt-security-updates':
              source => "puppet:///modules/hp_auto_upgrade/apt-security-updates",
@@ -28,7 +28,7 @@ class hp_auto_upgrade::config {
         }
     
     } else {
-    	fail("FAIL: Unknown $ostype distribution. Aborting...")
+    	fail("FAIL: Unknown ($::operatingsystem) distribution. Aborting...")
     }
 
 }
