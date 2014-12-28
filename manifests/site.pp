@@ -939,7 +939,7 @@ node 'ora.home.tld' {
     ## APPLICATIONS
 	
     #Install REDHAT packages without any special configurations
-    class { hp_install_rpms : rpms => [ "yum-plugin-priorities", "nano", "bind-utils", "wget", "perl-Log-Log4perl", "openssh-clients" ] }
+    class { hp_install_rpms : rpms => [ "nano", "bind-utils", "wget", "perl-Log-Log4perl", "openssh-clients" ] }
 }
 
 #

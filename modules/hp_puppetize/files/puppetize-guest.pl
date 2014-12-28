@@ -229,8 +229,10 @@ sub install_puppet_agent {
         
     # install rpm puppet agent package
     elsif ( $pkg eq 'el-6.noarch.rpm' ) {
-
-        system("yum install puppet");
+        
+        system ("rpm -Uvh puppetlabs-release-el-6.noarch.rpm");
+        system("yum update && yum install puppet");
+        
         $exitvalue = $? >> 8;
         $exitsignal = $? & 127;     
         
