@@ -6,7 +6,7 @@ define hp_sudo::config {
 
     include hp_sudo
     
-    $ostype = $::lsbdistid
+    $ostype = $::operatingsystem
 	
 	exec { "add_group_sudo" :
             command => "groupadd -r sudo",
@@ -23,7 +23,7 @@ define hp_sudo::config {
     }
     
     # use '/etc/sudoers.d' directory to add group sudo for OracleLinux
-    if $ostype == 'OracleServer' {
+    if $ostype == 'OracleLinux' {
     
         file { "/etc/sudoers.d/sudogrp":
             content =>  template( "hp_sudo/sudogrp.erb" ),

@@ -964,6 +964,14 @@ node 'ora.home.tld' {
     #Install REDHAT packages without any special configurations
     class { hp_install_rpms : rpms => [ "nano", "bind-utils", "wget", "perl-Log-Log4perl", "openssh-clients" ] }
 	
+	
+    ## MAINTENANCE
+	#  Note: Before installing new ssh-configuration, first create rsa keys on remost
+	#  managing host and "$ ssh-copy-id -i /home/bekr/.ssh/id_ilx_rsa bekr@192.168.0.44"
+	include hp_ssh_server
+    hp_ssh_server::sshuser { 'bekr' : }			
+	
+	
 }
 
 #
