@@ -18,9 +18,9 @@ define hp_selinux::state {
         fail("FAIL: SELINUX unknown state given! Aborting...")	
 	}
     
-	$ostype = $::lsbdistid
+	$ostype = $::operatingsystem
 	
-	if $ostype == 'OracleServer' {
+	if $ostype == 'OracleLinux' {
 	
         file { "/etc/selinux/config":
             content =>  template( "hp_selinux/config.erb" ),
@@ -39,7 +39,7 @@ define hp_selinux::state {
 		
         
 	} else {
-		fail("FAIL: SELINUX on unsupported $ostype distribution. Aborting...")
+		fail("FAIL: SELINUX on unsupported ($ostype) distribution. Aborting...")
 	}
     
 }
