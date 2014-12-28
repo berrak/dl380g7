@@ -23,12 +23,12 @@ class hp_puppetize::config {
     ## List all hosts which also acts as Puppet server on same host as client (see Oracle templates)
     ## NOTE: only used if puppet agent is running (in daemon mode) - don't do that, not used for Debian!
 	
-    #case $myhostname {
-    #    'ol65', 'hphome', 'hp': { $myserverdomain = $::hp_puppetize::params::server_domain_home }
-    #    'dl380g7': { $myserverdomain = $::hp_puppetize::params::server_domain_bahnhof }
-    #    'deborg','trise','kronlund','git','mc': { $myserverdomain = $::hp_puppetize::params::server_domain_home }
-    #    default: { fail("FAIL: Puppet server domain is missing from puppetize params-file") }
-    #}
+    case $myhostname {
+        'ol65', 'hphome', 'hp': { $myserverdomain = $::hp_puppetize::params::server_domain_home }
+        'dl380g7'             : { $myserverdomain = $::hp_puppetize::params::server_domain_bahnhof }
+        'ora','trise','deborg','mc','ilx' : { $myserverdomain = $::hp_puppetize::params::server_domain_home }
+        default               : { fail("FAIL: Puppet server domain is missing from puppetize params-file") }
+    }
     
     ## DEBIAN 7
     
