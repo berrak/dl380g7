@@ -137,7 +137,7 @@ sub get_puppet_repository_information {
     }
     
     # build puppetlabs url for rpm repository update package
-    elsif ( $pkg eq 'el-6.noarch.rpm' ) {
+    elsif ( $pkg eq 'el-6-noarch.rpm' ) {
         $myurl = "http://yum.puppetlabs.com/puppetlabs-release-" . $pkg;
 
         system("wget $myurl");
