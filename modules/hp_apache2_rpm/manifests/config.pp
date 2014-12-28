@@ -18,7 +18,7 @@ class hp_apache2_rpm::config {
     }
     
     # customize the initial error-no-index file
-    file { "/container/$myhostname/rootfs/var/www/error/noindex.html" :
+    file { "/var/www/error/noindex.html" :
         content =>  template( "hp_apache2_rpm/$myhostname.noindex.html.erb" ),    
           owner => 'root',
           group => 'root',
