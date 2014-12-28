@@ -111,10 +111,11 @@ sub get_puppet_repository_information {
     $our_logger->debug("get_puppet_repository_information($pkg)");
     my $exitvalue;
     my $exitsignal;
+    my $myurl;
  
     # build puppetlabs url for apt repository update package
     if ( $pkg eq 'wheezy.deb' ) {
-        my $myurl = "http://apt.puppetlabs.com/puppetlabs-release-" . "$pkg";
+        $myurl = "http://apt.puppetlabs.com/puppetlabs-release-" . $pkg;
 
         system("wget $myurl");
         $exitvalue = $? >> 8;
@@ -137,7 +138,7 @@ sub get_puppet_repository_information {
     
     # build puppetlabs url for rpm repository update package
     elsif ( $pkg eq 'el-6.noarch.rpm' ) {
-        my $myurl = "http://yum.puppetlabs.com/puppetlabs-release-" . "$pkg";
+        $myurl = "http://yum.puppetlabs.com/puppetlabs-release-" . $pkg;
 
         system("wget $myurl");
         $exitvalue = $? >> 8;
@@ -158,7 +159,7 @@ sub get_puppet_repository_information {
         
     } else { 
 
-        $our_logger->error("Unknown distribution: $pkg");      
+        $our_logger->error("Unknown distribution: $myurl");      
         $our_main_error_flag = 1; 
     }
     
@@ -180,7 +181,7 @@ sub install_puppet_agent {
     
     # update sources
     if ( $pkg eq 'wheezy.deb' ) {
-        my $dpkg_arg = "puppetlabs-release-" . "$pkg";
+        my $dpkg_arg = "puppetlabs-release-" . $pkg;
 
         system("dpkg -i /tmp/$dpkg_arg");
         $exitvalue = $? >> 8;
