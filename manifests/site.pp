@@ -166,10 +166,10 @@ node 'wheezy.vm.tld' {
 	       "bind9-host", "lynis", "pydf" , "dnsutils" , "ethtool", "parted", "lsof", "curl" ] }
     
     # APACHE2 (prefork)
-    include hp_apache2
+    include hp_apache2_deb
     
 	## Define a new VM's Apache2 site - transparent proxy in host
-    hp_apache2::vhost { 'deborg.debinix.org' :
+    hp_apache2_deb::vhost { 'deborg.debinix.org' :
             priority => '001',
           devgroupid => 'root',
           execscript => 'none',
@@ -324,10 +324,10 @@ node 'node-hphome.home.tld' {
 	}
 	
     # APACHE2 prefork
-    include hp_apache2 
+    include hp_apache2_deb 
 		
 	## Define a new Apache2 virtual host (docroot directory writable by group 'root')
-    hp_apache2::vhost { 'hphome.home.tld' :
+    hp_apache2_deb::vhost { 'hphome.home.tld' :
             priority => '001',
           devgroupid => 'root',
           execscript => 'none',
@@ -337,8 +337,8 @@ node 'node-hphome.home.tld' {
 	## SECURITY
 
 	## Add mod-security for Apache (+ module headers)
-	hp_apache2::module { 'mod-security' : }
-	hp_apache2::module { 'headers' : }		
+	hp_apache2_deb::module { 'mod-security' : }
+	hp_apache2_deb::module { 'headers' : }		
 	
 	# Security (iptables + fail2ban)
 	# fail2ban ssh is enabled. disabled apache, modsec, postfix actions
@@ -434,10 +434,10 @@ node 'node-dl380g7.home.tld' {
 	}
 	
     # APACHE2 prefork
-    include hp_apache2 
+    include hp_apache2_deb 
 		
 	## Define a new Apache2 virtual host (docroot directory writable by group 'root')
-    hp_apache2::vhost { 'dl380g7.home.tld' :
+    hp_apache2_deb::vhost { 'dl380g7.home.tld' :
             priority => '001',
           devgroupid => 'root',
           execscript => 'none',
@@ -447,8 +447,8 @@ node 'node-dl380g7.home.tld' {
 	## SECURITY
 
 	## Add mod-security for Apache (+ module headers)
-	hp_apache2::module { 'mod-security' : }
-	hp_apache2::module { 'headers' : }		
+	hp_apache2_deb::module { 'mod-security' : }
+	hp_apache2_deb::module { 'headers' : }		
 	
 	# Security (iptables + fail2ban)
 	# fail2ban ssh is enabled. disabled apache, modsec, postfix actions
@@ -663,10 +663,10 @@ node 'trise.home.tld' {
     class { hp_install_debs : debs => [ "tree", "sipcalc", "lshw", "pydf" , "dnsutils", "chkconfig", "liblog-log4perl-perl" ] }
 
     # APACHE2 prefork
-    include hp_apache2 
+    include hp_apache2_deb 
 		
 	## Define a new Apache2 virtual host (docroot directory writable by group 'root')
-    hp_apache2::vhost { 'trise.home.tld' :
+    hp_apache2_deb::vhost { 'trise.home.tld' :
             priority => '001',
           devgroupid => 'root',
           execscript => 'none',
@@ -677,11 +677,15 @@ node 'trise.home.tld' {
 
     ## SECURITY
 
+	## Add mod-security for Apache (+ module headers)
+	hp_apache2_deb::module { 'mod-security' : }
+	hp_apache2_deb::module { 'headers' : }		
+
 	# Security (iptables + fail2ban)
 	# fail2ban ssh is enabled. disabled apache, modsec, postfix actions
 	# latter parameters needs both apache and mod-security installed
     class { hp_iptables_fail2ban::config :
-		 puppetserver_hostname => 'trise',
+		 puppetserver_hostname => 'hp',
 		   fail2ban_trusted_ip => '192.168.0.0/24  81.237.0.0/16',
 		       fail2ban_apache => 'true',
 		       fail2ban_modsec => 'true',
@@ -737,10 +741,10 @@ node 'mc.home.tld' {
     class { hp_install_debs : debs => [ "tree", "sipcalc", "lshw", "pydf" , "dnsutils", "chkconfig", "liblog-log4perl-perl" ] }
     
     # APACHE2 prefork
-    include hp_apache2 
+    include hp_apache2_deb 
 		
 	## Define a new Apache2 virtual host (docroot directory writable by group 'root')
-    hp_apache2::vhost { 'mc.home.tld' :
+    hp_apache2_deb::vhost { 'mc.home.tld' :
             priority => '001',
           devgroupid => 'root',
           execscript => 'none',
@@ -754,11 +758,15 @@ node 'mc.home.tld' {
 	# Automatic security upgrades with cron script
 	include hp_auto_upgrade
 
+	## Add mod-security for Apache (+ module headers)
+	hp_apache2_deb::module { 'mod-security' : }
+	hp_apache2_deb::module { 'headers' : }		
+
 	# Security (iptables + fail2ban)
 	# fail2ban ssh is enabled. disabled apache, modsec, postfix actions
 	# latter parameters needs both apache and mod-security installed
     class { hp_iptables_fail2ban::config :
-		 puppetserver_hostname => 'mc',
+		 puppetserver_hostname => 'hp',
 		   fail2ban_trusted_ip => '192.168.0.0/24  81.237.0.0/16',
 		       fail2ban_apache => 'true',
 		       fail2ban_modsec => 'true',
@@ -811,10 +819,10 @@ node 'deborg.home.tld' {
     class { hp_install_debs : debs => [ "tree", "sipcalc", "lshw", "pydf" , "dnsutils", "chkconfig", "liblog-log4perl-perl" ] }
 
     # APACHE2 prefork
-    include hp_apache2 
+    include hp_apache2_deb 
 		
 	## Define a new Apache2 virtual host (docroot directory writable by group 'root')
-    hp_apache2::vhost { 'deborg.home.tld' :
+    hp_apache2_deb::vhost { 'deborg.home.tld' :
             priority => '001',
           devgroupid => 'root',
           execscript => 'none',
@@ -825,11 +833,15 @@ node 'deborg.home.tld' {
 
     ## SECURITY
 
+	## Add mod-security for Apache (+ module headers)
+	hp_apache2_deb::module { 'mod-security' : }
+	hp_apache2_deb::module { 'headers' : }		
+
 	# Security (iptables + fail2ban)
 	# fail2ban ssh is enabled. disabled apache, modsec, postfix actions
 	# latter parameters needs both apache and mod-security installed
     class { hp_iptables_fail2ban::config :
-		 puppetserver_hostname => 'deborg',
+		 puppetserver_hostname => 'hp',
 		   fail2ban_trusted_ip => '192.168.0.0/24  81.237.0.0/16',
 		       fail2ban_apache => 'true',
 		       fail2ban_modsec => 'true',
@@ -885,10 +897,10 @@ node 'ilx.home.tld' {
     class { hp_install_debs : debs => [ "tree", "sipcalc", "lshw", "pydf" , "dnsutils", "chkconfig", "liblog-log4perl-perl" ] }
 
     # APACHE2 prefork
-    include hp_apache2 
+    include hp_apache2_deb 
 		
 	## Define a new Apache2 virtual host (docroot directory writable by group 'root')
-    hp_apache2::vhost { 'ilx.home.tld' :
+    hp_apache2_deb::vhost { 'ilx.home.tld' :
             priority => '001',
           devgroupid => 'root',
           execscript => 'none',
@@ -900,12 +912,16 @@ node 'ilx.home.tld' {
 
     # Automatic security upgrades with cron script
 	include hp_auto_upgrade
-	
+
+	## Add mod-security for Apache (+ module headers)
+	hp_apache2_deb::module { 'mod-security' : }
+	hp_apache2_deb::module { 'headers' : }		
+
 	# Security (iptables + fail2ban)
 	# fail2ban ssh is enabled. disabled apache, modsec, postfix actions
 	# latter parameters needs both apache and mod-security installed
     class { hp_iptables_fail2ban::config :
-		 puppetserver_hostname => 'ilx',
+		 puppetserver_hostname => 'hp',
 		   fail2ban_trusted_ip => '192.168.0.0/24  81.237.0.0/16',
 		       fail2ban_apache => 'true',
 		       fail2ban_modsec => 'true',
@@ -962,13 +978,28 @@ node 'ora.home.tld' {
     ## APPLICATIONS
 	
     #Install REDHAT packages without any special configurations
-    class { hp_install_rpms : rpms => [ "nano", "bind-utils", "wget", "perl-Log-Log4perl", "openssh-clients", "curl" ] }
+    class { hp_install_rpms : rpms => [ "nano", "bind-utils", "wget", "perl-Log-Log4perl", "openssh-clients", "curl", "tree" ] }
 	
-	include hp_apache2_rpm
+	include hp_apache2_deb_rpm
 	
 	## SECURITY
 	
 	include hp_auto_upgrade
+	
+	##
+    ## Add mod_security and mod_headers for rpm!
+	##
+	
+	# Security (iptables + fail2ban)
+	# fail2ban ssh is enabled. disabled apache, modsec, postfix actions
+	# latter parameters needs both apache and mod-security installed
+    class { hp_iptables_fail2ban::config :
+		 puppetserver_hostname => 'hp',
+		   fail2ban_trusted_ip => '192.168.0.0/24  81.237.0.0/16',
+		       fail2ban_apache => 'true',
+		       fail2ban_modsec => 'true',
+			  fail2ban_postfix => 'false',
+	}	
 	
     hp_selinux::state { 'enforcing' : }
     include hp_logwatch
