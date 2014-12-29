@@ -1,3 +1,6 @@
+##############################################################
+# MANAGED BY PUPPET. DO NOT EDIT. CHANGES WILL BE WIPED OUT. # 
+##############################################################
 #
 # /etc/sysctl.conf - Configuration file for setting system 
 # variables. See /etc/sysctl.d/ for additonal system variables
@@ -5,9 +8,6 @@
 # For binary values, 0 is disabled, 1 is enabled.
 # See sysctl(8) and sysctl.conf(5) for more details.
 #
-##############################################################
-# MANAGED BY PUPPET. DO NOT EDIT. CHANGES WILL BE WIPED OUT. # 
-##############################################################
 
 kernel.domainname = <%= mydomain %>
 
@@ -54,5 +54,7 @@ net.ipv4.icmp_ignore_bogus_error_responses = 1
 
 # Prevents this host from joining a smurf attack
 net.ipv4.icmp_echo_ignore_broadcasts = 1
+
+## ABOVE IS ORIGINAL SETTINGS
 
 

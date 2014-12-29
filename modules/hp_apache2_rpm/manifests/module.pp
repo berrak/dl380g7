@@ -34,7 +34,7 @@ define hp_apache2_rpm::module {
 			#	owner => 'root',
 			#	group => 'root',
 			#	mode => '0644',
-			#	require => Package["modsecurity-crs"],
+			#	require => Package["mod_security"],
 			#	notify => Service["httpd"],
 			#}   	
 			#

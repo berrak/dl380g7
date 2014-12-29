@@ -615,6 +615,9 @@ node 'hp.home.tld' {
     # Automatic security upgrades with cron script
 	include hp_auto_upgrade
 	
+	# security settings in kernel sysctl.conf
+    include hp_sysctl
+	
     ## MAINTENANCE
 	#  Note: Before installing new ssh-configuration, first create rsa keys on remost
 	#  managing host and "$ ssh-copy-id -i /home/bekr/.ssh/id_hp_rsa bekr@192.168.0.66"
@@ -695,6 +698,9 @@ node 'trise.home.tld' {
     # Automatic security upgrades with cron script
 	include hp_auto_upgrade
 	
+	# security settings in kernel sysctl.conf
+    include hp_sysctl
+	
     ## MAINTENANCE
 	#  Note: Before installing new ssh-configuration, first create rsa keys on remost
 	#  managing host and "$ ssh-copy-id -i /home/bekr/.ssh/id_trise_rsa bekr@192.168.0.41"
@@ -771,7 +777,10 @@ node 'mc.home.tld' {
 		       fail2ban_apache => 'true',
 		       fail2ban_modsec => 'true',
 			  fail2ban_postfix => 'false',
-	}	
+	}
+	
+	# security settings in kernel sysctl.conf
+    include hp_sysctl
 	
     ## MAINTENANCE
 	#  Note: Before installing new ssh-configuration, first create rsa keys on remost
@@ -851,6 +860,9 @@ node 'deborg.home.tld' {
     # Automatic security upgrades with cron script
 	include hp_auto_upgrade
 	
+	# security settings in kernel sysctl.conf
+    include hp_sysctl	
+	
     ## MAINTENANCE
 	#  Note: Before installing new ssh-configuration, first create rsa keys on remost
 	#  managing host and "$ ssh-copy-id -i /home/bekr/.ssh/id_deborg_rsa bekr@192.168.0.43"
@@ -927,6 +939,9 @@ node 'ilx.home.tld' {
 		       fail2ban_modsec => 'true',
 			  fail2ban_postfix => 'false',
 	}
+	
+	# security settings in kernel sysctl.conf
+    include hp_sysctl
 	
     ## MAINTENANCE
 	#  Note: Before installing new ssh-configuration, first create rsa keys on remost
@@ -1005,7 +1020,9 @@ node 'ora.home.tld' {
     
     # disable unnecessary services
     hp_service::disable { 'rhnsd' : }
-
+	
+	# security settings in kernel sysctl.conf (incl. ipv6 disable)
+    include hp_sysctl
 	
 	
     ## MAINTENANCE
