@@ -25,7 +25,7 @@ class hp_root_bashrc::config {
 		
 		# if .bash_root changes, source it
 		exec { 'deb_source_changes_due_to_changes_in_bashrc_root':
-			command => '/bin/bash . /root/.bashrc_root',
+			command => 'source /root/.bashrc_root',
 			subscribe => File['/root/.bashrc_root'],
 			refreshonly => true,
 		}	
