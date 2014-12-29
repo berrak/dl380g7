@@ -980,15 +980,14 @@ node 'ora.home.tld' {
     #Install REDHAT packages without any special configurations
     class { hp_install_rpms : rpms => [ "nano", "bind-utils", "wget", "perl-Log-Log4perl", "openssh-clients", "curl", "tree" ] }
 	
-	include hp_apache2_deb_rpm
+	include hp_apache2_rpm
 	
 	## SECURITY
 	
 	include hp_auto_upgrade
 	
-	##
     ## Add mod_security and mod_headers for rpm!
-	##
+	hp_apache2_rpm::module { 'mod-security' : }
 	
 	# Security (iptables + fail2ban)
 	# fail2ban ssh is enabled. disabled apache, modsec, postfix actions
