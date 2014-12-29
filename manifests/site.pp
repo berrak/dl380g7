@@ -1002,7 +1002,6 @@ node 'ora.home.tld' {
 	
     hp_selinux::state { 'enforcing' : }
     include hp_logwatch
-    include hp_iptables_rpm
     
     # disable unnecessary services
     hp_service::disable { 'rhnsd' : }
