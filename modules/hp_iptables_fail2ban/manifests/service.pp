@@ -11,10 +11,13 @@ class hp_iptables_fail2ban::service {
         require => Package['fail2ban'],
     }
     
-    service { 'iptables':
-        enable => true,
-        ensure => running,
-        require => Package['iptables'],
-    }    
+    if ( $::operatingsystem == 'OracleLinux' ) {
+    
+        service { 'iptables':
+            enable => true,
+            ensure => running,
+            require => Package['iptables'],
+        }
+    }
     
 }
