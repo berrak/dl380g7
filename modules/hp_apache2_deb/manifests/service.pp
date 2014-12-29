@@ -1,7 +1,7 @@
 #
 # Manage apache2
 #
-class hp_apache2::service {
+class hp_apache2_deb::service {
 
     service { "apache2":
         enable => true,

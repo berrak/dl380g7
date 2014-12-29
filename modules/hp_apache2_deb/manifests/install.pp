@@ -1,8 +1,15 @@
 #
 # Manage apache2
 #
-class hp_apache2::install {
+class hp_apache2_deb::install {
 
+    
+    if ($::operatingsystem != 'Debian' ) {
+    
+        fail("FAIL: This module (apache2) is only for Debian! Aborting...")
+    
+    }
+    
     package { "apache2-mpm-prefork" : ensure => installed }
     
     # Requires mod_headers to be enabled (see security)

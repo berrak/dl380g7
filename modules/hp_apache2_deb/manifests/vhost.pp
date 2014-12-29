@@ -3,7 +3,7 @@
 #
 # Sample usage:
 #
-#     hp_apache2::vhost { 'hudson.vbox.tld' :
+#     hp_apache2_deb::vhost { 'hudson.vbox.tld' :
 #        priority => '001',
 #        devgroupid => 'bekr',
 #        execscript => 'php',
@@ -11,13 +11,13 @@
 #        port => '80',
 #     } 
 #
-define hp_apache2::vhost ( $priority='', $devgroupid='', $urlalias='', $aliastgtpath='', $execscript='', $site_ipaddr='', $port='') {
+define hp_apache2_deb::vhost ( $priority='', $devgroupid='', $urlalias='', $aliastgtpath='', $execscript='', $site_ipaddr='', $port='') {
 
     
     # Add a new virtual host fqdn to /etc/hosts for name resolution. This
     # is done in site.pp and 'hp_hosts' parameter 'apache_virtual_hosts'
     
-    include hp_apache2
+    include hp_apache2_deb
     
     if $devgroupid == '' {
         fail("FAIL: Missing group name for developer work under /var/www-directory tree ($devgroupid) or the /home/userid of the suexec user.")
@@ -173,10 +173,10 @@ define hp_apache2::vhost ( $priority='', $devgroupid='', $urlalias='', $aliastgt
         'cgi': {
                 
             file { "/etc/apache2/sites-available/${name}":
-                content =>  template('hp_apache2/cgi.vhost.erb'),
+                content =>  template('hp_apache2_deb/cgi.vhost.erb'),
                 owner => 'root',
                 group => 'root',       
-                require => Class["hp_apache2::install"],
+                require => Class["hp_apache2_deb::install"],
                 notify => Service["apache2"],
             }
             
@@ -194,7 +194,7 @@ define hp_apache2::vhost ( $priority='', $devgroupid='', $urlalias='', $aliastgt
             # vhost site index.cgi file and favicon
     
             file { "/var/www/${name}/public/cgi-bin/index.cgi":
-                source => "puppet:///modules/hp_apache2/newvhost.index.cgi",    
+                source => "puppet:///modules/hp_apache2_deb/newvhost.index.cgi",    
                 owner => 'root',
                 group => 'root',
                 mode => '0755',
@@ -202,7 +202,7 @@ define hp_apache2::vhost ( $priority='', $devgroupid='', $urlalias='', $aliastgt
             }   
     
             file { "/var/www/${name}/public/cgi-bin/favicon.ico":
-                source => "puppet:///modules/hp_apache2/tux-favicon.ico",    
+                source => "puppet:///modules/hp_apache2_deb/tux-favicon.ico",    
                  owner => 'root',
                  group => 'root',
                   mode => '0644',
@@ -225,24 +225,24 @@ define hp_apache2::vhost ( $priority='', $devgroupid='', $urlalias='', $aliastgt
             }
             
             file { '/etc/apache2/suexec/www-data':
-                content =>  template('hp_apache2/suexec.custom.www-data.erb'),
+                content =>  template('hp_apache2_deb/suexec.custom.www-data.erb'),
                   owner => 'root',
                   group => 'root',       
                 require => Package["apache2-suexec-custom"],
             }            
             
             file { "/etc/apache2/sites-available/${name}":
-                content =>  template('hp_apache2/suexec.vhost.erb'),
+                content =>  template('hp_apache2_deb/suexec.vhost.erb'),
                 owner => 'root',
                 group => 'root',       
-                require => Class["hp_apache2::install"],
+                require => Class["hp_apache2_deb::install"],
                 notify => Service["apache2"],
             }
             
             # sh.index.cgi (test that user is wrapped by suExec) and favicon
     
             file { "/home/${devgroupid}/${name}/public_html/cgi-bin/jensen.cgi":
-                source => "puppet:///modules/hp_apache2/newvhost.index.cgi",    
+                source => "puppet:///modules/hp_apache2_deb/newvhost.index.cgi",    
                 owner => $devgroupid,
                 group => $devgroupid,
                 mode => '0700',
@@ -250,7 +250,7 @@ define hp_apache2::vhost ( $priority='', $devgroupid='', $urlalias='', $aliastgt
             }   
     
             file { "/home/${devgroupid}/${name}/public_html/favicon.ico":
-                 source => "puppet:///modules/hp_apache2/tux-favicon.ico",    
+                 source => "puppet:///modules/hp_apache2_deb/tux-favicon.ico",    
                   owner => $devgroupid,
                   group => $devgroupid,
                    mode => '0644',
@@ -263,24 +263,24 @@ define hp_apache2::vhost ( $priority='', $devgroupid='', $urlalias='', $aliastgt
         'php': {
     
             file { "/etc/apache2/sites-available/${name}":
-                content =>  template('hp_apache2/vhost.erb'),
+                content =>  template('hp_apache2_deb/vhost.erb'),
                 owner => 'root',
                 group => 'root',       
-                require => Class["hp_apache2::install"],
+                require => Class["hp_apache2_deb::install"],
                 notify => Service["apache2"],
             }
             
             # vhost site initial index file and favicon
     
             file { "/var/www/${name}/public/index.html":
-                source => "puppet:///modules/hp_apache2/newvhost.index.html",    
+                source => "puppet:///modules/hp_apache2_deb/newvhost.index.html",    
                 owner => 'root',
                 group => 'root',
                 require => File["/var/www/${name}"],
             }
     
             file { "/var/www/${name}/public/favicon.ico":
-                source => "puppet:///modules/hp_apache2/tux-favicon.ico",    
+                source => "puppet:///modules/hp_apache2_deb/tux-favicon.ico",    
                 owner => 'root',
                 group => 'root',
                 require => File["/var/www/${name}"],
@@ -294,16 +294,16 @@ define hp_apache2::vhost ( $priority='', $devgroupid='', $urlalias='', $aliastgt
 	        $myipaddress = $::ipaddress
 	
             file { "/etc/apache2/sites-available/${name}":
-                content =>  template('hp_apache2/vhost.erb'),
+                content =>  template('hp_apache2_deb/vhost.erb'),
                 owner => 'root',
                 group => 'root',       
-                require => Class["hp_apache2::install"],
+                require => Class["hp_apache2_deb::install"],
                 notify => Service["apache2"],
             }
 			
 			# only "allow" Google, SN, and Bing for now
             file { "/var/www/${name}/public/robot.txt":
-                source => "puppet:///modules/hp_apache2/robot.txt",    
+                source => "puppet:///modules/hp_apache2_deb/robot.txt",    
                 owner => 'root',
                 group => 'root',
                 require => File["/var/www/${name}"],

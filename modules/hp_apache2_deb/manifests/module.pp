@@ -3,11 +3,11 @@
 #
 # Sample usage:
 #
-#     hp_apache2::module { 'mod-security' : } 
+#     hp_apache2_deb::module { 'mod-security' : } 
 #
-define hp_apache2::module {
+define hp_apache2_deb::module {
  
-    include hp_apache2
+    include hp_apache2_deb
 	include hp_iptables_fail2ban
     
 	case $name {
@@ -33,7 +33,7 @@ define hp_apache2::module {
 			
 			# Copy our configuration file with rules for mod-security
 			file { "/etc/modsecurity/modsecurity.conf":
-				source => "puppet:///modules/hp_apache2/modsecurity.conf",    
+				source => "puppet:///modules/hp_apache2_deb/modsecurity.conf",    
 				owner => 'root',
 				group => 'root',
 				mode => '0644',
@@ -52,7 +52,7 @@ define hp_apache2::module {
 			
 			# Only install regexp modsec-filter if fail2ban is installed
 			file { "/etc/fail2ban/filter.d/modsec.conf" :
-				source => "puppet:///modules/hp_apache2/modsec.conf",    
+				source => "puppet:///modules/hp_apache2_deb/modsec.conf",    
 				require => Package["fail2ban"],
 			}						
 			
