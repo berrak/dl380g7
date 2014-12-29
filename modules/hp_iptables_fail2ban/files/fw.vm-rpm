@@ -153,9 +153,14 @@ $IPTABLES -A OUTPUT -p tcp -m tcp --dport 465 -m state --state NEW -j ACCEPT
 $IPTABLES -A OUTPUT -p tcp -m tcp --dport 587 -m state --state NEW  -j $LOGOPT $RLIMIT --log-prefix "OUTPUT MAIL: "
 $IPTABLES -A OUTPUT -p tcp -m tcp --dport 587 -m state --state NEW -j ACCEPT
 
+#############################
+## LIST LOADED IPTABLES RULES
+#############################
+
+$IPTABLES -L -v --line-numbers
 
 ###############################################################################
-# To use this, manually run:
+# To make this persistent for next boot, manually run:
 #
 #    /root/bin/<scriptname>
 #    service iptables save
@@ -163,11 +168,11 @@ $IPTABLES -A OUTPUT -p tcp -m tcp --dport 587 -m state --state NEW -j ACCEPT
 #
 ###############################################################################
 scriptname="$(basename "$0")"
-echo "---------------------------------"
-echo "To enable, execute: $scriptname"
+echo "-------------------------------------------"
+echo "To make persistent, execute: $scriptname"
 echo "service iptables save"
 echo "service iptables restart"
-echo "---------------------------------"
+echo "-------------------------------------------"
 
 exit 0
 

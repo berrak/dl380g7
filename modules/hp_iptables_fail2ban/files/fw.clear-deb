@@ -28,6 +28,9 @@ IPTABLES=/sbin/iptables
 MODPROBE=/sbin/modprobe
 SERVICE=/sbin/service
 
+IPTSAVE=/sbin/iptables-save
+IPTSAVEFILE=/root/bin/IPTABLES.FW
+
 #------------------------------------------------------------------------------
 
 ## Load module (state tracking)
@@ -77,6 +80,16 @@ chmod 700 $IPTSAVEFILE
 
 $IPTABLES -L -v --line-numbers
 
+###############################################################################
+# To make this persistent for next boot, manually run:
+#
+#    /root/bin/<scriptname>
+#
+###############################################################################
+scriptname="$(basename "$0")"
+echo "-------------------------------------------"
+echo "To make persistent, execute: $scriptname"
+echo "-------------------------------------------"
 
 exit 0
 

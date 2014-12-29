@@ -29,6 +29,9 @@ IPTABLES=/sbin/iptables
 MODPROBE=/sbin/modprobe
 SERVICE=/sbin/service
 
+IPTSAVE=/sbin/iptables-save
+IPTSAVEFILE=/root/bin/IPTABLES.FW
+
 #------------------------------------------------------------------------------
 # Remote access
 BKTRUSTEDNET="192.168.0.0/24"
@@ -196,6 +199,17 @@ chmod 700 $IPTSAVEFILE
 #############################
 
 $IPTABLES -L -v --line-numbers
+
+###############################################################################
+# To make this persistent for next boot, manually run:
+#
+#    /root/bin/<scriptname>
+#
+###############################################################################
+scriptname="$(basename "$0")"
+echo "-------------------------------------------"
+echo "To make persistent, execute: $scriptname"
+echo "----
 
 exit 0
 
