@@ -1,10 +1,10 @@
 #!/bin/bash
-# /root/bin/fw.vm-rpm
+# /root/bin/fw.vm-deb
 ##############################################################
 # DO NOT EDIT. MANAGES BY PUPPET. CHANGES WILL BE WIPED OUT. #
 ##############################################################
 #
-# Rules for HP server (vm-rpm based hosts).
+# Rules for HP server (vm-deb i.e. VM Debian based guest).
 #
 # Copyright (C) (2014) K-B.Kronlund <bkronmailbox-copyright@yahoo.se>
 #
@@ -67,7 +67,7 @@ $IPTABLES -Z
 # Default policies
 #------------------------------------------------------------------------------
 $IPTABLES -P INPUT ACCEPT
-$IPTABLES -P FORWARD ACCEPT
+$IPTABLES -P FORWARD DROP
 $IPTABLES -P OUTPUT ACCEPT
 $IPTABLES -t nat -P PREROUTING ACCEPT
 $IPTABLES -t nat -P OUTPUT ACCEPT
@@ -99,9 +99,10 @@ $IPTABLES -A INPUT -p tcp -s $BKTRUSTEDRANGE -m tcp --dport 22 --syn -m state --
 $IPTABLES -A INPUT -p tcp -m tcp --dport 53 --syn -m state --state NEW -j ACCEPT
 $IPTABLES -A INPUT -p udp -m udp --dport 53 -m state --state NEW -j ACCEPT
 
-# accept HTTP traffic (remove -s when configured)
+# accept HTTP traffic (remove all when configured secure)
 $IPTABLES -A INPUT -p tcp -s $BKTRUSTEDNET -m tcp --dport 80 --syn -m state --state NEW -j ACCEPT
 $IPTABLES -A INPUT -p tcp -s $BKTRUSTEDADDR -m tcp --dport 80 --syn -m state --state NEW -j ACCEPT
+$IPTABLES -A INPUT -p tcp -s $GOOGLENET -m tcp --dport 80 --syn -m state --state NEW -j ACCEPT
 
 # allow NTP communication
 $IPTABLES -A INPUT -p udp -m udp --dport 123 -m state --state NEW -j ACCEPT
@@ -127,7 +128,7 @@ $IPTABLES -A INPUT -p icmp --icmp-type echo-request -j ACCEPT
 
 
 #==============================================================================
-# DROP SPOOF, MULTI- and BROADCAST and other as DEFAULT DROP
+# DROP MULTI- and BROADCAST and other INPUT as DEFAULT DROP
 #==============================================================================
 # drop (quiet) all router multicasts (IGMP snooping)
 $IPTABLES -A INPUT -d 224.0.0.0/24 -j DROP
@@ -135,27 +136,36 @@ $IPTABLES -A INPUT -d 224.0.0.0/24 -j DROP
 # drop (quiet) all broadcasts (from e.g. printers)
 $IPTABLES -A INPUT -m pkttype --pkt-type broadcast -j DROP
 
-# Log anything on eth0 claiming it's from a local or non-routable network
-# If you're using one of these local networks, remove it from the list below
-$IPTABLES -A INPUT -i eth0 -s 10.0.0.0/8 -j $LOGOPT $RLIMIT --log-prefix "INPUT DROP SPOOF A: "
-$IPTABLES -A INPUT -i eth0 -s 172.16.0.0/12 -j $LOGOPT $RLIMIT --log-prefix "INPUT DROP SPOOF B: "
-# $IPTABLES -A INPUT -i eth0 -s 192.168.0.0/16 -j $LOGOPT $RLIMIT --log-prefix "INPUT DROP SPOOF C: "
-$IPTABLES -A INPUT -i eth0 -s 224.0.0.0/4 -j $LOGOPT $RLIMIT --log-prefix "INPUT DROP MULTICAST D: "
-$IPTABLES -A INPUT -i eth0 -s 240.0.0.0/5 -j $LOGOPT $RLIMIT --log-prefix "INPUT DROP SPOOF E: "
-$IPTABLES -A INPUT -i eth0 -d 127.0.0.0/8 -j $LOGOPT $RLIMIT --log-prefix "INPUT DROP LOOPBACK: "
-
 #Log and drop everything else
 $IPTABLES -A INPUT ! -i lo -j $LOGOPT $RLIMIT --log-prefix "INPUT DROP DEFAULT: "
 $IPTABLES -A INPUT ! -i lo -j DROP
 
-###############################################################################
-# To use this, manually run:
-#
-#    /root/bin/fw.ora
-#    service iptables save
-#    service iptables restart
-#
-###############################################################################
+
+#==============================================================================
+# OUTBOUND
+#==============================================================================
+
+# Log mail out from host
+$IPTABLES -A OUTPUT -p tcp -m tcp --dport 25 -m state --state NEW  -j $LOGOPT $RLIMIT --log-prefix "OUTPUT MAIL: "
+$IPTABLES -A OUTPUT -p tcp -m tcp --dport 25 -m state --state NEW -j ACCEPT
+$IPTABLES -A OUTPUT -p tcp -m tcp --dport 465 -m state --state NEW  -j $LOGOPT $RLIMIT --log-prefix "OUTPUT MAIL: "
+$IPTABLES -A OUTPUT -p tcp -m tcp --dport 465 -m state --state NEW -j ACCEPT
+$IPTABLES -A OUTPUT -p tcp -m tcp --dport 587 -m state --state NEW  -j $LOGOPT $RLIMIT --log-prefix "OUTPUT MAIL: "
+$IPTABLES -A OUTPUT -p tcp -m tcp --dport 587 -m state --state NEW -j ACCEPT
+
+
+#############################
+## SAVE THE FILE
+#############################
+
+$IPTSAVE > $IPTSAVEFILE
+chmod 700 $IPTSAVEFILE
+
+#############################
+## LIST LOADED IPTABLES RULES
+#############################
+
+$IPTABLES -L -v --line-numbers
 
 exit 0
 

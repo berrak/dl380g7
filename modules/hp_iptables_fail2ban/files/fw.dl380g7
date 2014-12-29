@@ -1,12 +1,12 @@
-#!/bin/sh
+#!/bin/bash
 # /root/bin/fw.dl380g7
 ##############################################################
 # DO NOT EDIT. MANAGES BY PUPPET. CHANGES WILL BE WIPED OUT. #
 ##############################################################
 #
-# Rules for HP DL380G7 server (external host).
+# Rules for HP production server (Debian based host).
 #
-# Copyright (C) (2012-14) K-B.Kronlund <bkronmailbox-copyright@yahoo.se>
+# Copyright (C) (2014) K-B.Kronlund <bkronmailbox-copyright@yahoo.se>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,179 +21,168 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+#------------------------------------------------------------------------------
 ## Basic data
+# -----------------------------------------------------------------------------
 
 IPTABLES=/sbin/iptables
 MODPROBE=/sbin/modprobe
+SERVICE=/sbin/service
 
-IPTSAVE=/sbin/iptables-save
-IPTSAVEFILE=/root/bin/IPTABLES.FW
-
+#------------------------------------------------------------------------------
 # Remote access
 BKTRUSTEDNET="192.168.0.0/24"
 BKTRUSTEDADDR="81.237.245.35"
-
 # Ensure access to ssh incase Telia change ip (within a resonable range)
 BKTRUSTEDRANGE="81.237.0.0/16"
-
 # Trust google.com
 GOOGLENET="66.249.67.0/24"
 
-# Multicast mDNS packets
-MDNSMULTICASTADDR="224.0.0.251"
+# Local NFS server
+NFSHOSTADDR="192.168.0.10"
 
-## Log options - i.e. log to file var/log/debug
-LOGOPT="LOG --log-level 7 --log-ip-options --log-tcp-options"
+#------------------------------------------------------------------------------
 
-## Prevent excessive logging
-RLIMIT="-m limit --limit 3/s --limit-burst 8"
+## rsyslog: Configured to match log prefix 'FORWARD', 'INPUT' and 
+##  'OUTPUT' to separate out logs to files in /var/log/iptables/
+## 
+LOGOPT="LOG --log-ip-options --log-tcp-options"
 
-## Load modules
-$MODPROBE ip_conntrack
-$MODPROBE ip_conntrack_ftp
+#------------------------------------------------------------------------------
 
-## Flush old rules, old custom rules
+## Load module (state tracking)
+$MODPROBE nf_conntrack
+## Load module (RELATED used for ftp, tftp, irc, sctp, amanda)
+$MODPROBE nf_conntrack_ftp
+## Load module to used with broadcasts/multicaste rules
+$MODPROBE xt_pkttype
+## Load module xt_limit to limit excessive logging on public interfaces
+$MODPROBE xt_limit
+## Load module to be able to give a range of ip addresses (not used yet)
+## $MODPROBE xt_iprange
+
+## Flush old rules, old custom chains and zero counters 
 $IPTABLES -F
+$IPTABLES -t nat -F
 $IPTABLES -X
+$IPTABLES -Z
 
-#---------------------------------------------------------------------
-# Default policies (FORWARD ACCEPT to allow all VM traffic)
-#---------------------------------------------------------------------
-$IPTABLES -P INPUT DROP
-$IPTABLES -P OUTPUT DROP
+#------------------------------------------------------------------------------
+# Default policies
+#------------------------------------------------------------------------------
+$IPTABLES -P INPUT ACCEPT
 $IPTABLES -P FORWARD ACCEPT
+$IPTABLES -P OUTPUT ACCEPT
+$IPTABLES -t nat -P PREROUTING ACCEPT
+$IPTABLES -t nat -P OUTPUT ACCEPT
+$IPTABLES -t nat -P POSTROUTING ACCEPT
 
-#--------------------------------------------------------------------------------------
-## Drop broadcast-packages (only log for initial test -- comment out not to fill logs)
-$IPTABLES -N broadcast-drop
-# $IPTABLES -A broadcast-drop -m pkttype --pkt-type broadcast -j $LOGOPT $RLIMIT --log-prefix "BROADCAST DROP "
-$IPTABLES -A broadcast-drop -m pkttype --pkt-type broadcast -j DROP
-$IPTABLES -A broadcast-drop -j RETURN
-#--------------------------------------------------------------------------------------
-
-## ======================
-## LOOPBACK TRAFFIC
-## ======================
-
-## Free reign to loopback interfaces
+#==============================================================================
+#   LOOPBACK TRAFFIC
+#==============================================================================
+# Free reign to loopback interfaces
 $IPTABLES -I INPUT 1 -i lo -j ACCEPT
 $IPTABLES -I OUTPUT 1 -o lo -j ACCEPT
 
-## ======================
-## ALLOW INBOUND TRAFFIC
-## ======================
+#==============================================================================
+# INBOUND
+#==============================================================================
+# prevent all invalid input packages on INPUT
+$IPTABLES -A INPUT -m state --state INVALID -j $LOGOPT $RLIMIT --log-prefix "INPUT DROP INVALID: "
+$IPTABLES -A INPUT -m state --state INVALID -j DROP
 
-# allow all established and related in
+# allow all established and related traffic in
 $IPTABLES -A INPUT -p all -m state --state ESTABLISHED,RELATED -j ACCEPT
 
-# allow Google access
-$IPTABLES -A INPUT -p tcp -s $GOOGLENET -m tcp -m state --state NEW -j ACCEPT
+# allow SSH client access for management
+$IPTABLES -A INPUT -p tcp -s $BKTRUSTEDNET -m tcp --dport 22 --syn -m state --state NEW -j ACCEPT
+$IPTABLES -A INPUT -p tcp -s $BKTRUSTEDADDR -m tcp --dport 22 --syn -m state --state NEW -j ACCEPT
+$IPTABLES -A INPUT -p tcp -s $BKTRUSTEDRANGE -m tcp --dport 22 --syn -m state --state NEW -j ACCEPT
 
-# ssh client access for management
-$IPTABLES -A INPUT -p tcp -s $BKTRUSTEDNET -m tcp --dport 22 -m state --state NEW -j ACCEPT
-$IPTABLES -A INPUT -p tcp -s $BKTRUSTEDADDR -m tcp --dport 22 -m state --state NEW -j ACCEPT
-$IPTABLES -A INPUT -p tcp -s $BKTRUSTEDRANGE -m tcp --dport 22 -m state --state NEW -j ACCEPT
-
-# allow DHCP requests
-$IPTABLES -A INPUT -p udp -m udp --dport 67:68 --sport 67:68 -m state --state NEW -j ACCEPT
-
-# allow dns (udp/tcp) queries to our host
-$IPTABLES -A INPUT -p tcp -m tcp --dport 53 -m state --state NEW -j ACCEPT
+# allow DNS traffic
+$IPTABLES -A INPUT -p tcp -m tcp --dport 53 --syn -m state --state NEW -j ACCEPT
 $IPTABLES -A INPUT -p udp -m udp --dport 53 -m state --state NEW -j ACCEPT
 
-# allow trusted user access web server
-$IPTABLES -A INPUT -p tcp -s $BKTRUSTEDNET -m tcp --dport 80 -m state --state NEW -j ACCEPT
-$IPTABLES -A INPUT -p tcp -s $BKTRUSTEDADDR -m tcp --dport 80 -m state --state NEW -j ACCEPT
+# accept HTTP traffic (remove all when configured secure)
+$IPTABLES -A INPUT -p tcp -s $BKTRUSTEDNET -m tcp --dport 80 --syn -m state --state NEW -j ACCEPT
+$IPTABLES -A INPUT -p tcp -s $BKTRUSTEDADDR -m tcp --dport 80 --syn -m state --state NEW -j ACCEPT
+$IPTABLES -A INPUT -p tcp -s $GOOGLENET -m tcp --dport 80 --syn -m state --state NEW -j ACCEPT
 
-# allow same trusted users access developers web server on port 8080
-$IPTABLES -A INPUT -p tcp -s $BKTRUSTEDNET -m tcp --dport 8080 -m state --state NEW -j ACCEPT
-$IPTABLES -A INPUT -p tcp -s $BKTRUSTEDADDR -m tcp --dport 8080 -m state --state NEW -j ACCEPT
-
-# allow NTP to communicate with external time servers
+# allow NTP communication
 $IPTABLES -A INPUT -p udp -m udp --dport 123 -m state --state NEW -j ACCEPT
-
-# Puppet client: allow puppet server input to this puppet client
-$IPTABLES -A INPUT -p tcp -m tcp --dport 8139 -m state --state NEW -j ACCEPT
-
-# Puppet server: allow puppet client requests to this puppet server
-$IPTABLES -A INPUT -p tcp -m tcp --dport 8140 -m state --state NEW -j ACCEPT
 
 # allow possible multicast mDNS packets
 $IPTABLES -A INPUT -p udp -m udp --dport 5353 -j ACCEPT
 
-# allow Git (port 9418) access for trusted users
+# allow all puppet agent-master communication
+$IPTABLES -A INPUT -p tcp -m tcp --dport 8139:8140 --syn -m state --state NEW -j ACCEPT
+
+# allow GIT (port 9418) access for trusted users
 $IPTABLES -A INPUT -p tcp -s $BKTRUSTEDNET -m tcp --dport 9418 -m state --state NEW -j ACCEPT
 $IPTABLES -A INPUT -p tcp -s $BKTRUSTEDADDR -m tcp --dport 9418 -m state --state NEW -j ACCEPT
 
-# accept inbound ping requests to this server
-$IPTABLES -A INPUT -p icmp --icmp-type echo-request -m state --state NEW -j ACCEPT
+# allow some meaningful ICMP
+$IPTABLES -A INPUT -p icmp --icmp-type echo-reply -j ACCEPT
+$IPTABLES -A INPUT -p icmp --icmp-type destination-unreachable -j ACCEPT
+$IPTABLES -A INPUT -p icmp --icmp-type time-exceeded -j ACCEPT
 
-## ==========================
-## DROP OTHER INBOUND TRAFFIC
-## ==========================
+# allow, but log all pings
+$IPTABLES -A INPUT -p icmp --icmp-type echo-request -j $LOGOPT $RLIMIT --log-prefix "INPUT PING: "
+$IPTABLES -A INPUT -p icmp --icmp-type echo-request -j ACCEPT
 
-#---------------------------------------------------------------------------
-# CATCH ALL INPUT LOG-and-DROP RULES (you may be suprised what ends up here)
-#---------------------------------------------------------------------------
+#==============================================================================
+#  INPUT RULES ONLY IN NON PRODUCTION ENVIRONMENT
+#==============================================================================
 
-## Prevent invalid input packages
-$IPTABLES -A INPUT -m state --state INVALID -j $LOGOPT $RLIMIT --log-prefix "DROP INPUT INVALID "
-$IPTABLES -A INPUT -m state --state INVALID -j DROP
+# allow VNC client connections
+$IPTABLES -A INPUT -s $BKTRUSTEDNET -p tcp --dport 5900:5901 -m state --state NEW -j ACCEPT
+$IPTABLES -A INPUT -s $BKTRUSTEDNET -p tcp --dport 6000:6001 -m state --state NEW -j ACCEPT
 
-$IPTABLES -A INPUT ! -i lo -j $LOGOPT $RLIMIT --log-prefix "DROP INPUT DEFAULT "
+# allow spice traffic
+$IPTABLES -A INPUT -s $BKTRUSTEDNET -p tcp --dport 5930 -m state --state NEW -j ACCEPT
+
+## NFS clients (consume exported file system)
+## UDP
+$IPTABLES -A INPUT -s $NFSHOSTADDR -p udp --dport 111 -m state --state NEW -j ACCEPT
+$IPTABLES -A INPUT -s $NFSHOSTADDR -p udp --dport 2049 -m state --state NEW -j ACCEPT
+$IPTABLES -A INPUT -s $NFSHOSTADDR -p udp --dport 4000:4001 -m state --state NEW -j ACCEPT
+
+## TCP
+$IPTABLES -A INPUT -s $NFSHOSTADDR -p tcp --dport 111 -m state --state NEW -j ACCEPT
+$IPTABLES -A INPUT -s $NFSHOSTADDR -p tcp --dport 2049 -m state --state NEW -j ACCEPT
+$IPTABLES -A INPUT -s $NFSHOSTADDR -p tcp --dport 4000:4001 -m state --state NEW -j ACCEPT
+
+#==============================================================================
+# DROP MULTI- and BROADCAST and other INPUT as DEFAULT DROP
+#==============================================================================
+# drop (quiet) all router multicasts (IGMP snooping)
+$IPTABLES -A INPUT -d 224.0.0.0/24 -j DROP
+
+# drop (quiet) all broadcasts (from e.g. printers)
+$IPTABLES -A INPUT -m pkttype --pkt-type broadcast -j DROP
+
+#Log and drop everything else
+$IPTABLES -A INPUT ! -i lo -j $LOGOPT $RLIMIT --log-prefix "INPUT DROP DEFAULT: "
 $IPTABLES -A INPUT ! -i lo -j DROP
 
-## ======================
-## ALLOW OUTBOUND TRAFFIC
-## ======================
+#==============================================================================
+# FORWARD
+#==============================================================================
 
-# allow established and related traffic out
-$IPTABLES -A OUTPUT -p all -m state --state ESTABLISHED,RELATED -j ACCEPT
+# POLICY ACCEPT
 
-# allow ssh pass out
-$IPTABLES -A OUTPUT -p tcp -m tcp --dport 22 -m state --state NEW -j ACCEPT
+#==============================================================================
+# OUTBOUND
+#==============================================================================
 
-# allow whois
-$IPTABLES -A OUTPUT -p tcp -m tcp --dport 43 -m state --state NEW -j ACCEPT
-
-# allow DNS queries
-$IPTABLES -A OUTPUT -p tcp -m tcp --dport 53 -m state --state NEW -j ACCEPT
-$IPTABLES -A OUTPUT -p udp -m udp --dport 53 -m state --state NEW -j ACCEPT
-
-# Allow mail out from host
+# Log mail out from host
+$IPTABLES -A OUTPUT -p tcp -m tcp --dport 25 -m state --state NEW  -j $LOGOPT $RLIMIT --log-prefix "OUTPUT MAIL: "
 $IPTABLES -A OUTPUT -p tcp -m tcp --dport 25 -m state --state NEW -j ACCEPT
+$IPTABLES -A OUTPUT -p tcp -m tcp --dport 465 -m state --state NEW  -j $LOGOPT $RLIMIT --log-prefix "OUTPUT MAIL: "
 $IPTABLES -A OUTPUT -p tcp -m tcp --dport 465 -m state --state NEW -j ACCEPT
+$IPTABLES -A OUTPUT -p tcp -m tcp --dport 587 -m state --state NEW  -j $LOGOPT $RLIMIT --log-prefix "OUTPUT MAIL: "
 $IPTABLES -A OUTPUT -p tcp -m tcp --dport 587 -m state --state NEW -j ACCEPT
 
-# allow web traffic out
-$IPTABLES -A OUTPUT -p tcp -m tcp --dport 80 -m state --state NEW -j ACCEPT
-
-# allow https out
-$IPTABLES -A OUTPUT -p tcp -m tcp --dport 443 -m state --state NEW -j ACCEPT
-
-# allow this NTP server communicate with other external time servers (broadcast)
-$IPTABLES -A OUTPUT -p udp -m udp --dport 123 -m state --state NEW -j ACCEPT
-
-# allow an outbound ping request from this host
-$IPTABLES -A OUTPUT -p icmp --icmp-type echo-request -m state --state NEW -j ACCEPT
-
-## ===========================
-## DROP OTHER OUTBOUND TRAFFIC
-## ===========================
-
-# deny any broadcasts from host to external
-$IPTABLES -t filter -A OUTPUT -j broadcast-drop
-
-#-----------------------------------------------------------
-# CATCH ALL LOG RULES (you may be suprise what ends up here)
-#-----------------------------------------------------------
-
-## Prevent invalid output packages
-$IPTABLES -A OUTPUT -m state --state INVALID -j $LOGOPT $RLIMIT --log-prefix "DROP OUTPUT INVALID "
-$IPTABLES -A OUTPUT -m state --state INVALID -j DROP
-
-$IPTABLES -A OUTPUT ! -o lo -j $LOGOPT $RLIMIT --log-prefix "DROP OUTPUT DEFAULT "
-$IPTABLES -A OUTPUT ! -o lo -j DROP
 
 #############################
 ## SAVE THE FILE

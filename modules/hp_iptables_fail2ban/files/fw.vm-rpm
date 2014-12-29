@@ -1,10 +1,10 @@
 #!/bin/bash
-# /root/bin/fw.hp
+# /root/bin/fw.vm-rpm
 ##############################################################
 # DO NOT EDIT. MANAGES BY PUPPET. CHANGES WILL BE WIPED OUT. #
 ##############################################################
 #
-# Rules for HP development server (Debian based host).
+# Rules for HP server (vm-rpm i.e. VM OracleLinux based guest).
 #
 # Copyright (C) (2014) K-B.Kronlund <bkronmailbox-copyright@yahoo.se>
 #
@@ -37,10 +37,6 @@ BKTRUSTEDADDR="81.237.245.35"
 BKTRUSTEDRANGE="81.237.0.0/16"
 # Trust google.com
 GOOGLENET="66.249.67.0/24"
-
-# Local NFS server
-NFSHOSTADDR="192.168.0.10"
-
 #------------------------------------------------------------------------------
 
 ## rsyslog: Configured to match log prefix 'FORWARD', 'INPUT' and 
@@ -71,7 +67,7 @@ $IPTABLES -Z
 # Default policies
 #------------------------------------------------------------------------------
 $IPTABLES -P INPUT ACCEPT
-$IPTABLES -P FORWARD ACCEPT
+$IPTABLES -P FORWARD DROP
 $IPTABLES -P OUTPUT ACCEPT
 $IPTABLES -t nat -P PREROUTING ACCEPT
 $IPTABLES -t nat -P OUTPUT ACCEPT
@@ -130,27 +126,6 @@ $IPTABLES -A INPUT -p icmp --icmp-type time-exceeded -j ACCEPT
 $IPTABLES -A INPUT -p icmp --icmp-type echo-request -j $LOGOPT $RLIMIT --log-prefix "INPUT PING: "
 $IPTABLES -A INPUT -p icmp --icmp-type echo-request -j ACCEPT
 
-#==============================================================================
-#  INPUT RULES ONLY IN NON PRODUCTION ENVIRONMENT
-#==============================================================================
-
-# allow VNC client connections
-$IPTABLES -A INPUT -s $BKTRUSTEDNET -p tcp --dport 5900:5901 -m state --state NEW -j ACCEPT
-$IPTABLES -A INPUT -s $BKTRUSTEDNET -p tcp --dport 6000:6001 -m state --state NEW -j ACCEPT
-
-# allow spice traffic
-$IPTABLES -A INPUT -s $BKTRUSTEDNET -p tcp --dport 5930 -m state --state NEW -j ACCEPT
-
-## NFS clients (consume exported file system)
-## UDP
-$IPTABLES -A INPUT -s $NFSHOSTADDR -p udp --dport 111 -m state --state NEW -j ACCEPT
-$IPTABLES -A INPUT -s $NFSHOSTADDR -p udp --dport 2049 -m state --state NEW -j ACCEPT
-$IPTABLES -A INPUT -s $NFSHOSTADDR -p udp --dport 4000:4001 -m state --state NEW -j ACCEPT
-
-## TCP
-$IPTABLES -A INPUT -s $NFSHOSTADDR -p tcp --dport 111 -m state --state NEW -j ACCEPT
-$IPTABLES -A INPUT -s $NFSHOSTADDR -p tcp --dport 2049 -m state --state NEW -j ACCEPT
-$IPTABLES -A INPUT -s $NFSHOSTADDR -p tcp --dport 4000:4001 -m state --state NEW -j ACCEPT
 
 #==============================================================================
 # DROP MULTI- and BROADCAST and other INPUT as DEFAULT DROP
@@ -165,11 +140,6 @@ $IPTABLES -A INPUT -m pkttype --pkt-type broadcast -j DROP
 $IPTABLES -A INPUT ! -i lo -j $LOGOPT $RLIMIT --log-prefix "INPUT DROP DEFAULT: "
 $IPTABLES -A INPUT ! -i lo -j DROP
 
-#==============================================================================
-# FORWARD
-#==============================================================================
-
-# POLICY ACCEPT
 
 #==============================================================================
 # OUTBOUND
@@ -184,18 +154,20 @@ $IPTABLES -A OUTPUT -p tcp -m tcp --dport 587 -m state --state NEW  -j $LOGOPT $
 $IPTABLES -A OUTPUT -p tcp -m tcp --dport 587 -m state --state NEW -j ACCEPT
 
 
-#############################
-## SAVE THE FILE
-#############################
-
-$IPTSAVE > $IPTSAVEFILE
-chmod 700 $IPTSAVEFILE
-
-#############################
-## LIST LOADED IPTABLES RULES
-#############################
-
-$IPTABLES -L -v --line-numbers
+###############################################################################
+# To use this, manually run:
+#
+#    /root/bin/<scriptname>
+#    service iptables save
+#    service iptables restart
+#
+###############################################################################
+scriptname="$(basename "$0")"
+echo "---------------------------------"
+echo "To enable, execute: $scriptname"
+echo "service iptables save"
+echo "service iptables restart"
+echo "---------------------------------"
 
 exit 0
 

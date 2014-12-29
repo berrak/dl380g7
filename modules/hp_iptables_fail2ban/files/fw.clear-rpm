@@ -4,7 +4,7 @@
 # DO NOT EDIT. MANAGES BY PUPPET. CHANGES WILL BE WIPED OUT. #
 ##############################################################
 #
-# Rules for HP server (development host only).
+# Rules for HP server (OracleLinux development VM guest).
 #
 # Copyright (C) (2014) K-B.Kronlund <bkronmailbox-copyright@yahoo.se>
 #
@@ -74,6 +74,13 @@ $IPTABLES -I OUTPUT 1 -o lo -j ACCEPT
 #    iptables -t nat -L -v --line-numbers
 #
 ###############################################################################
+
+scriptname="$(basename "$0")"
+echo "---------------------------------"
+echo "To clear all rules, execute: $scriptname"
+echo "service iptables save"
+echo "service iptables restart"
+echo "---------------------------------"
 
 exit 0
 
