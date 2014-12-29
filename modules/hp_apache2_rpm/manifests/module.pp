@@ -24,6 +24,7 @@ define hp_apache2_rpm::module {
 			# Install mod-security
 			package { "mod_security" :
 				ensure => installed,
+				allow_virtual => true,				
 				require => Package["libxml2", "libxml2-devel", "httpd-devel", "pcre-devel", "libcurl-devel"],
 			}
 			
