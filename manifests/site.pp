@@ -959,14 +959,14 @@ node 'ilx.home.tld' {
 ################################################################
 
 
-#node 'debse.home.tld' {
-#
-#    ## SECURITY
-#
-#    # Automatic security upgrades with cron script
-#	include hp_auto_upgrade
-#
-#}
+node 'debse.home.tld' {
+
+    ## SECURITY
+
+    # Automatic security upgrades with cron script
+	include hp_auto_upgrade
+
+}
 
 
 ################################################################
