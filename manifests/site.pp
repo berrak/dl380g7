@@ -558,8 +558,8 @@ node 'hp.home.tld' {
 		 os_name => 'debian', local_guest_netmask => '255.255.255.0', local_guest_domain => 'home.tld',
     }
 	
-	# add KVM 5th guest (based on kvmbr0 - no NAT) -- OracleLinux 6		
-	hp_kvm_deb::add_guest { 'ora' :
+	# add KVM 5th guest (based on kvmbr0 - no NAT) -- Wheezy		
+	hp_kvm_deb::add_guest { 'debse' :
           local_guest_gw => '192.168.0.1', local_guest_ip  => '192.168.0.45', local_mac_address => '52:54:00:00:00:45',
 		local_guest_bcst => '192.168.0.255', local_guest_netw => '192.168.0.0',
 		 local_hostname  => 'ora', bridge_name => 'kvmbr0', auto_start => 'true',
@@ -956,86 +956,95 @@ node 'ilx.home.tld' {
 
 }
 
-###############################################################
-
-# This is a OracleLinux-6 'minimal-install' guest (aka rhel 6 minimal)
-# Before all this add EPEL-repo and add below required rpms manually.
-
-node 'ora.home.tld' {
+################################################################
 
 
-   ## BASIC
-   # (acpid is required for host 'virsh shutdown ora' to work) 
-	include hp_acpid_rpm
-	
-	include hp_puppetize
-    include puppet_utils
-	
-	# hosts file (hostname, domain name for puppetserver is usually 'puppet.home.tld' and master ip address)
-	class { hp_hosts::config : srv_hostname => 'puppet', srv_domain => 'home.tld', srv_host_ip => '192.168.0.66' }
-
-    # ntp service for client
-    class { 'hp_ntp' : role => 'lanclient', local_ntp_srvip => '192.168.0.66',
-                      local_ntp_srvnet => '192.168.0.0', local_ntp_srvmask => '255.255.255.0' }
 
 
-    ## USER PROFILES ##
-	
-	# Set up root's home directories and bash customization
-    include hp_root_home
-    include hp_root_bashrc
-    
-    # Set up user's home directories and bash customization
-    hp_user_bashrc::config { 'bekr' : }
-	hp_sudo::config { 'bekr': }
 
 
-    ## APPLICATIONS
-	
-    #Install REDHAT packages without any special configurations
-    class { hp_install_rpms : rpms => [ "nano", "bind-utils", "wget", "perl-Log-Log4perl", "openssh-clients", "curl", "tree" ] }
-	
-	include hp_apache2_rpm
-	
-	## SECURITY
-	
-	include hp_auto_upgrade
-	
-    ## Add mod_security and mod_headers for rpm!
-	hp_apache2_rpm::module { 'mod-security' : }
-	
-	# Security (iptables + fail2ban)
-	# fail2ban ssh is enabled. disabled apache, modsec, postfix actions
-	# latter parameters needs both apache and mod-security installed
-    class { hp_iptables_fail2ban::config :
-		 puppetserver_hostname => 'hp',
-		   fail2ban_trusted_ip => '192.168.0.0/24  81.237.0.0/16',
-		       fail2ban_apache => 'true',
-		       fail2ban_modsec => 'true',
-			  fail2ban_postfix => 'false',
-	}	
-	
-    hp_selinux::state { 'enforcing' : }
-    include hp_logwatch
-    
-    # disable unnecessary services
-    hp_service::disable { 'rhnsd' : }
-	
-	# security settings in kernel sysctl.conf (incl. ipv6 disable)
-    include hp_sysctl
-	
-	
-    ## MAINTENANCE
-	#  Note: Before installing new ssh-configuration, first create rsa keys on remost
-	#  managing host and "$ ssh-copy-id -i /home/bekr/.ssh/id_ora_rsa bekr@192.168.0.45"
-	include hp_ssh_server
-    hp_ssh_server::sshuser { 'bekr' : }
-	
-    include hp_logrotate
-    include hp_rsyslog
-	
-	
-}
+
+
+################################################################
+#
+## This is a OracleLinux-6 'minimal-install' guest (aka rhel 6 minimal)
+## Before all this add EPEL-repo and add below required rpms manually.
+#
+#node 'ora.home.tld' {
+#
+#
+#   ## BASIC
+#   # (acpid is required for host 'virsh shutdown ora' to work) 
+#	include hp_acpid_rpm
+#	
+#	include hp_puppetize
+#    include puppet_utils
+#	
+#	# hosts file (hostname, domain name for puppetserver is usually 'puppet.home.tld' and master ip address)
+#	class { hp_hosts::config : srv_hostname => 'puppet', srv_domain => 'home.tld', srv_host_ip => '192.168.0.66' }
+#
+#    # ntp service for client
+#    class { 'hp_ntp' : role => 'lanclient', local_ntp_srvip => '192.168.0.66',
+#                      local_ntp_srvnet => '192.168.0.0', local_ntp_srvmask => '255.255.255.0' }
+#
+#
+#    ## USER PROFILES ##
+#	
+#	# Set up root's home directories and bash customization
+#    include hp_root_home
+#    include hp_root_bashrc
+#    
+#    # Set up user's home directories and bash customization
+#    hp_user_bashrc::config { 'bekr' : }
+#	hp_sudo::config { 'bekr': }
+#
+#
+#    ## APPLICATIONS
+#	
+#    #Install REDHAT packages without any special configurations
+#    class { hp_install_rpms : rpms => [ "nano", "bind-utils", "wget", "perl-Log-Log4perl", "openssh-clients", "curl", "tree" ] }
+#	
+#	include hp_apache2_rpm
+#	
+#	## SECURITY
+#	
+#	include hp_auto_upgrade
+#	
+#    ## Add mod_security and mod_headers for rpm!
+#	hp_apache2_rpm::module { 'mod-security' : }
+#	
+#	# Security (iptables + fail2ban)
+#	# fail2ban ssh is enabled. disabled apache, modsec, postfix actions
+#	# latter parameters needs both apache and mod-security installed
+#    class { hp_iptables_fail2ban::config :
+#		 puppetserver_hostname => 'hp',
+#		   fail2ban_trusted_ip => '192.168.0.0/24  81.237.0.0/16',
+#		       fail2ban_apache => 'true',
+#		       fail2ban_modsec => 'true',
+#			  fail2ban_postfix => 'false',
+#	}	
+#	
+#    hp_selinux::state { 'enforcing' : }
+#    include hp_logwatch
+#    
+#    # disable unnecessary services
+#    hp_service::disable { 'rhnsd' : }
+#	
+#	# security settings in kernel sysctl.conf (incl. ipv6 disable)
+#    include hp_sysctl
+#	
+#	
+#    ## MAINTENANCE
+#	#  Note: Before installing new ssh-configuration, first create rsa keys on remost
+#	#  managing host and "$ ssh-copy-id -i /home/bekr/.ssh/id_ora_rsa bekr@192.168.0.45"
+#	include hp_ssh_server
+#    hp_ssh_server::sshuser { 'bekr' : }
+#	
+#    include hp_logrotate
+#    include hp_rsyslog
+#	
+#	
+#}
 
 #
 ## eof
