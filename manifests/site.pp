@@ -563,7 +563,7 @@ node 'hp.home.tld' {
           local_guest_gw => '192.168.0.1', local_guest_ip  => '192.168.0.45', local_mac_address => '52:54:00:00:00:45',
 		local_guest_bcst => '192.168.0.255', local_guest_netw => '192.168.0.0',
 		 local_hostname  => 'debse', bridge_name => 'kvmbr0', auto_start => 'true',
-		 os_name => 'oracle6', local_guest_netmask => '255.255.255.0', local_guest_domain => 'home.tld',
+		 os_name => 'debian', local_guest_netmask => '255.255.255.0', local_guest_domain => 'home.tld',
     }
 	
 	
