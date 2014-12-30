@@ -625,6 +625,8 @@ node 'hp.home.tld' {
     hp_ssh_server::sshuser { 'bekr' : }
 
 	include hp_logwatch
+	include hp_logrotate
+    include hp_rsyslog
 	
 	# Disable ipv6 in kernel/grub and use the more text lines in console mode
 	class { hp_grub::install : defaultline => 'vga=791', appendline => 'true', ipv6 => 'false' }
@@ -708,6 +710,8 @@ node 'trise.home.tld' {
     hp_ssh_server::sshuser { 'bekr' : }	
 	
 	include hp_logwatch
+	include hp_logrotate
+    include hp_rsyslog
 	
 	# Disable ipv6 in kernel/grub and use the more text lines in console mode
 	class { hp_grub::install : defaultline => 'vga=791', appendline => 'true', ipv6 => 'false' }	
@@ -789,6 +793,8 @@ node 'mc.home.tld' {
     hp_ssh_server::sshuser { 'bekr' : }		
 	
 	include hp_logwatch
+	include hp_logrotate
+    include hp_rsyslog
 	
 	# Disable ipv6 in kernel/grub and use the more text lines in console mode
 	class { hp_grub::install : defaultline => 'vga=791', appendline => 'true', ipv6 => 'false' }	
@@ -870,6 +876,8 @@ node 'deborg.home.tld' {
     hp_ssh_server::sshuser { 'bekr' : }			
 	
 	include hp_logwatch
+	include hp_logrotate
+    include hp_rsyslog
 	
 	# Disable ipv6 in kernel/grub and use the more text lines in console mode
 	class { hp_grub::install : defaultline => 'vga=791', appendline => 'true', ipv6 => 'false' }	
@@ -950,7 +958,9 @@ node 'ilx.home.tld' {
     hp_ssh_server::sshuser { 'bekr' : }			
 	
 	include hp_logwatch
-
+	include hp_logrotate
+    include hp_rsyslog
+	
 	# Disable ipv6 in kernel/grub and use the more text lines in console mode
 	class { hp_grub::install : defaultline => 'vga=791', appendline => 'true', ipv6 => 'false' }	
 
@@ -1033,7 +1043,9 @@ node 'debse.home.tld' {
     hp_ssh_server::sshuser { 'bekr' : }			
 	
 	include hp_logwatch
-	
+	include hp_logrotate
+    include hp_rsyslog
+
 	# Disable ipv6 in kernel/grub and use the more text lines in console mode
 	class { hp_grub::install : defaultline => 'vga=791', appendline => 'true', ipv6 => 'false' }	
 	
