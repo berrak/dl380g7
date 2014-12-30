@@ -44,7 +44,7 @@ if ( ! -f $original_domain_path ) {
 
 # Pre-check, check passed arguments
 my $num_args = $#ARGV +1 ;
-if ($num_args != 9) {
+if ($num_args != 10) {
     print "\nUsage: create-deb-guest.pl <new_domain> <local_gw_address> <local_ip_address> <local_mac_address> <new_broadcast> <new_network> <new_host_name> <new_bridge> <new_netmask> <new_inet_domain>\n";
     $logger->error("Wrong number of arguments ($num_args) passed to create-deb-guest.pl");
     exit 2;
