@@ -984,13 +984,41 @@ node 'debse.home.tld' {
 	hp_sudo::config { 'bekr': }
 
 
+    ## APPLICATIONS ##
+    
+	# DEBIAN packages without any special configurations
+    class { hp_install_debs : debs => [ "tree", "sipcalc", "lshw", "pydf" , "dnsutils", "chkconfig", "liblog-log4perl-perl" ] }
+
+    # APACHE2 prefork
+    include hp_apache2_deb 
+		
+	## Define a new Apache2 virtual host (docroot directory writable by group 'root')
+    hp_apache2_deb::vhost { 'debse.home.tld' :
+            priority => '001',
+          devgroupid => 'root',
+          execscript => 'none',
+		 site_ipaddr => '192.168.0.45', 
+		        port => '80',
+    }
 
 
     ## SECURITY
 
     # Automatic security upgrades with cron script
 	include hp_auto_upgrade
-
+	
+	
+    ## MAINTENANCE
+	#  Note: Before installing new ssh-configuration, first create rsa keys on remost
+	#  managing host and "$ ssh-copy-id -i /home/bekr/.ssh/id_deborg_rsa bekr@192.168.0.43"
+	include hp_ssh_server
+    hp_ssh_server::sshuser { 'bekr' : }			
+	
+	include hp_logwatch
+	
+	# Disable ipv6 in kernel/grub and use the more text lines in console mode
+	class { hp_grub::install : defaultline => 'vga=791', appendline => 'true', ipv6 => 'false' }	
+	
 }
 
 
