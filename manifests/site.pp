@@ -961,6 +961,9 @@ node 'ilx.home.tld' {
 	include hp_logrotate
     include hp_rsyslog
 	
+    hp_add_apt_release::config{ 'testing' : }
+    hp_add_apt_release::config{ 'wheezy-backports' : }	
+	
 	# Disable ipv6 in kernel/grub and use the more text lines in console mode
 	class { hp_grub::install : defaultline => 'vga=791', appendline => 'true', ipv6 => 'false' }	
 
@@ -1045,6 +1048,9 @@ node 'debse.home.tld' {
 	include hp_logwatch
 	include hp_logrotate
     include hp_rsyslog
+	
+    hp_add_apt_release::config{ 'testing' : }
+    hp_add_apt_release::config{ 'wheezy-backports' : }	
 
 	# Disable ipv6 in kernel/grub and use the more text lines in console mode
 	class { hp_grub::install : defaultline => 'vga=791', appendline => 'true', ipv6 => 'false' }	

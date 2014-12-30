@@ -1,0 +1,8 @@
+##############################################################
+# MANAGED BY PUPPET. DO NOT EDIT. CHANGES WILL BE WIPED OUT. #
+##############################################################
+
+deb http://http.debian.net/debian wheezy-backports main contrib non-free
+
+
+
