@@ -26,7 +26,7 @@ class hp_puppetize::config {
     case $myhostname {
         'ol65', 'hphome', 'hp': { $myserverdomain = $::hp_puppetize::params::server_domain_home }
         'dl380g7'             : { $myserverdomain = $::hp_puppetize::params::server_domain_bahnhof }
-        'ora','trise','deborg','mc','ilx' : { $myserverdomain = $::hp_puppetize::params::server_domain_home }
+        'ora','trise','deborg','mc','ilx', 'debse' : { $myserverdomain = $::hp_puppetize::params::server_domain_home }
         default               : { fail("FAIL: Puppet server domain is missing from puppetize params-file") }
     }
     
