@@ -916,6 +916,9 @@ node 'ilx.home.tld' {
 	# DEBIAN packages without any special configurations
     class { hp_install_debs : debs => [ "tree", "sipcalc", "lshw", "pydf" , "dnsutils", "chkconfig", "liblog-log4perl-perl" ] }
 
+	# install latest
+	hp_backport::install { 'git' : }
+
     # APACHE2 prefork
     include hp_apache2_deb 
 		
