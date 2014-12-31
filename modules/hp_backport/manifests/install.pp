@@ -14,8 +14,10 @@ define hp_backport::install {
     
         git : {
         
-			exec { "/usr/bin/apt-get install git/wheezy-backports" :
-				refreshonly => true,
+			exec { "/usr/bin/apt-get install $name/wheezy-backports" :
+				   path => '/bin:/usr/bin:/sbin:/usr/sbin',
+				command => "apt-get install $name/wheezy-backports",
+				 unless => "dpkg -l $name", 
 			}	   			
         }
 
