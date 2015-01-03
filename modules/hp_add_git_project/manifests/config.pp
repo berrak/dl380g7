@@ -19,7 +19,7 @@ define hp_add_git_project::config {
 	}
 	
 	# unsecure passwd
-	$name_password = "${name}${:}${name}"
+	$name_password = "$name:$name"
 	
 	exec { "create_project_${name}_password" :
 		       path => '/bin:/sbin:/usr/bin:/usr/sbin',
