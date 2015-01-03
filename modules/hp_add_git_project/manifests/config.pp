@@ -10,14 +10,25 @@ define hp_add_git_project::config {
 		fail("FAIL: This module is only for Debian, not for $::operatingsystem. Aborting...")
 	}
 
+	file { "/home/${name}":
+		ensure => "directory",
+		 owner => ${name}",
+		 group => ${name}",
+	}
+	
+	file { "/home/${name}/.ssh":
+		 ensure => "directory",
+		  owner => ${name}",
+		  group => ${name}",
+		require => File["/home/${name}"],
+	}
+
 	# add 'user' - holder of ssh-keys for project members 
 	user { $name :
 		    ensure => present,
-		      home => "/home/${name}",
-		managehome => true,
-		       gid => "${name}",
 		     shell => '/usr/bin/git-shell',
 		    notify => Exec["set_${name}_password"],
+			require => File["/home/${name}"],
 	}
 	
 	# add password to this 'user'
