@@ -10,12 +10,20 @@ define hp_add_git_project::config {
 		fail("FAIL: This module is only for Debian, not for $::operatingsystem. Aborting...")
 	}
 
-	# add user and password to this 'user'
-	$password = $name
+	# add 'user' - holder of ssh-keys for project members 
 	user { $name :
 		   ensure => present,
 		    shell => '/usr/bin/git-shell',
-		 password => generate('/bin/sh', '-c', "mkpasswd -m sha-512 ${password} | tr -d '\n'"),
 	}
+	
+	# add password to this 'user'
+	$name_password = ${name}:${name}
+	
+	exec { set_${name}_password":
+		command => "/bin/echo \"${name_password}\" | /usr/sbin/chpasswd",
+		require => [ $name ],
+	
+	}
+	
 	
 }
