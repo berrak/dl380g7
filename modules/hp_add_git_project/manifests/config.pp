@@ -12,9 +12,12 @@ define hp_add_git_project::config {
 
 	# add 'user' - holder of ssh-keys for project members 
 	user { $name :
-		ensure => present,
-		 shell => '/usr/bin/git-shell',
-		notify => Exec["set_${name}_password"],
+		    ensure => present,
+		      home => "/home/${name}",
+		managehome => true,
+		       gid => ${name}",
+		     shell => '/usr/bin/git-shell',
+		    notify => Exec["set_${name}_password"],
 	}
 	
 	# add password to this 'user'
