@@ -919,10 +919,10 @@ node 'ilx.home.tld' {
 	# DEBIAN packages without any special configurations
     class { hp_install_debs : debs => [ "tree", "sipcalc", "lshw", "pydf" , "dnsutils", "chkconfig", "liblog-log4perl-perl" ] }
 
-	# install latest git (either this way or with include hp_git_server for wheezy version)
+	# install latest git (either this way or with 'include hp_git_server' which installs git wheezy version)
 	hp_backport::install { 'git' : }
 	# create a git-depot i.e. remote repository /data/cpan/<repo-name>.git 
-	hp_add_git_project::config { 'cpan' : }
+	hp_add_git_project::config { 'cpan' : git_name => 'Filter-Heredoc.git' }
 
     # APACHE2 prefork
     include hp_apache2_deb 
