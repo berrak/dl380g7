@@ -11,18 +11,18 @@ define hp_add_git_project::config {
 	}
 
     # create user/group with name of project
-	exec { "create_project_$name" :
+	exec { "create_project_${name}" :
 		   path => '/bin:/sbin:/usr/bin:/usr/sbin',
 		command => "useradd --shell /usr/bin/git-shell $name", 
 		 unless => "cat /etc/passwd | grep $name",
-		 notify => Exec["create_project_$name"],
+		 notify => Exec["create_project_${name}"],
 	}
 	
 	# set password
-	exec { "create_project_$name_password" :
+	exec { "create_project_${name}_password" :
 		       path => '/bin:/sbin:/usr/bin:/usr/sbin',
 		    command => "echo $name:$name | chpasswd $name", 
-		   required => Exec["create_project_$name"],
+		   required => Exec["create_project_${name}"],
 		refreshonly => true,
 	}
 	
