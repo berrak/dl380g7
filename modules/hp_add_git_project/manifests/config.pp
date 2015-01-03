@@ -23,7 +23,7 @@ define hp_add_git_project::config {
 	
 	exec { "create_project_${name}_password" :
 		       path => '/bin:/sbin:/usr/bin:/usr/sbin',
-		    command => 'echo "$name_password" | "chpasswd $name"', 
+		    command => '"echo \"$name_password\" | chpasswd $name"', 
 		   required => Exec["create_project_${name}"],
 		refreshonly => true,
 	}
