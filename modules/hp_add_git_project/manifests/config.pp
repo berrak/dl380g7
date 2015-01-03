@@ -12,14 +12,14 @@ define hp_add_git_project::config {
 
 	file { "/home/${name}":
 		ensure => "directory",
-		 owner => ${name}",
-		 group => ${name}",
+		 owner => "${name}",
+		 group => "${name}",
 	}
 	
 	file { "/home/${name}/.ssh":
 		 ensure => "directory",
-		  owner => ${name}",
-		  group => ${name}",
+		  owner => "${name}",
+		  group => "${name}",
 		require => File["/home/${name}"],
 	}
 
