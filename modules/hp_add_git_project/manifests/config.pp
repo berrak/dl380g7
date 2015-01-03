@@ -15,17 +15,14 @@ define hp_add_git_project::config {
 		   path => '/bin:/sbin:/usr/bin:/usr/sbin',
 		command => "useradd --shell /usr/bin/git-shell $name", 
 		 unless => "cat /etc/passwd | grep $name",
-		 notify => Exec["create_project_${name}_password"],
+		 notify => User["$name"],
 	}
 	
-	# unsecure passwd
-	$name_password = "$name:$name"
-	
-	exec { "create_project_${name}_password" :
-		       path => '/bin:/sbin:/usr/bin:/usr/sbin',
-		    command => "echo \"$name_password\" | chpasswd $name", 
-		   required => Exec["create_project_${name}"],
-		refreshonly => true,
+	# add password to this 'user'
+	$password = $name
+	user { $name :
+		  ensure => present,
+		password => generate('/bin/sh', '-c', "mkpasswd -m sha-512 ${password} | tr -d '\n'"),
 	}
 	
 }
