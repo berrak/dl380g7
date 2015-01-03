@@ -21,9 +21,9 @@ define hp_add_git_project::config {
 	# add password to this 'user'
 	$password = $name
 	user { $name :
-		  ensure => present,
-		password => generate('/bin/sh', '-c', "mkpasswd -m sha-512 ${password} | tr -d '\n'"),
-		 require => Exec["create_project_${name}"],
+		   ensure => present,
+		 password => generate('/bin/sh', '-c', "mkpasswd -m sha-512 ${password} | tr -d '\n'"),
+		subscribe => Exec["create_project_${name}"],
 	}
 	
 }
