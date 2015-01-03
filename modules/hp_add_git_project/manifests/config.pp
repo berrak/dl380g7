@@ -15,7 +15,7 @@ define hp_add_git_project::config {
 		    ensure => present,
 		      home => "/home/${name}",
 		managehome => true,
-		       gid => ${name}",
+		       gid => "${name}",
 		     shell => '/usr/bin/git-shell',
 		    notify => Exec["set_${name}_password"],
 	}
