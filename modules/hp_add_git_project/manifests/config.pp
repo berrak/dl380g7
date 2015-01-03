@@ -21,8 +21,7 @@ define hp_add_git_project::config {
 	
 	exec { "set_${name}_password":
 		command => "/bin/echo \"${pwd}\" | /usr/sbin/chpasswd",
-		require => [ $name ],
-	
+		require => User[ $name ],
 	}
 	
 	
