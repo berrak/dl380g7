@@ -919,8 +919,10 @@ node 'ilx.home.tld' {
 	# DEBIAN packages without any special configurations
     class { hp_install_debs : debs => [ "tree", "sipcalc", "lshw", "pydf" , "dnsutils", "chkconfig", "liblog-log4perl-perl" ] }
 
-	# install latest
+	# install latest git (either this way or with include hp_git_server for wheezy version)
 	hp_backport::install { 'git' : }
+	# create a git-depot i.e. remote repository /data/cpan/<repo-name>.git 
+	hp_add_git_project::config { 'cpan' : }
 
     # APACHE2 prefork
     include hp_apache2_deb 
