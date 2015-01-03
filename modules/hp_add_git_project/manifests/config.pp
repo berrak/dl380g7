@@ -17,10 +17,10 @@ define hp_add_git_project::config {
 	}
 	
 	# add password to this 'user'
-	$name_password = ${name}:${name}
+	$pwd = "${name}:${name}"
 	
-	exec { set_${name}_password":
-		command => "/bin/echo \"${name_password}\" | /usr/sbin/chpasswd",
+	exec { "set_${name}_password":
+		command => "/bin/echo \"${pwd}\" | /usr/sbin/chpasswd",
 		require => [ $name ],
 	
 	}
