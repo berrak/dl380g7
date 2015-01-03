@@ -43,7 +43,7 @@ define hp_add_git_project::config ( $git_name ) {
 		    command => "/bin/echo \"${pwd}\" | /usr/sbin/chpasswd",
 		    require => User[ $name ],
 		refreshonly => true,
-		     notify => Exec["setup_git_project_user_${name}"],
+		     notify => Exec["setup_git_depot_${name}"],
 	}
 
 	
