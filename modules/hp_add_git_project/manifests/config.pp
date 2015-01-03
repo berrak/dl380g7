@@ -18,10 +18,12 @@ define hp_add_git_project::config {
 		 notify => Exec["create_project_${name}_password"],
 	}
 	
-	# set password
+	# unsecure passwd
+	$name_password = "${name}${:}${name}"
+	
 	exec { "create_project_${name}_password" :
 		       path => '/bin:/sbin:/usr/bin:/usr/sbin',
-		    command => 'echo "${name}:${name} | chpasswd $name"', 
+		    command => 'echo "$name_password | chpasswd $name"', 
 		   required => Exec["create_project_${name}"],
 		refreshonly => true,
 	}
