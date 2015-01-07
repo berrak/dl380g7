@@ -963,7 +963,10 @@ node 'ilx.home.tld' {
 	#  Note: Before installing new ssh-configuration, first create rsa keys on remost
 	#  managing host and "$ ssh-copy-id -i /home/bekr/.ssh/id_ilx_rsa bekr@192.168.0.44"
 	include hp_ssh_server
-    hp_ssh_server::sshuser { 'bekr' : }			
+    hp_ssh_server::sshuser { 'bekr' : }
+	
+	# this user is just for git depot (ssh) access - must exist on server
+    hp_ssh_server::sshuser { 'bkron' : }	
 	
 	include hp_logwatch
 	include hp_logrotate
